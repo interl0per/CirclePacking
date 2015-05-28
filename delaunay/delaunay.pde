@@ -37,6 +37,8 @@ class HalfEdge {
       twin.prev.connectTo(next);
       twin.v.h = next;
     }
+    hetoe.remove(this);
+    hetoe.remove(twin);
     for(int i = 0; i < edges.size(); i++)
     {
       if(edges.get(i).h1 == this || edges.get(i).h1==this.twin)
@@ -112,6 +114,9 @@ void attach(Vertex s, Vertex t) {
   h2.connectTo(sh);
   h1.connectTo(th);  
   edges.add(new Edge(h1, h2));
+  hetoe.put(h1, edges.get(edges.size()-1));
+  hetoe.put(h2, edges.get(edges.size()-1));
+
 }
 
 /**************************************************************************/
@@ -121,6 +126,7 @@ boolean showCircles = false;
 HashMap<HalfEdge, Boolean> visited = new HashMap<HalfEdge, Boolean>();
 ArrayList<Edge> edges = new ArrayList<Edge>();
 ArrayList<Vertex> verticies = new ArrayList<Vertex>();
+HashMap<HalfEdge, Edge> hetoe = new HashMap<HalfEdge, Edge>();
 
 //bounding triangle
 Vertex a = new Vertex(-100,-100);
@@ -149,7 +155,6 @@ void draw()
   else if(keyPressed && key=='2')
     showCircles = false;
 }
-
 void mouseReleased()
 {
   Vertex v = new Vertex(mouseX, mouseY);
@@ -170,12 +175,37 @@ void mouseReleased()
     while(!edgesToCheck.isEmpty())
     {
       Edge nxt = edgesToCheck.pop();
-      if(!inCircumcircle(nxt.h1.v, nxt.h1.next.v, nxt.h1.next.next.v, nxt.h2.prev.v) || !inCircumcircle(nxt.h2.v, nxt.h2.next.v, nxt.h2.next.next.v, nxt.h1.prev.v))
+      if(inCircumcircle(nxt.h1.v, nxt.h1.next.v, nxt.h1.next.next.v, nxt.h2.prev.v) || inCircumcircle(nxt.h2.v, nxt.h2.next.v, nxt.h2.next.next.v, nxt.h1.prev.v))
       {
+        Edge e1 = hetoe.get(nxt.h1.next);
+        Edge e2 = hetoe.get(nxt.h1.next.next);
+        Edge e3 = hetoe.get(nxt.h2.next);
+        Edge e4 = hetoe.get(nxt.h2.next.next);
+        
+        if(inStack.get(e1) == null || !inStack.get(e1))
+        {
+          edgesToCheck.push(hetoe.get(nxt.h1.next));
+          inStack.put(e1, true);
+        }
+        if(inStack.get(e2) == null || !inStack.get(e2))
+        {
+          edgesToCheck.push(e2);
+          inStack.put(e2, true);
+        }
+        if(inStack.get(e3) == null || !inStack.get(e3))
+        {
+          edgesToCheck.push(e3);
+          inStack.put(e3, true);
+        }
+        if(inStack.get(e4) == null || !inStack.get(e4))
+        {
+          edgesToCheck.push(e4);
+          inStack.put(e4, true);
+        }
         attach(nxt.h2.prev.v, nxt.h1.prev.v);
         nxt.h1.detach();
       }
-      inStack.put(nxt, false);
+      inStack.put(nxt, false);//mark as out of the stack
     }
   }
 }
@@ -207,8 +237,7 @@ void drawBFS(HalfEdge curr)
     HalfEdge he = q.remove();
     if(visited.containsKey(he))  continue;
     line(he.v.x, he.v.y, he.next.v.x, he.next.v.y);
-    if(showCircles)
-      drawCircumcircle(he.v, he.next.v, he.next.next.v);
+    if(showCircles)  drawCircumcircle(he.v, he.next.v, he.next.next.v);
     visited.put(he, true);
     q.add(he.next);
     q.add(he.twin);
@@ -260,5 +289,5 @@ boolean inCircumcircle(Vertex a, Vertex b, Vertex c, Vertex d)
   float alift = adx * adx + ady * ady;
   float blift = bdx * bdx + bdy * bdy;
   float clift = cdx * cdx + cdy * cdy;
-  return alift * bcdet + blift * cadet + clift * abdet >= 0;
+  return alift * bcdet + blift * cadet + clift * abdet < 0;
 }
