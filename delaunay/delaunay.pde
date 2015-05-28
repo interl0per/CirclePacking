@@ -1,5 +1,11 @@
 import java.util.*;
-class Point { float x, y; public Point(float xx, float yy) { x = xx; y = yy; } } ;
+/*******************************************************************************/
+/**************************     Data structures     ****************************/
+
+class Edge {
+  HalfEdge h1, h2;
+  public Edge(HalfEdge _h1, HalfEdge _h2) {  h1 = _h1; h2 = _h2;  }
+}
 
 class HalfEdge {
   HalfEdge prev;
@@ -17,16 +23,10 @@ class HalfEdge {
   }
   // Disconnect both a halfedge and its twin.
   void detach() {
-    stroke(255);
-    strokeWeight(5);
-    line(v.loc.x, v.loc.y, next.v.loc.x, next.v.loc.y);
-    stroke(0);
-    strokeWeight(1);
     if (v.isLeaf()) { 
       v.h = null;
     } 
     else {
-
       prev.connectTo(twin.next);
       v.h = twin.next;
     }
@@ -34,31 +34,38 @@ class HalfEdge {
       twin.v.h = null; 
     }
     else {
-
       twin.prev.connectTo(next);
       twin.v.h = next;
     }
+    for(int i = 0; i < edges.size(); i++)
+    {
+      if(edges.get(i).h1 == this || edges.get(i).h1==this.twin)
+      {
+        edges.remove(i);
+        return;
+      }
+    }
   }
 }
+
 class Vertex {
-  Point loc;
   HalfEdge h;
-  
-  Vertex(Point p) {
-    loc = p;
+  float x, y;
+  Vertex(float _x, float _y) {
+    x = _x; y = _y;
     h = null;
   }
   
   void draw(){
     fill(0);
     noStroke();
-    ellipse(loc.x, loc.y,2,2);
+    ellipse(x, y,2,2);
   }
 
   HalfEdge handle(Vertex u) {
     if (isIsolated() || isLeaf()) { return h; }
     HalfEdge h1 = h, h2 = h.prev.twin;
-    while (!ordered(h1.twin.v.loc, u.loc, h2.twin.v.loc)) {
+    while (!ordered(h1.twin.v, u, h2.twin.v)) {
       h1 = h2;
       h2 = h1.prev.twin;      
     }
@@ -73,18 +80,17 @@ class Vertex {
     return (!isIsolated()) && (h.twin == h.prev);
   }
   
-  boolean ccw(Point a, Point b) {
-    return ((a.y-loc.y) * (b.x-loc.x) - (a.x-loc.x) * (b.y-loc.y) >= 0);
+  boolean ccw(Vertex a, Vertex b) {
+    return ((a.y-y) * (b.x-x) - (a.x-x) * (b.y-y) >= 0);
   }
   
-  boolean ordered(Point a, Point b, Point c) {
+  boolean ordered(Vertex a, Vertex b, Vertex c) {
     boolean I   = ccw(a,b);
     boolean II  = ccw(b,c);
     boolean III = ccw(c,a);
     return ((I && (II || III)) || (II && III)); // at least two must be true
   } 
 }
-
 
 void attach(Vertex s, Vertex t) {
   HalfEdge h1 = new HalfEdge(s);
@@ -105,13 +111,76 @@ void attach(Vertex s, Vertex t) {
   th.prev.connectTo(h2);
   h2.connectTo(sh);
   h1.connectTo(th);  
-  if(s!=a && t!=a && s!=b && t!=b && s!=c && t!=c)    
-    line(s.loc.x, s.loc.y, t.loc.x, t.loc.y);
+  edges.add(new Edge(h1, h2));
 }
 
-HashMap<HalfEdge, Boolean> visited = new HashMap<HalfEdge, Boolean>();
+/**************************************************************************/
+/**************************     Algorithms     ****************************/
 
-HalfEdge dualBFS(HalfEdge curr, Point d)//walk along all the faces
+boolean showCircles = false;
+HashMap<HalfEdge, Boolean> visited = new HashMap<HalfEdge, Boolean>();
+ArrayList<Edge> edges = new ArrayList<Edge>();
+ArrayList<Vertex> verticies = new ArrayList<Vertex>();
+
+//bounding triangle
+Vertex a = new Vertex(-100,-100);
+Vertex b = new Vertex(1200, -100);
+Vertex c = new Vertex(512, 5000);
+
+void setup()
+{
+  size(1024, 512);
+  background(255);
+  fill(0,0);
+  attach(a,b);
+  attach(b,c);
+  attach(c,a);
+  verticies.add(a);  verticies.add(b);  verticies.add(c);
+}
+
+void draw()
+{
+  visited.clear();
+  background(255);
+  drawBFS(a.h);
+  visited.clear();
+  if(keyPressed && key == '1')
+    showCircles = true;
+  else if(keyPressed && key=='2')
+    showCircles = false;
+}
+
+void mouseReleased()
+{
+  Vertex v = new Vertex(mouseX, mouseY);
+  verticies.add(v);
+  HalfEdge tri = findHE(a.h, v);    //the face this new vertex sits in
+
+  if(tri!=null)
+  {
+    triangulate(tri, v);
+    Stack<Edge> edgesToCheck = new Stack<Edge>();
+    HashMap<Edge, Boolean> inStack = new HashMap<Edge, Boolean>();
+    println(edges.size());
+    for(Edge e : edges)
+    {
+      edgesToCheck.push(e);
+      inStack.put(e, true);
+    } 
+    while(!edgesToCheck.isEmpty())
+    {
+      Edge nxt = edgesToCheck.pop();
+      if(!inCircumcircle(nxt.h1.v, nxt.h1.next.v, nxt.h1.next.next.v, nxt.h2.prev.v) || !inCircumcircle(nxt.h2.v, nxt.h2.next.v, nxt.h2.next.next.v, nxt.h1.prev.v))
+      {
+        attach(nxt.h2.prev.v, nxt.h1.prev.v);
+        nxt.h1.detach();
+      }
+      inStack.put(nxt, false);
+    }
+  }
+}
+
+HalfEdge findHE(HalfEdge curr, Vertex d)//bfs the faces
 {
   Queue<HalfEdge> q = new LinkedList<HalfEdge>();
   q.add(curr);
@@ -129,26 +198,33 @@ HalfEdge dualBFS(HalfEdge curr, Point d)//walk along all the faces
   return null;
 }
 
-/**************************************************************************/
-/************************** Processing events *****************************/
-//bounding triangle
-Vertex a = new Vertex(new Point(-100,-100));
-Vertex b = new Vertex(new Point(1200,-100));
-Vertex c = new Vertex(new Point(512, 5000));
-
-ArrayList<Vertex> verticies = new ArrayList<Vertex>();
-
-void draw(){  }
-
-void setup()
+void drawBFS(HalfEdge curr)
 {
-  size(1024, 512);
-  background(255);
-  attach(a,b);
-  attach(b,c);
-  attach(c,a);
-  //println(inCircumcircle( new Point(500,500),  new Point(500, 600), new Point(550, 550), new Point(498, 550)));
+  Queue<HalfEdge> q = new LinkedList<HalfEdge>();
+  q.add(curr);
+  while(!q.isEmpty())
+  {
+    HalfEdge he = q.remove();
+    if(visited.containsKey(he))  continue;
+    line(he.v.x, he.v.y, he.next.v.x, he.next.v.y);
+    if(showCircles)
+      drawCircumcircle(he.v, he.next.v, he.next.next.v);
+    visited.put(he, true);
+    q.add(he.next);
+    q.add(he.twin);
+  }
 }
+
+void drawCircumcircle(Vertex a, Vertex b, Vertex c)
+{
+  float mr = (b.y-a.y) / (b.x-a.x);
+  float mt = (c.y-b.y) / (c.x-b.x);
+  float x = (mr*mt*(c.y-a.y) + mr*(b.x+c.x) - mt*(a.x+b.x)) / (2*(mr-mt));
+  float y = (a.y+b.y)/2 - (x - (a.x+b.x)/2) / mr;
+  float r = sqrt(((b.x-x)*(b.x-x) +  (b.y-y)*(b.y-y)));
+  ellipse(x, y,2*r, 2*r);
+}
+
 void triangulate(HalfEdge h, Vertex v)
 {
   for(int i = 0; i < 3; i++)
@@ -158,17 +234,18 @@ void triangulate(HalfEdge h, Vertex v)
     h = h.next;
   }
 }
-boolean turn(Point p, Point q, Point r)
+
+boolean turn(Vertex p, Vertex q, Vertex r)
 {//returns true if no turn/right turn is formed by p q r
   return((q.x - p.x)*(r.y - p.y) - (r.x - p.x)*(q.y - p.y)>=0);
 }
 
-boolean inFace(HalfEdge h, Point d)
+boolean inFace(HalfEdge h, Vertex d)
 {//is d in the face defined by h?
-  return!((turn(h.v.loc,h.next.v.loc, d) || turn(h.next.v.loc,h.next.next.v.loc, d) || turn(h.next.next.v.loc,h.v.loc, d)));
+  return!((turn(h.v,h.next.v, d) || turn(h.next.v,h.next.next.v, d) || turn(h.next.next.v,h.v, d)));
 }
 
-boolean inCircumcircle(Point a, Point b, Point c, Point d)
+boolean inCircumcircle(Vertex a, Vertex b, Vertex c, Vertex d)
 {//a,b,c should be in ccw order from following the half edges. I just copied this from http://algs4.cs.princeton.edu/91primitives/ to save a headache...
   float adx = a.x - d.x;
   float ady = a.y - d.y;
@@ -185,53 +262,3 @@ boolean inCircumcircle(Point a, Point b, Point c, Point d)
   float clift = cdx * cdx + cdy * cdy;
   return alift * bcdet + blift * cadet + clift * abdet >= 0;
 }
-
-void mouseReleased()
-{
-  Vertex v = new Vertex(new Point(mouseX, mouseY));
-  verticies.add(v);
-  HalfEdge tri = dualBFS(a.h, v.loc);    //the face this new vertex sits in
-  if(tri!=null)
-  {
-    triangulate(tri, v);
-    boolean isDelaunay = false;
-    while(!isDelaunay)
-    {
-      isDelaunay = true;
-      for(Vertex vv : verticies)
-      {
-        /*if(i==2) 
-        {
-          ellipse(vv.loc.x, vv.loc.y, 10, 10);
-          ellipse(vv.h.twin.prev.v.loc.x, vv.h.twin.prev.v.loc.y, 20,20);
-          ellipse(vv.h.next.v.loc.x, vv.h.next.v.loc.y, 30,30);
-          ellipse(vv.h.twin.prev.twin.next.next.v.loc.x, vv.h.twin.prev.twin.next.next.v.loc.y, 40,40);
-        }*/
-        if(!inCircumcircle(vv.loc, vv.h.next.v.loc, vv.h.next.next.v.loc, vv.h.twin.prev.v.loc))
-        {
-          println("c1");
-          attach(vv.h.twin.prev.v, vv.h.next.next.v);
-          vv.h.detach();  
-          isDelaunay = false;
-        }
-         /*else if(!inCircumcircle(vv.loc, vv.h.next.next.v.loc, vv.h.twin.prev.v.loc, vv.h.next.v.loc))
-        {
-          int x = 2/0;
-          println("c2");
-          attach(vv.h.next.v, vv.h.twin.prev.v);
-          vv.h.next.detach();  
-          isDelaunay = false;
-        }*/
-         else if(!inCircumcircle(vv.loc, vv.h.twin.prev.v.loc,vv.h.next.v.loc, vv.h.twin.prev.twin.next.next.v.loc))
-        {
-          println("c3");
-          attach(vv,  vv.h.twin.prev.twin.next.next.v);
-          vv.h.twin.prev.twin.detach();  
-          isDelaunay = false;
-        }
-      }
-    }
-  }
-  visited.clear();
-}
-
