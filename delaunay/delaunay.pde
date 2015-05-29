@@ -51,6 +51,7 @@ class HalfEdge {
 }
 
 class Vertex {
+  float weight;
   HalfEdge h;
   float x, y;
   Vertex(float _x, float _y) {
@@ -59,9 +60,9 @@ class Vertex {
   }
   
   void draw(){
-    fill(0);
-    noStroke();
-    ellipse(x, y,2,2);
+    //fill(0);
+    //noStroke();
+    ellipse(x, y,2*weight,2*weight);
   }
 
   HalfEdge handle(Vertex u) {
@@ -116,7 +117,6 @@ void attach(Vertex s, Vertex t) {
   edges.add(new Edge(h1, h2));
   hetoe.put(h1, edges.get(edges.size()-1));
   hetoe.put(h2, edges.get(edges.size()-1));
-
 }
 
 /**************************************************************************/
@@ -133,82 +133,6 @@ Vertex a = new Vertex(-100,-100);
 Vertex b = new Vertex(1200, -100);
 Vertex c = new Vertex(512, 5000);
 
-void setup()
-{
-  size(1024, 512);
-  background(255);
-  fill(0,0);
-  attach(a,b);
-  attach(b,c);
-  attach(c,a);
-  verticies.add(a);  verticies.add(b);  verticies.add(c);
-}
-
-void draw()
-{
-  visited.clear();
-  background(255);
-  drawBFS(a.h);
-  visited.clear();
-  if(keyPressed && key == '1')
-    showCircles = true;
-  else if(keyPressed && key=='2')
-    showCircles = false;
-}
-void mouseReleased()
-{
-  Vertex v = new Vertex(mouseX, mouseY);
-  verticies.add(v);
-  HalfEdge tri = findHE(a.h, v);    //the face this new vertex sits in
-
-  if(tri!=null)
-  {
-    triangulate(tri, v);
-    Stack<Edge> edgesToCheck = new Stack<Edge>();
-    HashMap<Edge, Boolean> inStack = new HashMap<Edge, Boolean>();
-    println(edges.size());
-    for(Edge e : edges)
-    {
-      edgesToCheck.push(e);
-      inStack.put(e, true);
-    } 
-    while(!edgesToCheck.isEmpty())
-    {
-      Edge nxt = edgesToCheck.pop();
-      if(inCircumcircle(nxt.h1.v, nxt.h1.next.v, nxt.h1.next.next.v, nxt.h2.prev.v) || inCircumcircle(nxt.h2.v, nxt.h2.next.v, nxt.h2.next.next.v, nxt.h1.prev.v))
-      {
-        Edge e1 = hetoe.get(nxt.h1.next);
-        Edge e2 = hetoe.get(nxt.h1.next.next);
-        Edge e3 = hetoe.get(nxt.h2.next);
-        Edge e4 = hetoe.get(nxt.h2.next.next);
-        
-        if(inStack.get(e1) == null || !inStack.get(e1))
-        {
-          edgesToCheck.push(hetoe.get(nxt.h1.next));
-          inStack.put(e1, true);
-        }
-        if(inStack.get(e2) == null || !inStack.get(e2))
-        {
-          edgesToCheck.push(e2);
-          inStack.put(e2, true);
-        }
-        if(inStack.get(e3) == null || !inStack.get(e3))
-        {
-          edgesToCheck.push(e3);
-          inStack.put(e3, true);
-        }
-        if(inStack.get(e4) == null || !inStack.get(e4))
-        {
-          edgesToCheck.push(e4);
-          inStack.put(e4, true);
-        }
-        attach(nxt.h2.prev.v, nxt.h1.prev.v);
-        nxt.h1.detach();
-      }
-      inStack.put(nxt, false);//mark as out of the stack
-    }
-  }
-}
 
 HalfEdge findHE(HalfEdge curr, Vertex d)//bfs the faces
 {
@@ -219,12 +143,17 @@ HalfEdge findHE(HalfEdge curr, Vertex d)//bfs the faces
     HalfEdge he = q.remove();
     println(he);
     if(visited.containsKey(he))  continue;
-    if(inFace(he,d))  return he;
+    if(inFace(he,d))
+    {
+      visited.clear();
+      return he;
+    }
     visited.put(he, true);
     q.add(he.next);
     q.add(he.twin);
   }
   println("it seems that the point is not inside any triangle");
+  visited.clear();
   return null;
 }
 
@@ -236,12 +165,15 @@ void drawBFS(HalfEdge curr)
   {
     HalfEdge he = q.remove();
     if(visited.containsKey(he))  continue;
-    line(he.v.x, he.v.y, he.next.v.x, he.next.v.y);
+    if(he.v!=a && he.next.v!=a && he.v!=b && he.next.v!=b && he.v!=c && he.next.v!=c)  
+      line(he.v.x, he.v.y, he.next.v.x, he.next.v.y);
+    he.v.draw();
     if(showCircles)  drawCircumcircle(he.v, he.next.v, he.next.next.v);
     visited.put(he, true);
     q.add(he.next);
     q.add(he.twin);
   }
+  visited.clear();
 }
 
 void drawCircumcircle(Vertex a, Vertex b, Vertex c)
@@ -286,8 +218,99 @@ boolean inCircumcircle(Vertex a, Vertex b, Vertex c, Vertex d)
   float abdet = adx * bdy - bdx * ady;
   float bcdet = bdx * cdy - cdx * bdy;
   float cadet = cdx * ady - adx * cdy;
-  float alift = adx * adx + ady * ady;
-  float blift = bdx * bdx + bdy * bdy;
-  float clift = cdx * cdx + cdy * cdy;
+  float alift = adx * adx + ady * ady - d.weight*d.weight - a.weight*a.weight;
+  float blift = bdx * bdx + bdy * bdy - d.weight*d.weight - b.weight*b.weight;
+  float clift = cdx * cdx + cdy * cdy - d.weight*d.weight - c.weight*c.weight;
+  println(d.weight + " " + b.weight + " " + a.weight);
   return alift * bcdet + blift * cadet + clift * abdet < 0;
+}
+/**************************************************************************/
+/**************************  Processing events ****************************/
+void setup()
+{
+  size(1024, 512);
+  background(255);
+  fill(200,0);
+  attach(a,b);
+  attach(b,c);
+  attach(c,a);
+  a.weight = 10;
+  b.weight = 10;
+  c.weight = 10;
+  verticies.add(a);  verticies.add(b);  verticies.add(c);
+}
+boolean drawing = false;
+int sx, sy;
+void draw()
+{
+  background(255);
+  drawBFS(a.h);
+  if(keyPressed && key == '1')
+    showCircles = true;
+  else if(keyPressed && key=='2')
+    showCircles = false;
+  if(mousePressed && !drawing)
+  {
+    drawing = true;
+    sx = mouseX;
+    sy = mouseY;
+  }
+}
+void mouseReleased()
+{
+  float r = sqrt((mouseX-sx)*(mouseX-sx) + (mouseY-sy)*(mouseY-sy));
+  Vertex v = new Vertex(sx, sy);
+  v.weight = r;
+  verticies.add(v);
+  drawing = false;
+
+  HalfEdge tri = findHE(a.h, v);    //the face this new vertex sits in
+
+  if(tri!=null)
+  {
+    triangulate(tri, v);
+    Stack<Edge> edgesToCheck = new Stack<Edge>();
+    HashMap<Edge, Boolean> inStack = new HashMap<Edge, Boolean>();
+    println(edges.size());
+    for(Edge e : edges)
+    {
+      edgesToCheck.push(e);
+      inStack.put(e, true);
+    } 
+    while(!edgesToCheck.isEmpty())
+    {
+      Edge nxt = edgesToCheck.pop();
+      if(inCircumcircle(nxt.h1.v, nxt.h1.next.v, nxt.h1.next.next.v, nxt.h2.prev.v) || inCircumcircle(nxt.h2.v, nxt.h2.next.v, nxt.h2.next.next.v, nxt.h1.prev.v))
+      {
+        Edge e1 = hetoe.get(nxt.h1.next);
+        Edge e2 = hetoe.get(nxt.h1.next.next);
+        Edge e3 = hetoe.get(nxt.h2.next);
+        Edge e4 = hetoe.get(nxt.h2.next.next);
+        
+        if(inStack.get(e1) == null || !inStack.get(e1))
+        {
+          edgesToCheck.push(e1);
+          inStack.put(e1, true);
+        }
+        if(inStack.get(e2) == null || !inStack.get(e2))
+        {
+          edgesToCheck.push(e2);
+          inStack.put(e2, true);
+        }
+        if(inStack.get(e3) == null || !inStack.get(e3))
+        {
+          edgesToCheck.push(e3);
+          inStack.put(e3, true);
+        }
+        if(inStack.get(e4) == null || !inStack.get(e4))
+        {
+          edgesToCheck.push(e4);
+          inStack.put(e4, true);
+        }
+        attach(nxt.h2.prev.v, nxt.h1.prev.v);
+        nxt.h1.detach();
+      }
+      inStack.put(nxt, false);//mark as out of the stack
+    }
+  }
 }
