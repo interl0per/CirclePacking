@@ -147,7 +147,28 @@ void attach(Vertex s, Vertex t) {
   hetoe.put(h2, edges.get(edges.size()-1));
 }
 
+class Vertex2 {
+  float x, y, r;
+  ArrayList<Integer> neighbors = new ArrayList<Integer>();
+}
 /**************************************************************************/
+//void computePacking()
+//{
+//  visited.clear();
+//  Queue<HalfEdge> q = new LinkedList<HalfEdge>();
+//  q.add(a);
+//  ArrayList<Vertex2> graph = new ArrayList<Vertex2>();
+//  while(!q.isEmpty())
+//  {
+//    HalfEdge he = q.remove();
+//    if(visited.containsKey(he))  continue;
+//    if(he.v != a && he.v!=b && he.v != c)
+//    visited.put(he, true);
+//    q.add(he.next);
+//    q.add(he.twin);
+//  }
+//  visited.clear();
+//}
 
 HalfEdge findHE(HalfEdge curr, Vertex d)//bfs the faces
 {
@@ -288,7 +309,6 @@ void addVertex(int x, int y, float r)
             Edge e1 = hetoe.get(nxt.h1.next.twin.prev);//new edge
             Edge e2 = hetoe.get(nxt.h1.prev);
             Edge e3 = hetoe.get(nxt.h2.next);
-            println(e1  + " " + e2 + " " + e3);
             
             if(inStack.get(e1) == null || !inStack.get(e1))
             {
@@ -312,7 +332,6 @@ void addVertex(int x, int y, float r)
         }
         else if(!turn(nxt.h2.prev.v, nxt.h1.v, nxt.h1.prev.v))
         {//concave case 2
-          //println("c2 " + degree(nxt.h1.next.v));
           if(degree(nxt.h1.v)==3)//nxt.h1.v.degree <= 3)//flippable
           {
             attach(nxt.h2.prev.v,nxt.h1.prev.v);
@@ -392,11 +411,12 @@ void setup()
 
 boolean drawing = false;
 int sx, sy;
-int SCALE = 30;
+int SCALE = 50;
 
 int avgColor(int x, int y, int w)
 {
   int sum = 0;
+  
   for(int i = x; i < x+SCALE; i++)
     for(int j = y; j < y+SCALE; j++)
       sum+=get(i,j);
@@ -425,7 +445,7 @@ void draw()
       for(int j = 0; j < img.height; j+= SCALE)
       {
         float weight = brightness(avgColor(i,j,img.width));
-        addVertex(i,j, weight/(SCALE-5));
+        addVertex(i,j, weight/(10));
       }
   }
   if(mousePressed && !drawing)
