@@ -72,8 +72,6 @@ class Vertex {
   }
   
   void draw(){
-    //fill(0);
-    //noStroke();
     ellipse(x, y,2*weight,2*weight);
   }
 
@@ -123,7 +121,7 @@ void attach(Vertex s, Vertex t) {
       return;
     test = test.prev.twin;
   }
-  //
+
   HalfEdge h1 = new HalfEdge(s);
   HalfEdge h2 = new HalfEdge(t);
   h1.twin = h2;
@@ -150,7 +148,6 @@ void attach(Vertex s, Vertex t) {
 }
 
 /**************************************************************************/
-/**************************     Algorithms     ****************************/
 
 HalfEdge findHE(HalfEdge curr, Vertex d)//bfs the faces
 {
@@ -241,6 +238,143 @@ boolean inCircumcircle(Vertex a, Vertex b, Vertex c, Vertex d)
   float clift = cdx * cdx + cdy * cdy - d.weight*d.weight - c.weight*c.weight;
   return alift * bcdet + blift * cadet + clift * abdet < 0;
 }
+
+int degree(Vertex v)
+{
+  int degree = 1;
+  HalfEdge test = v.h.prev.twin;
+            
+  while(test != v.h)
+  {
+    test = test.prev.twin;
+    degree++;
+  }
+  return degree;
+}
+
+void addVertex(int x, int y, float r)
+{
+  Vertex v = new Vertex(x, y);
+  v.weight = r;
+  HalfEdge tri = findHE(a.h, v);    //the face this new vertex sits in
+
+  if(tri!=null)
+  {
+    triangulate(tri, v);
+
+    Stack<Edge> edgesToCheck = new Stack<Edge>();
+    HashMap<Edge, Boolean> inStack = new HashMap<Edge, Boolean>();
+    for(Edge e : edges)
+    {
+      edgesToCheck.push(e);
+      inStack.put(e, true);
+    } 
+    
+    while(!edgesToCheck.isEmpty())
+    {
+      Edge nxt = edgesToCheck.pop();
+      inStack.put(nxt, false);//mark as out of the stack
+
+      if(hetoe.get(nxt.h1)==null)  continue; //removed edge
+      if(inCircumcircle(nxt.h2.v, nxt.h2.next.v, nxt.h2.prev.v, nxt.h1.prev.v) || inCircumcircle(nxt.h1.v, nxt.h1.next.v, nxt.h1.prev.v, nxt.h2.prev.v))
+      {//edge is not ld
+        //ld = false;
+        if(turn(nxt.h2.prev.v, nxt.h1.next.v, nxt.h1.prev.v))
+        {//concave case 1
+          if(degree(nxt.h1.next.v)==3)
+          {//flippable
+            attach(nxt.h2.prev.v,nxt.h1.prev.v);
+
+            Edge e1 = hetoe.get(nxt.h1.next.twin.prev);//new edge
+            Edge e2 = hetoe.get(nxt.h1.prev);
+            Edge e3 = hetoe.get(nxt.h2.next);
+            println(e1  + " " + e2 + " " + e3);
+            
+            if(inStack.get(e1) == null || !inStack.get(e1))
+            {
+              edgesToCheck.push(e1);
+              inStack.put(e1, true);
+            }
+            if(inStack.get(e2) == null || !inStack.get(e2))
+            {
+              edgesToCheck.push(e2);
+              inStack.put(e2, true);
+            }
+            if(inStack.get(e3) == null || !inStack.get(e3))
+            {
+              edgesToCheck.push(e3);
+              inStack.put(e3, true);
+            }
+            nxt.h1.next.detach();
+            nxt.h2.prev.detach();
+            nxt.h1.detach();
+          }
+        }
+        else if(!turn(nxt.h2.prev.v, nxt.h1.v, nxt.h1.prev.v))
+        {//concave case 2
+          //println("c2 " + degree(nxt.h1.next.v));
+          if(degree(nxt.h1.v)==3)//nxt.h1.v.degree <= 3)//flippable
+          {
+            attach(nxt.h2.prev.v,nxt.h1.prev.v);
+
+            Edge e1 = hetoe.get(nxt.h1.prev.twin.next);
+            Edge e2 = hetoe.get(nxt.h1.next);
+            Edge e3 = hetoe.get(nxt.h2.prev);
+            
+            if(inStack.get(e1) == null || !inStack.get(e1))
+            {
+              edgesToCheck.push(e1);
+              inStack.put(e1, true);
+            }
+            if(inStack.get(e2) == null || !inStack.get(e2))
+            {
+              edgesToCheck.push(e2);
+              inStack.put(e2, true);
+            }
+            if(inStack.get(e3) == null || !inStack.get(e3))
+            {
+              edgesToCheck.push(e3);
+              inStack.put(e3, true);
+            }
+            nxt.h1.prev.detach();
+            nxt.h2.next.detach();
+            nxt.h1.detach();
+          }
+        }
+        else 
+        {//2-2 flip
+          Edge e1 = hetoe.get(nxt.h1.next);
+          Edge e2 = hetoe.get(nxt.h1.prev);
+          Edge e3 = hetoe.get(nxt.h2.next);
+          Edge e4 = hetoe.get(nxt.h2.prev);
+          
+          if(inStack.get(e1) == null || !inStack.get(e1))
+          {
+            edgesToCheck.push(e1);
+            inStack.put(e1, true);
+          }
+          if(inStack.get(e2) == null || !inStack.get(e2))
+          {
+            edgesToCheck.push(e2);
+            inStack.put(e2, true);
+          }
+          if(inStack.get(e3) == null || !inStack.get(e3))
+          {
+            edgesToCheck.push(e3);
+            inStack.put(e3, true);
+          }
+          if(inStack.get(e4) == null || !inStack.get(e4))
+          {
+            edgesToCheck.push(e4);
+            inStack.put(e4, true);
+          }
+          attach(nxt.h2.prev.v, nxt.h1.prev.v);
+          nxt.h1.detach();
+        }
+      }
+    }
+  }
+}
 /**************************************************************************/
 /**************************  Processing events ****************************/
 void setup()
@@ -255,6 +389,7 @@ void setup()
   b.weight = 0;
   c.weight = 0;
 }
+
 boolean drawing = false;
 int sx, sy;
 int SCALE = 30;
@@ -287,13 +422,11 @@ void draw()
     image(img, 0, 0);
 
     for(int i =0 ; i < img.width; i+= SCALE)
-    {
       for(int j = 0; j < img.height; j+= SCALE)
       {
         float weight = brightness(avgColor(i,j,img.width));
         addVertex(i,j, weight/(SCALE-5));
       }
-    }
   }
   if(mousePressed && !drawing)
   {
@@ -308,150 +441,6 @@ void draw()
   }
 }
 
-int degree(Vertex v)
-{
-  int degree = 1;
-  HalfEdge test = v.h.prev.twin;
-            
-  while(test != v.h)
-  {
-    test = test.prev.twin;
-    degree++;
-  }
-  return degree;
-}
-
-void addVertex(int x, int y, float r)
-{
-  Vertex v = new Vertex(x, y);
-  v.weight = r;
-  HalfEdge tri = findHE(a.h, v);    //the face this new vertex sits in
-
-  if(tri!=null)
-  {
-    triangulate(tri, v);
-
-    for(int i = 0; i < 10; i++)
-    {
-    Deque<Edge> edgesToCheck = new LinkedList<Edge>();
-    HashMap<Edge, Boolean> inStack = new HashMap<Edge, Boolean>();
-    for(Edge e : edges)
-    {
-      edgesToCheck.push(e);
-      inStack.put(e, true);
-    } 
-    
-    while(!edgesToCheck.isEmpty())
-    {
-      Edge nxt = edgesToCheck.pop();
-      if(hetoe.get(nxt.h1)==null)  continue; //removed edge
-      if(inCircumcircle(nxt.h2.v, nxt.h2.next.v, nxt.h2.prev.v, nxt.h1.prev.v) || inCircumcircle(nxt.h1.v, nxt.h1.next.v, nxt.h1.prev.v, nxt.h2.prev.v))
-      {//edge is not ld
-        //ld = false;
-        if(turn(nxt.h2.prev.v, nxt.h1.next.v, nxt.h1.prev.v))
-        {//concave case 1
-        //println("c1 " + degree(nxt.h1.next.v));
-          if(degree(nxt.h1.next.v)==3)
-          {//flippable
-            attach(nxt.h2.prev.v,nxt.h1.prev.v);
-
-            Edge e1 = hetoe.get(nxt.h1.next.twin.prev);//new edge
-            Edge e2 = hetoe.get(nxt.h1.prev);
-            Edge e3 = hetoe.get(nxt.h2.next);
-            println(e1  + " " + e2 + " " + e3);
-            
-            if(inStack.get(e1) == null || !inStack.get(e1))
-            {
-              edgesToCheck.push(e1);
-              inStack.put(e1, true);
-            }
-            if(inStack.get(e2) == null || !inStack.get(e2))
-            {
-              edgesToCheck.push(e2);
-              inStack.put(e2, true);
-            }
-            if(inStack.get(e3) == null || !inStack.get(e3))
-            {
-              edgesToCheck.push(e3);
-              inStack.put(e3, true);
-            }
-            nxt.h1.next.detach();
-            nxt.h2.prev.detach();
-            nxt.h1.detach();
-          }
-//          else
-//            edgesToCheck.addLast(nxt);
-        }
-        else if(!turn(nxt.h2.prev.v, nxt.h1.v, nxt.h1.prev.v))
-        {//concave case 2
-          //println("c2 " + degree(nxt.h1.next.v));
-          if(degree(nxt.h1.v)==3)//nxt.h1.v.degree <= 3)//flippable
-          {
-            attach(nxt.h2.prev.v,nxt.h1.prev.v);
-
-            Edge e1 = hetoe.get(nxt.h1.prev.twin.next);
-            Edge e2 = hetoe.get(nxt.h1.next);
-            Edge e3 = hetoe.get(nxt.h2.prev);
-            
-            if(inStack.get(e1) == null || !inStack.get(e1))
-            {
-              edgesToCheck.push(e1);
-              inStack.put(e1, true);
-            }
-            if(inStack.get(e2) == null || !inStack.get(e2))
-            {
-              edgesToCheck.push(e2);
-              inStack.put(e2, true);
-            }
-            if(inStack.get(e3) == null || !inStack.get(e3))
-            {
-              edgesToCheck.push(e3);
-              inStack.put(e3, true);
-            }
-            nxt.h1.prev.detach();
-            nxt.h2.next.detach();
-            nxt.h1.detach();
-          }
-//          else
-//            edgesToCheck.addLast(nxt);
-        }
-        else 
-        {//2-2 flip
-       // println("c3");
-          Edge e1 = hetoe.get(nxt.h1.next);
-          Edge e2 = hetoe.get(nxt.h1.prev);
-          Edge e3 = hetoe.get(nxt.h2.next);
-          Edge e4 = hetoe.get(nxt.h2.prev);
-          
-          if(inStack.get(e1) == null || !inStack.get(e1))
-          {
-            edgesToCheck.push(e1);
-            inStack.put(e1, true);
-          }
-          if(inStack.get(e2) == null || !inStack.get(e2))
-          {
-            edgesToCheck.push(e2);
-            inStack.put(e2, true);
-          }
-          if(inStack.get(e3) == null || !inStack.get(e3))
-          {
-            edgesToCheck.push(e3);
-            inStack.put(e3, true);
-          }
-          if(inStack.get(e4) == null || !inStack.get(e4))
-          {
-            edgesToCheck.push(e4);
-            inStack.put(e4, true);
-          }
-          attach(nxt.h2.prev.v, nxt.h1.prev.v);
-          nxt.h1.detach();
-        }
-        inStack.put(nxt, false);//mark as out of the stack
-      }
-    }
-    }
-  }
-}
 void mouseReleased()
 {
   drawing = false;
