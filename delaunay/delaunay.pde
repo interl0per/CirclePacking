@@ -52,18 +52,17 @@ class HalfEdge {
     hetoe.remove(this);
     hetoe.remove(twin);
     for(int i = 0; i < edges.size(); i++)
-    {
-      if(edges.get(i).h1 == this || edges.get(i).h1==this.twin)
+    {//not efficent
+      if(edges.get(i).h1 == this || edges.get(i).h1 == twin)
       {
         edges.remove(i);
-        return;
+        i--;
       }
     }
   }
 }
 
 class Vertex {
-  int degree = 0;
   float weight;
   HalfEdge h;
   float x, y;
@@ -109,8 +108,8 @@ class Vertex {
 }
 
 void attach(Vertex s, Vertex t) {
-  
-   if(s.h!=null&&s.h.next!=null && s.h.next.v == t)
+  //don't connect verticies that are already connected
+  if(s.h!=null&&s.h.next!=null && s.h.next.v == t)
     return;
     
   HalfEdge test = null;
@@ -124,7 +123,7 @@ void attach(Vertex s, Vertex t) {
       return;
     test = test.prev.twin;
   }
-  
+  //
   HalfEdge h1 = new HalfEdge(s);
   HalfEdge h2 = new HalfEdge(t);
   h1.twin = h2;
@@ -144,8 +143,7 @@ void attach(Vertex s, Vertex t) {
   th.prev.connectTo(h2);
   h2.connectTo(sh);
   h1.connectTo(th);
-  s.degree++;
-  t.degree++;  
+
   edges.add(new Edge(h1, h2));
   hetoe.put(h1, edges.get(edges.size()-1));
   hetoe.put(h2, edges.get(edges.size()-1));
@@ -249,7 +247,7 @@ void setup()
 {
   size(1024, 512);
   background(255);
-  fill(20,0);
+  fill(0,0);
   attach(a,b);
   attach(b,c);
   attach(c,a);
@@ -260,6 +258,7 @@ void setup()
 boolean drawing = false;
 int sx, sy;
 int SCALE = 30;
+
 int avgColor(int x, int y, int w)
 {
   int sum = 0;
@@ -269,6 +268,7 @@ int avgColor(int x, int y, int w)
  
   return sum/(SCALE*SCALE);
 }
+
 void draw()
 {
   background(255);
@@ -285,8 +285,7 @@ void draw()
   {
     PImage img = loadImage("test.jpg");
     image(img, 0, 0);
-    //loadPixels();
-    int c = get(215, 25);
+
     for(int i =0 ; i < img.width; i+= SCALE)
     {
       for(int j = 0; j < img.height; j+= SCALE)
@@ -309,6 +308,19 @@ void draw()
   }
 }
 
+int degree(Vertex v)
+{
+  int degree = 1;
+  HalfEdge test = v.h.prev.twin;
+            
+  while(test != v.h)
+  {
+    test = test.prev.twin;
+    degree++;
+  }
+  return degree;
+}
+
 void addVertex(int x, int y, float r)
 {
   Vertex v = new Vertex(x, y);
@@ -318,28 +330,35 @@ void addVertex(int x, int y, float r)
   if(tri!=null)
   {
     triangulate(tri, v);
-    Stack<Edge> edgesToCheck = new Stack<Edge>();
+
+    for(int i = 0; i < 10; i++)
+    {
+    Deque<Edge> edgesToCheck = new LinkedList<Edge>();
     HashMap<Edge, Boolean> inStack = new HashMap<Edge, Boolean>();
     for(Edge e : edges)
     {
       edgesToCheck.push(e);
       inStack.put(e, true);
     } 
+    
     while(!edgesToCheck.isEmpty())
     {
       Edge nxt = edgesToCheck.pop();
       if(hetoe.get(nxt.h1)==null)  continue; //removed edge
-
-      if(inCircumcircle(nxt.h2.v, nxt.h2.next.v, nxt.h2.next.next.v, nxt.h1.prev.v)) //inCircumcircle(nxt.h1.v, nxt.h1.next.v, nxt.h1.next.next.v, nxt.h2.prev.v) || 
+      if(inCircumcircle(nxt.h2.v, nxt.h2.next.v, nxt.h2.prev.v, nxt.h1.prev.v) || inCircumcircle(nxt.h1.v, nxt.h1.next.v, nxt.h1.prev.v, nxt.h2.prev.v))
       {//edge is not ld
+        //ld = false;
         if(turn(nxt.h2.prev.v, nxt.h1.next.v, nxt.h1.prev.v))
         {//concave case 1
-          if(nxt.h1.next.v.degree == 3)
+        //println("c1 " + degree(nxt.h1.next.v));
+          if(degree(nxt.h1.next.v)==3)
           {//flippable
             attach(nxt.h2.prev.v,nxt.h1.prev.v);
-            Edge e1 = hetoe.get(nxt.h1.next.twin.prev);
+
+            Edge e1 = hetoe.get(nxt.h1.next.twin.prev);//new edge
             Edge e2 = hetoe.get(nxt.h1.prev);
             Edge e3 = hetoe.get(nxt.h2.next);
+            println(e1  + " " + e2 + " " + e3);
             
             if(inStack.get(e1) == null || !inStack.get(e1))
             {
@@ -356,19 +375,20 @@ void addVertex(int x, int y, float r)
               edgesToCheck.push(e3);
               inStack.put(e3, true);
             }
-
             nxt.h1.next.detach();
             nxt.h2.prev.detach();
             nxt.h1.detach();
           }
-          inStack.put(nxt, false);//mark as out of the stack
+//          else
+//            edgesToCheck.addLast(nxt);
         }
-        else if(!turn(nxt.h2.prev.v,nxt.h1.v, nxt.h1.prev.v))
+        else if(!turn(nxt.h2.prev.v, nxt.h1.v, nxt.h1.prev.v))
         {//concave case 2
-          if(nxt.h1.v.degree == 3)//flippable
+          //println("c2 " + degree(nxt.h1.next.v));
+          if(degree(nxt.h1.v)==3)//nxt.h1.v.degree <= 3)//flippable
           {
             attach(nxt.h2.prev.v,nxt.h1.prev.v);
-            
+
             Edge e1 = hetoe.get(nxt.h1.prev.twin.next);
             Edge e2 = hetoe.get(nxt.h1.next);
             Edge e3 = hetoe.get(nxt.h2.prev);
@@ -388,19 +408,20 @@ void addVertex(int x, int y, float r)
               edgesToCheck.push(e3);
               inStack.put(e3, true);
             }
-            
             nxt.h1.prev.detach();
             nxt.h2.next.detach();
             nxt.h1.detach();
           }
-          inStack.put(nxt, false);
+//          else
+//            edgesToCheck.addLast(nxt);
         }
         else 
         {//2-2 flip
+       // println("c3");
           Edge e1 = hetoe.get(nxt.h1.next);
-          Edge e2 = hetoe.get(nxt.h1.next.next);
+          Edge e2 = hetoe.get(nxt.h1.prev);
           Edge e3 = hetoe.get(nxt.h2.next);
-          Edge e4 = hetoe.get(nxt.h2.next.next);
+          Edge e4 = hetoe.get(nxt.h2.prev);
           
           if(inStack.get(e1) == null || !inStack.get(e1))
           {
@@ -424,9 +445,10 @@ void addVertex(int x, int y, float r)
           }
           attach(nxt.h2.prev.v, nxt.h1.prev.v);
           nxt.h1.detach();
-          inStack.put(nxt, false);//mark as out of the stack
         }
+        inStack.put(nxt, false);//mark as out of the stack
       }
+    }
     }
   }
 }
