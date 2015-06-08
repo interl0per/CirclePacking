@@ -1,6 +1,6 @@
 import java.util.*;
 
-int NUM_OUTER_VERTS = 3;
+int NUM_OUTER_VERTS = 1;
 boolean showCircles = false;
 HashMap<HalfEdge, Boolean> visited = new HashMap<HalfEdge, Boolean>();
 ArrayList<Edge> edges = new ArrayList<Edge>();
@@ -151,12 +151,6 @@ void attach(Vertex s, Vertex t) {
   hetoe.put(h2, edges.get(edges.size()-1));
 }
 
-class Vertex2 {
-  float x, y, r;
-  ArrayList<Integer> neighbors = new ArrayList<Integer>();
-}
-
-
 HalfEdge findHE(HalfEdge curr, Vertex d)//bfs the faces
 {
   Queue<HalfEdge> q = new LinkedList<HalfEdge>();
@@ -234,7 +228,19 @@ boolean turn(Vertex p, Vertex q, Vertex r)
 
 boolean inFace(HalfEdge h, Vertex d)
 {//is d in the face defined by h?
-  return!((turn(h.v,h.next.v, d) || turn(h.next.v,h.next.next.v, d) || turn(h.next.next.v,h.v, d)));
+  HalfEdge start = h;
+  HalfEdge temp = h.next;
+  boolean first = true;
+  while(first || h!=start)
+  {
+    first = false;
+    if(turn(h.v, temp.v, d))
+      return false;
+    h = h.next;
+    temp = temp.next;
+  }
+  return true;
+  //return!((turn(h.v,h.next.v, d) || turn(h.next.v,h.next.next.v, d) || turn(h.next.next.v,h.v, d)));
 }
 
 boolean inCircumcircle(Vertex a, Vertex b, Vertex c, Vertex d)
@@ -515,7 +521,7 @@ void computePacking()
   }
   //compute radii to some threshhold
   float error = 10;
-  while(error>0.001)
+  while(error>0.005)
   {
     error = 0;
     for(int j = 0; j < verts.size(); j++)
