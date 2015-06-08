@@ -1,19 +1,13 @@
 import java.util.*;
-boolean packing = false;
+
+int NUM_OUTER_VERTS = 4;
 boolean showCircles = false;
-boolean showWeights = true;
 HashMap<HalfEdge, Boolean> visited = new HashMap<HalfEdge, Boolean>();
 ArrayList<Edge> edges = new ArrayList<Edge>();
 ArrayList<Vertex> verts = new ArrayList<Vertex>();//internal verticies
 HashMap<HalfEdge, Edge> hetoe = new HashMap<HalfEdge, Edge>();
 
-//bounding triangle
-Vertex a = new Vertex(-100,-100);
-Vertex b = new Vertex(2000, -100);
-Vertex c = new Vertex(512, 5000);
-//Vertex d = new Vertex(2000, 500);
-
-
+ArrayList<Vertex> outerVerts = new ArrayList<Vertex>();
 
 /*******************************************************************************/
 /**************************     Data structures     ****************************/
@@ -67,12 +61,10 @@ class HalfEdge {
 }
 
 class Vertex {
-  boolean inc = false;
   boolean internal = true;
   boolean processed = false;
   boolean placed = false;
-  boolean f = false;
-  float r = 20;
+  boolean f = false;//fill this vertex
   float weight;
   HalfEdge h;
   float x, y;
@@ -82,10 +74,8 @@ class Vertex {
   }
   
   void draw(){
-    if(inc) fill(204, 102, 0);
-    if(f) fill(0);
-    if(!packing)  ellipse(x, y,2*weight,2*weight);
-    else     ellipse(x, y,2*r,2*r);
+    if(f)  fill(0);
+    ellipse(x, y,2*weight,2*weight);
     fill(255,0);
   }
 
@@ -197,9 +187,9 @@ void drawBFS(HalfEdge curr)
   {
     HalfEdge he = q.remove();
     if(visited.containsKey(he))  continue;
-    //if(he.v!=a && he.next.v!=a && he.v!=b && he.next.v!=b && he.v!=c && he.next.v!=c)  
+    if(he.v.internal && he.next.v.internal)  
       line(he.v.x, he.v.y, he.next.v.x, he.next.v.y);
-    if(showWeights)
+    //if(he.v.internal)
       he.v.draw();
     if(showCircles)  
       drawCircumcircle(he.v, he.next.v, he.next.next.v);
@@ -222,13 +212,15 @@ void drawCircumcircle(Vertex a, Vertex b, Vertex c)
 
 void triangulate(HalfEdge h, Vertex v)
 {
-//  HalfEdge temp = h.next;
-//  while(temp!=h)
-//  {
-//    attach(v, temp.v);
-//    temp = temp.next;
-//  }
-  for(int i = 0; i < 3; i++)
+  int sides = 1;
+  HalfEdge temp = h.next;
+  while(temp!=h)
+  {
+    sides++;
+    temp = temp.next;
+  }
+
+  for(int i = 0; i < sides; i++)
   {
     attach(v, h.v);
     h = h.next;
@@ -266,6 +258,7 @@ boolean inCircumcircle(Vertex a, Vertex b, Vertex c, Vertex d)
 ArrayList<Vertex> degree(Vertex v)//returns neighbors in ccw order
 {
   ArrayList<Vertex> neighbors = new ArrayList<Vertex>();
+  //if(v.h==null) return neighbors;//?
   neighbors.add(v.h.next.v);
   HalfEdge test = v.h.prev.twin;
             
@@ -281,8 +274,9 @@ void addVertex(int x, int y, float r)
 {
   Vertex v = new Vertex(x, y);
   v.weight = r;
+  if(r < EPSILON)  v.weight = 10;
   verts.add(v);
-  HalfEdge tri = findHE(a.h, v);    //the face this new vertex sits in
+  HalfEdge tri = findHE(outerVerts.get(0).h, v);    //the face this new vertex sits in
 
   if(tri!=null)
   {
@@ -406,13 +400,24 @@ void setup()
   size(1024, 512);
   background(255);
   fill(0,0);
-  attach(a,b);
-  attach(b,c);
-  attach(c,a);
-  //attach(a,c);
-  a.weight = b.weight = c.weight = 0;// = d.weight = 0;
-  a.internal = b.internal = c.internal = false;//= d.internal = false;
-  a.r = b.r = c.r = 500;// d.r = 50;
+  //create outer face
+  Vertex center = new Vertex(512, 256);
+  center.weight = 10000;
+  float step = 2*PI/NUM_OUTER_VERTS;//angle between adjacent verticies
+  for(int i = 0; i < NUM_OUTER_VERTS; i++)
+  {
+    Vertex bv = new Vertex(-100,-100);
+    bv.weight = 600;
+    bv.internal = false;
+    placeVertex(bv, i*step, center);
+    outerVerts.add(bv);
+  }
+  center.weight = 0;
+  for(int i =1; i < NUM_OUTER_VERTS+1; i++)
+  {
+    attach(outerVerts.get(i%NUM_OUTER_VERTS), outerVerts.get(i-1)); 
+    println(i%NUM_OUTER_VERTS + " " + (i-1));
+  }
 }
 
 boolean drawing = false;
@@ -433,15 +438,11 @@ int avgColor(int x, int y, int w)
 void draw()
 {
   background(255);
-  drawBFS(a.h);
+  drawBFS(outerVerts.get(0).h);
   if(keyPressed && key == '1')
     showCircles = true;
   else if(keyPressed && key == '2')
     showCircles = false;
- else if(keyPressed && key=='3')
-    showWeights = true;
-  else if(keyPressed && key=='4')
-    showWeights = false;
   else if(keyPressed && key=='5')
   {
     PImage img = loadImage("test.jpg");
@@ -455,10 +456,8 @@ void draw()
       }
   }
   else if(keyPressed && key=='6')
-  {
-    packing = true;
     computePacking();
-  }
+    
   if(mousePressed && !drawing)
   {
     drawing = true;
@@ -484,33 +483,36 @@ float angleSum(Vertex v)
   float res = 0;
   ArrayList<Vertex> adjacent = degree(v);
   //adjacent.remove(a);  adjacent.remove(b);  adjacent.remove(c);
-  float x = v.r;
+  float x = v.weight;
 
   for(int i = 1; i < adjacent.size()+1; i++)
   {
-    float y = adjacent.get(i-1).r;
-    float z = adjacent.get(i%adjacent.size()).r;
+    float y = adjacent.get(i-1).weight;
+    float z = adjacent.get(i%adjacent.size()).weight;
     res += Math.acos(((x+y)*(x+y) + (x+z)*(x+z) - (y+z)*(y+z))/(2*(x+y)*(x+z)));
   }
   return res;
 }
+
 void placeVertex(Vertex targ, float theta,  Vertex ref)
 {
-  targ.x = (ref.r + targ.r)*cos(theta) + ref.x;
-  targ.y = (ref.r + targ.r)*sin(theta) + ref.y;
+  targ.x = (ref.weight + targ.weight)*cos(theta) + ref.x;
+  targ.y = (ref.weight + targ.weight)*sin(theta) + ref.y;
   targ.placed = true;
 }
+
 void computePacking()
 {
-  a.placed = b.placed = c.placed = false;
+  for(Vertex v : outerVerts)
+    v.placed = false;
   for(Vertex v : verts)
   {
     v.placed = false;
     v.processed = false;
   }
   //compute radii to some threshhold
-  float error = 100;
-  while(error>1)
+  float error = 10;
+  while(error>0.001)
   {
     error = 0;
     for(int j = 0; j < verts.size(); j++)
@@ -519,16 +521,11 @@ void computePacking()
       //println(csum);
       error+=abs(csum-2*PI);
       if(csum < 2*PI)
-      {
-        verts.get(j).r -= 0.05;
-        verts.get(j).inc = false;
-      }
+        verts.get(j).weight -= 0.01;
       else if(csum > 2*PI)
-      {
-        verts.get(j).r +=0.05;  
-        verts.get(j).inc = true;
-      }
+        verts.get(j).weight +=0.01;  
     }
+    error/=verts.size();
   }
   
   //fix an arbitrary internal vertex
@@ -563,31 +560,15 @@ void computePacking()
     while(++j % adjacent.size() != i)
     {
       Vertex v = adjacent.get(j % adjacent.size());
-      //println(j);
-
       if(!v.placed)
       {
         Vertex lastKnown = adjacent.get((j-1)%adjacent.size());
-        atan2(0.1, 0.2);
         lastAngle = atan2(lastKnown.y-iv.y,lastKnown.x-iv.x);
-        if(j==4)
-        {
-          //lastKnown.f = true;
-        }
-        float x = iv.r;
-        float y = lastKnown.r;
-        float z = v.r;
+
+        float x = iv.weight;
+        float y = lastKnown.weight;
+        float z = v.weight;
         float theta = (float)Math.acos(((x+y)*(x+y) + (x+z)*(x+z) - (y+z)*(y+z))/(2*(x+y)*(x+z)));
-
-       // println(j + " " + lastAngle);
-        if(cnt==1&&j==4) 
-        {
-          //iv.f = true;
-          //v.f = true;
-          println(lastAngle + " " + theta);
-          
-        }
-
         placeVertex(v, theta+lastAngle, iv);
       }
       if(!v.processed && v.internal)
