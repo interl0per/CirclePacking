@@ -1,6 +1,6 @@
 import java.util.*;
 
-int NUM_OUTER_VERTS = 4;
+int NUM_OUTER_VERTS = 3;
 boolean showCircles = false;
 HashMap<HalfEdge, Boolean> visited = new HashMap<HalfEdge, Boolean>();
 ArrayList<Edge> edges = new ArrayList<Edge>();
@@ -414,10 +414,7 @@ void setup()
   }
   center.weight = 0;
   for(int i =1; i < NUM_OUTER_VERTS+1; i++)
-  {
     attach(outerVerts.get(i%NUM_OUTER_VERTS), outerVerts.get(i-1)); 
-    println(i%NUM_OUTER_VERTS + " " + (i-1));
-  }
 }
 
 boolean drawing = false;
@@ -505,10 +502,16 @@ void computePacking()
 {
   for(Vertex v : outerVerts)
     v.placed = false;
-  for(Vertex v : verts)
+  for(int i = 0; i < verts.size(); i++)
   {
-    v.placed = false;
-    v.processed = false;
+    if(verts.get(i).h==null)
+    {
+      verts.remove(verts.get(i));
+      i--;
+      continue;
+    }
+    verts.get(i).placed = false;
+    verts.get(i).processed = false;
   }
   //compute radii to some threshhold
   float error = 10;
