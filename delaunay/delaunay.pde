@@ -1,6 +1,6 @@
 import java.util.*;
 
-int NUM_OUTER_VERTS = 1;
+int NUM_OUTER_VERTS = 3;
 boolean showCircles = false;
 HashMap<HalfEdge, Boolean> visited = new HashMap<HalfEdge, Boolean>();
 ArrayList<Edge> edges = new ArrayList<Edge>();
@@ -538,8 +538,6 @@ void computePacking()
   }
   
   //fix an arbitrary internal vertex
-  verts.get(0).x = 512; 
-  verts.get(0).y = 256;
   verts.get(0).placed = true;
 
   Queue<Vertex> q = new LinkedList<Vertex>();
@@ -560,6 +558,7 @@ void computePacking()
     if(i==adjacent.size() && !adjacent.get(i-1).placed)  
     {//initialization
       i--; 
+      lastAngle = atan2(adjacent.get(i).y-iv.y,adjacent.get(i).x-iv.x);
       placeVertex(adjacent.get(i), lastAngle, iv);
       if(adjacent.get(i).internal)  
         q.add(adjacent.get(i));
@@ -578,7 +577,7 @@ void computePacking()
         float y = lastKnown.weight;
         float z = v.weight;
         float theta = (float)Math.acos(((x+y)*(x+y) + (x+z)*(x+z) - (y+z)*(y+z))/(2*(x+y)*(x+z)));
-        placeVertex(v, theta+lastAngle, iv);
+        placeVertex(v, lastAngle-theta, iv);
       }
       if(!v.processed && v.internal)
         q.add(v);
