@@ -181,19 +181,40 @@ void drawBFS(HalfEdge curr)
   {
     HalfEdge he = q.remove();
     if(visited.containsKey(he))  continue;
-    if(he.v.internal && he.next.v.internal)  
+    //if(he.v.internal && he.next.v.internal)  
       line(he.v.x, he.v.y, he.next.v.x, he.next.v.y);
     //if(he.v.internal)
       he.v.draw();
-    if(showCircles)  
-      drawCircumcircle(he.v, he.next.v, he.next.next.v);
+    if(showCircles)
+    {
+      Vertex v1, v2, v3;
+      float sign1 = (he.next.v.x-he.v.x) / abs(he.next.v.x-he.v.x);
+      float m1 = (he.v.y - he.next.v.y)/ (he.v.x - he.next.v.x);//take he.v as origin
+      float x1 = sqrt(he.v.weight*he.v.weight / (m1*m1+1));
+      float y1 = m1*x1;
+      v1 = new Vertex(he.v.x + sign1*x1, he.v.y + sign1*y1);
+      
+      float sign2 = (he.next.next.v.x-he.next.v.x) / abs(he.next.next.v.x-he.next.v.x);
+      float m2 = (he.next.v.y - he.next.next.v.y)/ (he.next.v.x - he.next.next.v.x);
+      float x2 = sqrt(he.next.v.weight*he.next.v.weight / (m2*m2+1));
+      float y2 = m2*x2;
+      v2 = new Vertex(he.next.v.x + sign2*x2, he.next.v.y + sign2*y2);
+      
+      float sign3 = (he.next.next.next.v.x-he.next.next.v.x) / abs(he.next.next.next.v.x-he.next.next.v.x);
+      float m3 = (he.next.next.v.y - he.next.next.next.v.y)/ (he.next.next.v.x - he.next.next.next.v.x);
+      float x3 = sqrt(he.next.next.v.weight*he.next.next.v.weight / (m3*m3+1));
+      float y3 = m3*x3;
+      v3 = new Vertex(he.next.next.v.x + sign3*x3, he.next.next.v.y + sign3*y3);
+   
+      drawCircumcircle(v1, v2, v3);
+    }
     visited.put(he, true);
     q.add(he.next);
     q.add(he.twin);
   }
   visited.clear();
 }
-
+//Vertex getPt(float x, float dx, float y, float dy)
 void drawCircumcircle(Vertex a, Vertex b, Vertex c)
 {
   float mr = (b.y-a.y) / (b.x-a.x);
@@ -201,7 +222,9 @@ void drawCircumcircle(Vertex a, Vertex b, Vertex c)
   float x = (mr*mt*(c.y-a.y) + mr*(b.x+c.x) - mt*(a.x+b.x)) / (2*(mr-mt));
   float y = (a.y+b.y)/2 - (x - (a.x+b.x)/2) / mr;
   float r = sqrt(((b.x-x)*(b.x-x) +  (b.y-y)*(b.y-y)));
+  stroke(255, 0, 0);
   ellipse(x, y,2*r, 2*r);
+  stroke(0);
 }
 
 void triangulate(HalfEdge h, Vertex v)
@@ -413,7 +436,7 @@ void setup()
   for(int i = 0; i < NUM_OUTER_VERTS; i++)
   {
     Vertex bv = new Vertex(-100,-100);
-    bv.weight = 600;
+    bv.weight = 700;
     bv.internal = false;
     placeVertex(bv, i*step, center);
     outerVerts.add(bv);
