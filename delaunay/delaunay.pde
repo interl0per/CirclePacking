@@ -42,7 +42,7 @@ class JQueue<T>
   }
 }
 
-class Edge {
+class Edge {//
   HalfEdge h1, h2;
   public Edge(HalfEdge _h1, HalfEdge _h2) {  h1 = _h1; h2 = _h2;  }
 }
