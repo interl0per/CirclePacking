@@ -1,5 +1,3 @@
-import java.util.*;
-
 int NUM_OUTER_VERTS = 3;
 boolean showCircles = false;
 HashMap<HalfEdge, Boolean> visited = new HashMap<HalfEdge, Boolean>();
@@ -11,6 +9,38 @@ ArrayList<Vertex> outerVerts = new ArrayList<Vertex>();
 
 /*******************************************************************************/
 /**************************     Data structures     ****************************/
+class JStack<T>
+{
+  ArrayList<T> container = new ArrayList<T>();
+  void push(T e)
+  {
+    container.add(e);
+  }
+  T pop()
+  {
+    return container.remove(container.size()-1);
+  }
+  boolean isEmpty()
+  {
+    return(container.size()==0);
+  }
+}
+class JQueue<T>
+{
+  ArrayList<T> container = new ArrayList<T>();
+  void add(T e)
+  {
+    container.add(e);
+  }
+  T remove()
+  {
+    return container.remove(0);
+  }
+    boolean isEmpty()
+  {
+    return(container.size()==0);
+  }
+}
 
 class Edge {
   HalfEdge h1, h2;
@@ -153,7 +183,7 @@ void attach(Vertex s, Vertex t) {
 
 HalfEdge findHE(HalfEdge curr, Vertex d)//bfs the faces
 {
-  Queue<HalfEdge> q = new LinkedList<HalfEdge>();
+  JQueue<HalfEdge> q = new JQueue<HalfEdge>();
   q.add(curr);
   while(!q.isEmpty())
   {
@@ -175,7 +205,7 @@ HalfEdge findHE(HalfEdge curr, Vertex d)//bfs the faces
 
 void drawBFS(HalfEdge curr)
 {
-  Queue<HalfEdge> q = new LinkedList<HalfEdge>();
+  JQueue<HalfEdge> q = new JQueue<HalfEdge>();
   q.add(curr);
   while(!q.isEmpty())
   {
@@ -267,7 +297,8 @@ boolean inFace(HalfEdge h, Vertex d)
 }
 
 boolean inCircumcircle(Vertex a, Vertex b, Vertex c, Vertex d)
-{//a,b,c should be in ccw order from following the half edges. I just copied this from http://algs4.cs.princeton.edu/91primitives/ to save a headache...
+{//a,b,c should be in ccw order from following the half edges. 
+//stolen from http://algs4.cs.princeton.edu/91primitives/
   float adx = a.x - d.x;
   float ady = a.y - d.y;
   float bdx = b.x - d.x;
@@ -287,10 +318,8 @@ boolean inCircumcircle(Vertex a, Vertex b, Vertex c, Vertex d)
 ArrayList<Vertex> degree(Vertex v)//returns neighbors in ccw order
 {
   ArrayList<Vertex> neighbors = new ArrayList<Vertex>();
-  //if(v.h==null) return neighbors;//?
   neighbors.add(v.h.next.v);
   HalfEdge test = v.h.prev.twin;
-            
   while(test != v.h)
   {
     neighbors.add(test.next.v);
@@ -311,7 +340,7 @@ void addVertex(int x, int y, float r)
   {
     triangulate(tri, v);
 
-    Stack<Edge> edgesToCheck = new Stack<Edge>();
+    JStack<Edge> edgesToCheck = new JStack<Edge>();
     HashMap<Edge, Boolean> inStack = new HashMap<Edge, Boolean>();
     for(Edge e : edges)
     {
@@ -563,7 +592,7 @@ void computePacking()
   //fix an arbitrary internal vertex
   verts.get(0).placed = true;
 
-  Queue<Vertex> q = new LinkedList<Vertex>();
+  JQueue<Vertex> q = new JQueue<Vertex>();
 
   q.add(verts.get(0));
   int cnt = 0;
