@@ -42,7 +42,7 @@ class JQueue<T>
   }
 }
 
-class Edge {//
+class Edge {
   HalfEdge h1, h2;
   public Edge(HalfEdge _h1, HalfEdge _h2) {  h1 = _h1; h2 = _h2;  }
 }
@@ -462,6 +462,7 @@ void setup()
   Vertex center = new Vertex(512, 256);
   center.weight = 10000;
   float step = 2*PI/NUM_OUTER_VERTS;//angle between adjacent verticies
+  //place the verticies on the outer face
   for(int i = 0; i < NUM_OUTER_VERTS; i++)
   {
     Vertex bv = new Vertex(-100,-100);
@@ -477,18 +478,6 @@ void setup()
 
 boolean drawing = false;
 int sx, sy;
-int SCALE = 50;
-
-int avgColor(int x, int y, int w)
-{
-  int sum = 0;
-  
-  for(int i = x; i < x+SCALE; i++)
-    for(int j = y; j < y+SCALE; j++)
-      sum+=get(i,j);
- 
-  return sum/(SCALE*SCALE);
-}
 
 void draw()
 {
@@ -498,18 +487,7 @@ void draw()
     showCircles = true;
   else if(keyPressed && key == '2')
     showCircles = false;
-  else if(keyPressed && key=='5')
-  {
-    PImage img = loadImage("test.jpg");
-    image(img, 0, 0);
-
-    for(int i =0 ; i < img.width; i+= SCALE)
-      for(int j = 0; j < img.height; j+= SCALE)
-      {
-        float weight = brightness(avgColor(i,j,img.width));
-        addVertex(i,j, weight/(10));
-      }
-  }
+  
   else if(keyPressed && key=='6')
     computePacking();
     
@@ -532,14 +510,12 @@ void mouseReleased()
   addVertex(sx, sy, sqrt((mouseX-sx)*(mouseX-sx) + (mouseY-sy)*(mouseY-sy)));
 }
 
-/**************************************************************************/
+
 float angleSum(Vertex v)
 {
   float res = 0;
   ArrayList<Vertex> adjacent = degree(v);
-  //adjacent.remove(a);  adjacent.remove(b);  adjacent.remove(c);
   float x = v.weight;
-
   for(int i = 1; i < adjacent.size()+1; i++)
   {
     float y = adjacent.get(i-1).weight;
