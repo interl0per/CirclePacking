@@ -104,15 +104,24 @@ class Vertex {
   void draw(){
     if(f)  fill(0);
     ellipse(x, y,2*weight,2*weight);
-    float x2 = x-512; float y2 = y-256;
-    z = (x*x+y*y-weight*weight)/1000;
+    z = getZ();
     translate(x, y, z); 
     sphereDetail(6);
     sphere(10);
     translate(-x, -y, -z); 
     fill(255,0);
   }
-
+  float getZ()
+  {
+    return (x*x+y*y-weight*weight)/1000;
+  }
+  void setPos(float dz)
+  {
+    z = getZ();
+    //println(dz);
+    z+=dz/1000;
+    weight = sqrt(x*x + y*y - z*1000); 
+  }
   HalfEdge handle(Vertex u) {
     if (isIsolated() || isLeaf()) { return h; }
     HalfEdge h1 = h, h2 = h.prev.twin;
@@ -231,4 +240,5 @@ void drawCircumcircle(Vertex a, Vertex b, Vertex c)
   ellipse(x, y,2*r, 2*r);
   stroke(0);
 }
+
 
