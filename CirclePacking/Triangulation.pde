@@ -10,7 +10,7 @@ class Triangulation
   {
     //create outer face
     Vertex center = new Vertex(512, 256);
-    center.weight = 10000;
+    center.weight = 1000;
     float step = 2*PI/n;//angle between adjacent verticies
     //place the verticies on the outer face
     for(int i = 0; i < n; i++)
@@ -27,7 +27,7 @@ class Triangulation
   }
   
   void draw()
-  {//draw the graph
+  {//draw the graph, and its lifting
     JQueue<HalfEdge> q = new JQueue<HalfEdge>();
     q.add(outerVerts.get(0).h);
     while(!q.isEmpty())
@@ -36,6 +36,9 @@ class Triangulation
       if(visited.containsKey(he))  continue;
       //if(he.v.internal && he.next.v.internal)  
         line(he.v.x, he.v.y, he.next.v.x, he.next.v.y);
+       if(he.v.internal && he.next.v.internal)  
+        line(he.v.x, he.v.y, he.v.z, 
+             he.next.v.x, he.next.v.y, he.next.v.z);
       //if(he.v.internal)
         he.v.draw();
       if(showCircles)
@@ -110,7 +113,7 @@ class Triangulation
         inStack.put(nxt, false);//mark as out of the stack
   
         if(hetoe.get(nxt.h1)==null)  continue; //removed edge
-        if(inCircumcircle(nxt.h2.v, nxt.h2.next.v, nxt.h2.prev.v, nxt.h1.prev.v) || inCircumcircle(nxt.h1.v, nxt.h1.next.v, nxt.h1.prev.v, nxt.h2.prev.v))
+        if(inOrthocircle(nxt.h2.v, nxt.h2.next.v, nxt.h2.prev.v, nxt.h1.prev.v) || inOrthocircle(nxt.h1.v, nxt.h1.next.v, nxt.h1.prev.v, nxt.h2.prev.v))
         {//edge is not ld
           //ld = false;
           if(turn(nxt.h2.prev.v, nxt.h1.next.v, nxt.h1.prev.v))

@@ -85,20 +85,31 @@ class JQueue<T>
 
 class Edge {
   HalfEdge h1, h2;
-  public Edge(HalfEdge _h1, HalfEdge _h2) {  h1 = _h1; h2 = _h2;  }
+  float spring;
+  public Edge(HalfEdge _h1, HalfEdge _h2) 
+  {  
+    h1 = _h1; 
+    h2 = _h2;  
+  }
 }
 
 class Vertex {
   boolean internal = true, processed = false, placed = false, f = false;
   HalfEdge h;
-  float x, y, weight;
+  float x, y, z, weight; // z = f(x,y,weight)
   Vertex(float _x, float _y) {
-    x = _x; y = _y;
+    x = _x; y = _y; weight = 0;
     h = null;
   }
   void draw(){
     if(f)  fill(0);
     ellipse(x, y,2*weight,2*weight);
+    float x2 = x-512; float y2 = y-256;
+    z = (x*x+y*y-weight*weight)/1000;
+    translate(x, y, z); 
+    sphereDetail(6);
+    sphere(10);
+    translate(-x, -y, -z); 
     fill(255,0);
   }
 
