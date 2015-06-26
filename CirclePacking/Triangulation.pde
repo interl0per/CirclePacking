@@ -43,26 +43,39 @@ class Triangulation
         he.v.draw();
       if(showCircles)
       {
-        Vertex v1, v2, v3;
-        float sign1 = (he.next.v.x-he.v.x) / abs(he.next.v.x-he.v.x);
-        float m1 = (he.v.y - he.next.v.y)/ (he.v.x - he.next.v.x);//take he.v as origin
-        float x1 = sqrt(he.v.weight*he.v.weight / (m1*m1+1));
-        float y1 = m1*x1;
-        v1 = new Vertex(he.v.x + sign1*x1, he.v.y + sign1*y1);
+        Vertex v1 = new Vertex(he.v.x, he.v.y);
+        v1.weight = he.v.weight;
+        Vertex v2 = new Vertex(he.next.v.x, he.next.v.y);
+        v2.weight = he.next.v.weight;
+        Vertex v3 = new Vertex(he.prev.v.x, he.prev.v.y);
+        v3.weight = he.prev.v.weight;
         
-        float sign2 = (he.next.next.v.x-he.next.v.x) / abs(he.next.next.v.x-he.next.v.x);
-        float m2 = (he.next.v.y - he.next.next.v.y)/ (he.next.v.x - he.next.next.v.x);
-        float x2 = sqrt(he.next.v.weight*he.next.v.weight / (m2*m2+1));
-        float y2 = m2*x2;
-        v2 = new Vertex(he.next.v.x + sign2*x2, he.next.v.y + sign2*y2);
+        float v1h = v1.x*v1.x + v1.y*v1.y - v1.weight*v1.weight;
+        float v2h = v2.x*v2.x + v2.y*v2.y - v2.weight*v2.weight;
+        float v3h = v3.x*v3.x + v3.y*v3.y - v3.weight*v3.weight;
+
+        float ach = v1h - v3h;
+        float bch = v2h - v3h;
         
-        float sign3 = (he.next.next.next.v.x-he.next.next.v.x) / abs(he.next.next.next.v.x-he.next.next.v.x);
-        float m3 = (he.next.next.v.y - he.next.next.next.v.y)/ (he.next.next.v.x - he.next.next.next.v.x);
-        float x3 = sqrt(he.next.next.v.weight*he.next.next.v.weight / (m3*m3+1));
-        float y3 = m3*x3;
-        v3 = new Vertex(he.next.next.v.x + sign3*x3, he.next.next.v.y + sign3*y3);
-     
-        drawCircumcircle(v1, v2, v3);
+        float acx = v1.x - v3.x;
+        float acy = v1.y - v3.y;
+        
+        float bcx = v2.x - v3.x;
+        float bcy = v2.y - v3.y;
+        
+        
+        float det2 = acx*bch - ach*bcx;
+        float det3 = ach*bcy - acy*bch;
+        float det4 = acx*bcy - acy*bcx;
+        
+        float det1 = 1*(v1h*(v2.x*v3.y - v2.y*v3.x) - v1.x*(v2h*v3.y - v2.y*v3h) + v1.y*(v2h*v3.x - v2.x*v3h));
+        
+        float cx = det3/(2*det4);
+        float cy = det2/(2*det4);
+        println(det1/det4);
+        float r = sqrt(cx*cx + cy*cy + det1/det4);
+        println(cx + " " +cy + " " + r);
+        ellipse(cx, cy, r/2, r/2);
       }
       visited.put(he, true);
       q.add(he.next);
