@@ -9,50 +9,50 @@ class Triangulation
   public Triangulation(int n)
   {
     //create outer face
-    Vertex center = new Vertex(512, 256);
-    center.weight = 1000;
+    Vertex center = new Vertex(512, 256, 1000);
     float step = 2*PI/n;//angle between adjacent verticies
     //place the verticies on the outer face
     for(int i = 0; i < n; i++)
     {
-      Vertex bv = new Vertex(-100,-100);
-      bv.weight = 700;
+      Vertex bv = new Vertex(-100,-100,700);
       bv.internal = false;
       placeVertex(bv, i*step, center);
       outerVerts.add(bv);
     }
-    center.weight = 0;
+    //center.weight = 0;
     for(int i =1; i < n+1; i++)
       attach(outerVerts.get(i%n), outerVerts.get(i-1)); 
   }
   
   void draw()
-  {//draw the graph, and its lifting
+  {//draw the triangulation
     JQueue<HalfEdge> q = new JQueue<HalfEdge>();
     q.add(outerVerts.get(0).h);
     while(!q.isEmpty())
     {
       HalfEdge he = q.remove();
+      
       if(visited.containsKey(he))  continue;
+      
       //if(he.v.internal && he.next.v.internal)  
+      if(!drawDualEdge)
         line(he.v.x, he.v.y, he.next.v.x, he.next.v.y);
-       if(he.v.internal && he.next.v.internal)  
-        line(he.v.x, he.v.y, he.v.z, 
-             he.next.v.x, he.next.v.y, he.next.v.z);
-      //if(he.v.internal)
-        he.v.draw();
-      if(showCircles)
-      {
-        Vertex v1 = new Vertex(he.v.x, he.v.y);
-        v1.weight = he.v.weight;
-        Vertex v2 = new Vertex(he.next.v.x, he.next.v.y);
-        v2.weight = he.next.v.weight;
-        Vertex v3 = new Vertex(he.prev.v.x, he.prev.v.y);
-        v3.weight = he.prev.v.weight;
         
-        float v1h = v1.x*v1.x + v1.y*v1.y - v1.weight*v1.weight;
-        float v2h = v2.x*v2.x + v2.y*v2.y - v2.weight*v2.weight;
-        float v3h = v3.x*v3.x + v3.y*v3.y - v3.weight*v3.weight;
+       //if(he.v.internal && he.next.v.internal)  
+        //line(he.v.x, he.v.y, he.v.z, 
+         //    he.next.v.x, he.next.v.y, he.next.v.z);
+        
+      //if(!showCircles)
+        he.v.draw();
+      if(drawDualEdge || drawOrtho && he.v.internal && he.next.v.internal && he.prev.v.internal)
+      {//draw orthocircle of internal triangles
+        Vertex v1 = new Vertex(he.v.x, he.v.y, he.v.weight);
+        Vertex v2 = new Vertex(he.next.v.x, he.next.v.y,he.next.v.weight);
+        Vertex v3 = new Vertex(he.prev.v.x, he.prev.v.y,he.prev.v.weight);
+        
+        float v1h = v1.getZ();
+        float v2h = v2.getZ();
+        float v3h = v3.getZ();
 
         float ach = v1h - v3h;
         float bch = v2h - v3h;
@@ -63,27 +63,30 @@ class Triangulation
         float bcx = v2.x - v3.x;
         float bcy = v2.y - v3.y;
         
+        float det1 = acx*bcy - acy*bcx;
+        float det2 = ach*bcy - acy*bch;
+        float det3 = acx*bch - ach*bcx;
+        float det4 = v1h*(v2.x*v3.y - v2.y*v3.x) - v1.x*(v2h*v3.y - v2.y*v3h) + v1.y*(v2h*v3.x - v2.x*v3h);
         
-        float det2 = acx*bch - ach*bcx;
-        float det3 = ach*bcy - acy*bch;
-        float det4 = acx*bcy - acy*bcx;
-        
-        float det1 = 1*(v1h*(v2.x*v3.y - v2.y*v3.x) - v1.x*(v2h*v3.y - v2.y*v3h) + v1.y*(v2h*v3.x - v2.x*v3h));
-        
-        float cx = det3/(2*det4);
-        float cy = det2/(2*det4);
-        println(det1/det4);
-        float r = sqrt(cx*cx + cy*cy + det1/det4);
-        println(cx + " " +cy + " " + r);
-        ellipse(cx, cy, r/2, r/2);
+        float cx = det2/(2*det1);
+        float cy = det3/(2*det1);
+        float r = sqrt(cx*cx + cy*cy + det4/det1);
+        he.ocx = cx;
+        he.ocy = cy;
+        stroke(20,20,20);
+        if(drawDualEdge && he.twin.v.internal && he.twin.ocx>-999999)
+          line(he.ocx, he.ocy, he.twin.ocx, he.twin.ocy);
+        stroke(255,0,0);
+        if(drawOrtho)
+          ellipse(cx, cy, 2*r, 2*r);
+        stroke(0,0,0);
       }
       visited.put(he, true);
       q.add(he.next);
       q.add(he.twin);
     }
     visited.clear();
-  }
-  
+  }  
   void triangulate(HalfEdge h, Vertex v)
   {
     int sides = 1;
@@ -102,9 +105,9 @@ class Triangulation
   }
   void addVertex(int x, int y, float r)
   {
-    Vertex v = new Vertex(x, y);
-    v.weight = r;
-    if(r < EPSILON)  v.weight = 2;
+    Vertex v = new Vertex(x, y,r);
+    if(r < 2*EPSILON)  
+      v.weight = 2;
     verticies.add(v);
     HalfEdge tri = findHE(outerVerts.get(0).h, v);    //the face this new vertex sits in
   

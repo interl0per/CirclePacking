@@ -1,7 +1,9 @@
 final int NUM_OUTER_VERTS = 3;
 Triangulation tri = new Triangulation(NUM_OUTER_VERTS);
-boolean showCircles = false;
+boolean drawOrtho = false;
 boolean drawing = false;
+boolean drawDualEdge = false;
+
 int sx, sy;
 
 void setup()
@@ -19,23 +21,24 @@ void draw()
     switch (key)
     {
       case '1':
-        showCircles = true;
+        drawOrtho = true;
         break;
       case '2':
-        showCircles = false;
+        drawOrtho = false;
         break;
       case '3':
-        computePacking(tri);
+        drawDualEdge = true;
         break;
       case '4':
-        computeSprings(tri);
+        drawDualEdge = false;
         break;
       case '5':
         simulate(tri);
         break;
      case '6':
-        updateStress(tri);
+        computePacking(tri);
         break;
+        
       case 'c':
         translate(0,0,0);
         rotate(0,0,0,0);
@@ -95,7 +98,5 @@ void mouseReleased()
 {
   drawing = false;
   tri.addVertex(sx, sy, sqrt((mouseX-sx)*(mouseX-sx) + (mouseY-sy)*(mouseY-sy)));
-  computeSprings(tri);
-
 }
 

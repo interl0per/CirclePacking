@@ -5,12 +5,11 @@ HashMap<HalfEdge, Boolean> visited = new HashMap<HalfEdge, Boolean>();
 
 
 class HalfEdge {
-
-  //public HalfEdge(){}
   HalfEdge prev;
   HalfEdge next;
   HalfEdge twin;
   Vertex v;
+  float ocx=-99999999, ocy=-99999999;//orthocenter of this face
   
   HalfEdge(Vertex vv) {
     v =vv;
@@ -97,30 +96,23 @@ class Vertex {
   boolean internal = true, processed = false, placed = false, f = false;
   HalfEdge h;
   float x, y, z, weight; // z = f(x,y,weight)
-  Vertex(float _x, float _y) {
-    x = _x; y = _y; weight = 0;
+  Vertex(float _x, float _y, float _w) {
+    x = _x; y = _y; weight = _w;
     h = null;
   }
   void draw(){
     if(f)  fill(0);
     ellipse(x, y,2*weight,2*weight);
-    z = getZ();
-    translate(x, y, z); 
-    sphereDetail(6);
-    sphere(10);
-    translate(-x, -y, -z); 
+    //z = getZ()/1000;
+    //translate(x, y, z); 
+    //sphereDetail(6);
+    //sphere(10);
+   // translate(-x, -y, -z); 
     fill(255,0);
   }
   float getZ()
   {
-    return (x*x+y*y-weight*weight)/1000;
-  }
-  void setPos(float dz)
-  {
-    z = getZ();
-    //println(dz);
-    z+=dz/1000;
-    weight = sqrt(x*x + y*y - z*1000); 
+    return (x*x+y*y-weight*weight);
   }
   HalfEdge handle(Vertex u) {
     if (isIsolated() || isLeaf()) { return h; }

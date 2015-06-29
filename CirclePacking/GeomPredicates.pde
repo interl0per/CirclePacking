@@ -21,7 +21,7 @@ boolean inFace(HalfEdge h, Vertex d)
 
 boolean inOrthocircle(Vertex a, Vertex b, Vertex c, Vertex d)//is d in the circumcircle of a,b,c?
 {//a,b,c should be in ccw order from following the half edges. 
-//stolen from http://algs4.cs.princeton.edu/91primitives/
+//from http://algs4.cs.princeton.edu/91primitives/
   float adx = a.x - d.x;
   float ady = a.y - d.y;
   float bdx = b.x - d.x;
