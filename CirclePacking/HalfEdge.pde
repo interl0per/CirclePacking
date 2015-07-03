@@ -103,11 +103,11 @@ class Vertex {
   void draw(){
     if(f)  fill(0);
     ellipse(x, y,2*weight,2*weight);
-    //z = getZ()/1000;
-    //translate(x, y, z); 
-    //sphereDetail(6);
-    //sphere(10);
-   // translate(-x, -y, -z); 
+    z = getZ()/1000;
+    translate(x, y, z); 
+    sphereDetail(6);
+    sphere(10);
+    translate(-x, -y, -z); 
     fill(255,0);
   }
   float getZ()

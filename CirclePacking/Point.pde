@@ -13,10 +13,10 @@ class Point
   }
   void normalize(float target)
   {
-    float norm = magnitude();
-    x = x*target/norm;
-    y = y*target/norm;
-    z = z*target/norm;
+    float c = target/z;
+    x*=c;
+    y*=c;
+    z = target;
   }
   Point crossp(Point b)
   {

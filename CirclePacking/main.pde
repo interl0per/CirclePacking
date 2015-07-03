@@ -98,5 +98,7 @@ void mouseReleased()
 {
   drawing = false;
   tri.addVertex(sx, sy, sqrt((mouseX-sx)*(mouseX-sx) + (mouseY-sy)*(mouseY-sy)));
+   computeSprings(tri);
+
 }
 

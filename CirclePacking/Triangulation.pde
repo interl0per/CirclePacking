@@ -38,9 +38,9 @@ class Triangulation
       if(!drawDualEdge)
         line(he.v.x, he.v.y, he.next.v.x, he.next.v.y);
         
-       //if(he.v.internal && he.next.v.internal)  
-        //line(he.v.x, he.v.y, he.v.z, 
-         //    he.next.v.x, he.next.v.y, he.next.v.z);
+       if(he.v.internal && he.next.v.internal)  
+        line(he.v.x, he.v.y, he.v.z, 
+             he.next.v.x, he.next.v.y, he.next.v.z);
         
       //if(!showCircles)
         he.v.draw();
