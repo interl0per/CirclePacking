@@ -1,0 +1,111 @@
+\documentclass{article}
+\usepackage{algpseudocode} 
+\title{Circle Packing Algorithms}
+\author{Kevin Pratt}
+
+\maketitle
+
+\begin{document}
+\section{Radii finding algorithms}
+
+
+The following algorithms determine a set of radii for a circle packing. Given these radii, the positions can be determined in the $O(n)$ time in following way:
+
+Initialize the location of an arbitrary circle $u$ to the origin, and initialize a neighboring circle $v$ to $(0,r_u + r_v)$.
+During a breadth first traversal of the graph starting at $v$, two neighbors of the current vertex will always be placed. From the law of cosines we can determine the position of the current vertex from these neighbors.
+
+Maybe you can also determine the positions from Tutte, by taking the stresses to be $\frac{1}{r_u+r_v}$. This would take $O(n^{1.5})$ time, however.
+
+\subsection{Stephenson / Collins}
+
+This works by optomizing the angle sum at each vertex. The angle sum is defined at a vertex u as $\phi(u) = \sum_{v \sim u}^{} \theta(u, v, v+1)$.
+
+
+\subsection{Mohar}
+This algorithm computes the dual radii along with the primal radii.
+\section{Spring based algorithms}
+
+The following algorithms are inspired by Tutte's algorithm for embedding a planar graph. They avoid trigonometric computations. They take as input a delaunay triangulation. (Are they correct? What's their running time?). The work done inside the main loops takes $O(n^{1.5})$ time if the equilibrium positions are determined by solving a system of equations. Maybe this can be done faster since the positions are already close to their equilibrium positions?
+
+\subsection{Spring algorithm I}
+
+With the right choice of $\epsilon$ and $\delta$, this seems to work.\\
+
+\newpage
+
+\begin{algorithmic}
+\State Calculate the spring constants $k_e$ for each edge of the triangulation
+\While {there is some error}
+		\For {edge $e = (u,v)$ in E}
+				\If {$||u-v|| > r_u + r_v$}
+						\State $k_e\gets k_e + \epsilon$
+						\State $r_u\gets r_u + \delta$
+						\State $r_v\gets r_v + \delta$
+				\ElsIf {$||u-v|| < r_u + r_v$}
+						\State $k_e\gets k_e - \epsilon$
+						\State $r_u\gets r_u - \delta$
+						\State $r_v\gets r_v - \delta$
+				\EndIf
+		\EndFor
+		\State Compute equilibrium positions
+\EndWhile
+\end{algorithmic}
+
+\subsection{Spring algorithm II}
+The following algorithm seems to not work for certain triangulations (icosahedron) \\
+
+
+\begin{algorithmic}
+\State Initialize the spring constants $k_e$ to 0 for each edge
+\While {there is some error}
+		\For {edge $e = (u,v)$ in E}
+				\If {$||u-v|| > r_u + r_v$}
+						\State $k_e\gets \epsilon$
+						\State $r_u\gets r_u + \delta$
+						\State $r_v\gets r_v + \delta$
+				\ElsIf {$||u-v|| < r_u + r_v$}
+						\State $k_e\gets -\epsilon$
+						\State $r_u\gets r_u - \delta$
+						\State $r_v\gets r_v - \delta$
+				\EndIf
+		\EndFor
+		\State Compute equilibrium positions
+\EndWhile
+\end{algorithmic}	
+
+\subsection{Spring Algorithm III}
+In contrast to the previous two algorithms, this approach does not explicitly change the radii. Rather, they are calculated from the spring constants and the positions of the verticies in equilibrium.
+
+\newpage
+
+\begin{algorithmic}
+\State Calculate the spring constants $k_e$ to for each edge $e$
+\State $\sigma = \delta$
+\While {$\sigma \geq \delta$}
+		\State $\sigma \gets 0$
+		\For {edge $e = (u,v)$ in E}
+				\State $\sigma \gets 0$
+				\State $error\gets ||u-v|| - r_u - r_v$
+				\If {$error > 0$}
+						\State $k_e\gets k_e + \epsilon$
+				\ElsIf {$error < 0$}
+						\State $k_e\gets k_e - \epsilon$
+				\EndIf
+				\State $\sigma \gets \sigma + error^2$
+		\EndFor
+		\State Compute equilibrium positions
+		\State Set the z coordinates of some face f to 0
+		\State Initialize a Queue q containing f.v1, f.v2, f.v3
+		\While {q is not empty}
+				\State u = q.pop()
+				\For {Each neighbor v of u}
+						\State $lift\gets $height giving the correct gradient
+						\State $r_v\gets v.x^2 + v.y^2 - lift$
+						\State If v is not visited, add v to q
+				\EndFor
+				\State Mark u as visited
+		\EndWhile
+\EndWhile
+\end{algorithmic}	
+
+\end{document}
