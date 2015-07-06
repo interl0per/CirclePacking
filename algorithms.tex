@@ -1,0 +1,140 @@
+\documentclass{article}
+\usepackage{algpseudocode} 
+\title{Circle Packing Algorithms}
+\author{Kevin Pratt}
+\begin{document}
+\maketitle
+
+
+\section{Radii finding algorithms}
+
+
+The following algorithms determine a set of radii for a circle packing. Given these radii, the positions can be determined in the $O(n)$ time in following way:
+
+Initialize the location of an arbitrary circle $u$ to the origin, and initialize a neighboring circle $v$ to $(0,r_u + r_v)$.
+During a breadth first traversal of the graph starting at $v$, two neighbors of the current vertex will always be placed. From the law of cosines we can determine the position of the current vertex from these neighbors.
+
+??? Maybe ??? you can also determine the positions from Tutte, by taking the stresses to be $\frac{1}{r_u+r_v}$. This would take $O(n^{1.5})$ time.
+
+\subsection{Stephenson / Collins}
+
+This works by optomizing the angle sum at each vertex. The angle sum is defined at a vertex/circle u as $\phi(u) = \sum_{v \sim u}^{} \theta(u, v, v+1)$, where $\theta(u,v,v+1)$ is the angle formed by the three neighboring circles u,v, and v+1.\\
+\begin{algorithmic}
+\While {there is some error}
+		\For {each vertex v}
+				\State $k\gets$ number of neighbors of v
+				\State Determine the angle sum at v
+				\State Determine the radius r' that gives v a covering angle of the angle sum if it had k neighbors of radius r'
+				\State $r_u \gets$ radius giving v a covering angle of $2\pi$ if it had k neighbors of radius r'
+		\EndFor
+\EndWhile
+\end{algorithmic}
+
+
+\subsection{Mohar}
+This algorithm computes the dual radii along with the primal radii.
+\section{Spring based algorithms}
+
+The following algorithms are inspired by Tutte's algorithm for embedding a planar graph. They avoid trigonometric computations. They take as input a delaunay triangulation. (Are they correct? What's their running time?). The work done inside the main loops takes $O(n^{1.5})$ time if the equilibrium positions are determined by solving a system of equations. I think this can be done faster using Newton's method.
+
+\subsection{Spring algorithm I}
+
+With the right choice of $\epsilon$ and $\delta$, this seems to work. Or not.\\
+
+\begin{algorithmic}
+\State Calculate the spring constants $k_e$ for each edge of the triangulation
+\While {there is some error}
+		\For {edge $e = (u,v)$ in E}
+				\If {$||u-v|| > r_u + r_v$}
+						\State $k_e\gets k_e + \epsilon$
+						\State $r_u\gets r_u + \delta$
+						\State $r_v\gets r_v + \delta$
+				\ElsIf {$||u-v|| < r_u + r_v$}
+						\State $k_e\gets k_e - \epsilon$
+						\State $r_u\gets r_u - \delta$
+						\State $r_v\gets r_v - \delta$
+				\EndIf
+		\EndFor
+		\State Compute equilibrium positions
+\EndWhile
+\end{algorithmic}
+
+\subsection{Spring algorithm II}
+The following algorithm seems to not work for certain triangulations (e.x. icosahedron) \\
+
+\begin{algorithmic}
+\State Initialize the spring constants $k_e$ to 0 for each edge
+\While {there is some error}
+		\For {edge $e = (u,v)$ in E}
+				\If {$||u-v|| > r_u + r_v$}
+						\State $k_e\gets \epsilon$
+						\State $r_u\gets r_u + \delta$
+						\State $r_v\gets r_v + \delta$
+				\ElsIf {$||u-v|| < r_u + r_v$}
+						\State $k_e\gets -\epsilon$
+						\State $r_u\gets r_u - \delta$
+						\State $r_v\gets r_v - \delta$
+				\EndIf
+		\EndFor
+		\State Compute equilibrium positions
+\EndWhile
+\end{algorithmic}	
+
+\subsection{Spring Algorithm III}
+In contrast to the previous two algorithms, this approach does not explicitly change the radii. Rather, they are calculated from the spring constants and the positions of the verticies in equilibrium.
+
+\begin{algorithmic}
+\State Calculate the spring constants $k_e$ to for each edge $e$
+\While {there is some error}
+		\For {edge $e = (u,v)$ in E}
+				\State $error\gets ||u-v|| - r_u - r_v$
+				\If {$error > 0$}
+						\State $k_e\gets k_e + \epsilon$
+				\ElsIf {$error < 0$}
+						\State $k_e\gets k_e - \epsilon$
+				\EndIf
+		\EndFor
+		\State Compute equilibrium positions
+		\State Set the z coordinates of some face f to 0
+		\State Initialize a Queue q containing f
+		\While {q is not empty}
+				\State u = q.pop()
+				\For {Each neighbor f' of u sharing some edge e}
+						\State v = vertex of f' not on e
+						\State $lift\gets $height v giving the correct gradient
+						\State $r_v\gets v.x^2 + v.y^2 - lift$
+						\State If f' is not visited, add f' to q
+				\EndFor
+				\State Mark u as visited
+		\EndWhile
+\EndWhile
+\end{algorithmic}	
+
+Some elboration on how to compute the correct height of a vertex. For a vertex w in a triangle T and the edge $e = (u,v)$ of T not containing v but adjacent to some triangle T', we have
+\\$k_e||e|| = \frac{\nabla T`}{-2\nabla T`_z} - \frac{\nabla T}{-2\nabla T_z}$\\
+\\$k_e||e|| = \frac{\nabla T`}{-2\nabla T`_z} - \frac{(w-v)\times(w-u)}{-2((w-v)\times(w-u) )_z}$\\
+
+Solving for the z coordinate of w,
+
+$$w_z = \frac{bd \pm \sqrt{b^2d^2-(a^2+b^2)(c^2+d^2-k_e^2||u-v||^2)}}{a^2 + b^2}$$
+
+where
+
+$$n = (w_x - v_x)(w_y-u_y) - (w_y-v_y)(w_x-u_x),$$\\
+$$a=\frac{u_y - v_y}{-2n}, b = \frac{v_x-u_x}{-2n},$$\\ 
+$$c = \frac{v_z(w_y-u_y) - u_z(w_y-v_y)}{-2n} - \frac{\nabla T'_x}{-2\nabla T'_z},$$ \\
+$$d = \frac{u_z(w_x-v_x) - v_z(w_x-u_x)}{-2n} - \frac{\nabla T'_y}{-2\nabla T'_z}$$
+
+I think the larger of the two possible values of $w_z$ is what we care about. 
+
+\subsection{Calculating equilibrium positions}
+
+At any time we have a system of $2n$ equations and $2n$ unknowns to solve. A verticies position is taken to be a weighted average of its neighbors positions, where the weights are the spring constants. Initially, we have
+$$ \forall u \in V, p(u) = \frac{\sum\limits_{v \sim u}{w_{u,v}P(v)}}{\sum\limits_{v \sim u}{w_{u,v}}}$$
+After some update in which we add $\epsilon c_e$ for some $c_e \in \Re $ to each edge's spring, we would like to solve
+$$ \forall u \in V, p(u) = \frac{\sum\limits_{v \sim u}{(w_{u,v}+c_{u,v})P(v)}}{\sum\limits_{v \sim u}{w_{u,v}+c_{u,v}}}$$
+
+One approach to calculating the positions would is simulation. The outer face should be fixed. (What's the running time?)\\
+Alternativley, Tutte's algorithm can be used to calculate the positions from scratch. This takes $O(n^{1.5})$ time. \\
+I think the best option is Newton's method.\\
+\end{document}
