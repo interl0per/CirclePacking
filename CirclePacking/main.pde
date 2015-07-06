@@ -1,3 +1,5 @@
+import java.util.Random;
+
 final int NUM_OUTER_VERTS = 3;
 Triangulation tri = new Triangulation(NUM_OUTER_VERTS);
 boolean drawOrtho = false;
@@ -38,7 +40,9 @@ void draw()
      case '6':
         computePacking(tri);
         break;
-        
+     case '7':
+        test(tri);
+        break;
       case 'c':
         translate(0,0,0);
         rotate(0,0,0,0);
@@ -97,8 +101,17 @@ void draw()
 void mouseReleased()
 {
   drawing = false;
+//  for(int i =0; i < 50; i++)
+//  {
+//    Random rand = new Random();
+//    int r = rand.nextInt(20);
+//    int mx = rand.nextInt(1024);
+//    int my = rand.nextInt(512);
+//    tri.addVertex(mx, my,r);
+//  }
+  //tri.addVertex(20, 20, 20);
+   // computeSprings(tri);
   tri.addVertex(sx, sy, sqrt((mouseX-sx)*(mouseX-sx) + (mouseY-sy)*(mouseY-sy)));
-   computeSprings(tri);
-
+  computeSprings(tri);
 }
 

@@ -9,23 +9,17 @@ void computeSprings(Triangulation t)
 
     if(visited.containsKey(he))  
       continue;
-    Point vec1 = new Point(he.v.x - he.next.v.x, he.v.y - he.next.v.y, he.v.z - he.next.v.z);
-    Point vec2 = new Point(he.v.x - he.prev.v.x, he.v.y - he.prev.v.y, he.v.z - he.prev.v.z);
-
-    Point norm1 = vec2.crossp(vec1);
-    norm1.normalize(-0.5);
+      
+    Point grad1 = new Point(he.ocx, he.ocy, 0);
+    Point grad2 = new Point(he.twin.ocx, he.twin.ocy, 0);
     
-    Point vec3 = new Point (he.twin.v.x - he.twin.next.v.x, he.twin.v.y - he.twin.next.v.y, he.twin.v.z - he.twin.next.v.z);
-    Point vec4 = new Point(he.twin.v.x - he.twin.prev.v.x, he.twin.v.y - he.twin.prev.v.y, he.twin.v.z - he.twin.prev.v.z);
-
-    Point norm2 = vec4.crossp(vec3);
-    norm2.normalize(-0.5);
-    
-    Point force = new Point(norm1.x-norm2.x, norm1.y - norm2.y,0);
-    println(force.x + " " + force.y + " " + (he.v.x-he.next.v.x) + " " + (he.v.y-he.next.v.y));
+    Point force = new Point(grad1.x - grad2.x, grad1.y - grad2.y, 0);
+   // println(force.x + " " + force.y + " " + (he.v.x-he.next.v.x) + " " + (he.v.y-he.next.v.y));
     float magnitude = sqrt(force.x*force.x + force.y*force.y);
     //hetoe.get(he).spring = force.x/(he.v.x-he.next.v.x);
-    hetoe.get(he).spring = magnitude/sqrt((he.v.x-he.next.v.x)*(he.v.x-he.next.v.x) + (he.v.y-he.next.v.y)*(he.v.y-he.next.v.y));
+    float disp = sqrt((he.v.x-he.next.v.x)*(he.v.x-he.next.v.x) + (he.v.y-he.next.v.y)*(he.v.y-he.next.v.y));
+    hetoe.get(he).spring = magnitude/disp;
+    println(magnitude);
     visited.put(he, true);
     q.add(he.next);
     q.add(he.twin);
@@ -33,7 +27,7 @@ void computeSprings(Triangulation t)
   visited.clear();
 }
 
-float CORRECTION = 0.00001;
+float CORRECTION = 0.001;
 
 void updateStress(Triangulation t)
 {
@@ -42,26 +36,39 @@ void updateStress(Triangulation t)
     if(!(e.h1.v.internal && e.h2.v.internal)) continue;
     float target = sqrt((e.h1.v.x-e.h2.v.x)*(e.h1.v.x-e.h2.v.x) + (e.h1.v.y-e.h2.v.y)*(e.h1.v.y-e.h2.v.y));
     if(e.h1.v.weight + e.h2.v.weight < target)
-    {
+    {      //increase the stress on this edge
      e.spring += CORRECTION;
-     e.h1.v.weight += CORRECTION*1000; 
-     e.h2.v.weight+= CORRECTION*1000;
-      //increase the stress on this edge
+     e.h1.v.weight += CORRECTION*10; 
+     e.h2.v.weight+= CORRECTION*10;
     }
     else
     {
-      //if(e.spring > 0)
+      if(e.spring > 0)
         e.spring -= CORRECTION;//decrease stress
-
-      e.h1.v.weight -= CORRECTION*1000; 
-      e.h2.v.weight-= CORRECTION*1000;
+      e.h1.v.weight -= CORRECTION*10; 
+      e.h2.v.weight-= CORRECTION*10;
+    }
+  }
+}
+void updateStress2(Triangulation t)
+{
+  for(Edge e : edges)
+  {
+    float target = sqrt((e.h1.v.x-e.h2.v.x)*(e.h1.v.x-e.h2.v.x) + (e.h1.v.y-e.h2.v.y)*(e.h1.v.y-e.h2.v.y));
+    if(e.h1.v.weight + e.h2.v.weight < target)
+    {      //increase the stress on this edge
+     e.spring += CORRECTION;
+    }
+    else
+    {
+      if(e.spring > 0)
+        e.spring -= CORRECTION;//decrease stress
     }
   }
 }
 final float SPRING = 0.01;
-void simulate(Triangulation t)
+void test(Triangulation t)
 {
- //computeSprings(t);//error accumulates with simulation, have to recompute
  for(int i =0; i < 100; i++)
  {
     JQueue<HalfEdge> q = new JQueue<HalfEdge>();
@@ -72,8 +79,65 @@ void simulate(Triangulation t)
       if(visited.containsKey(he))// || !he.next.v.internal)  
         continue;
         
-      float vx = (he.v.x - he.next.v.x)*hetoe.get(he).spring;
-      float vy = (he.v.y - he.next.v.y)*hetoe.get(he).spring;
+      float vx = (he.v.x - he.next.v.x)*hetoe.get(he).spring/1000;
+      float vy = (he.v.y - he.next.v.y)*hetoe.get(he).spring/1000;
+      
+      if(!he.next.v.internal)
+      {
+        vx = 0;
+        vy = 0;
+      }
+
+      he.next.v.x += vx;
+      he.next.v.y += vy;
+
+      visited.put(he, true);
+      q.add(he.next);
+      q.add(he.twin);
+    }
+    visited.clear();
+  }
+  updateStress2(t);
+  HalfEdge he = edges.get(0).h1;
+  he.v.weight = he.v.x*he.v.x + he.v.y*he.v.y;
+  he.next.v.weight = he.next.v.x*he.next.v.x + he.next.v.y*he.next.v.y;
+  he.prev.v.weight = he.prev.v.x*he.prev.v.x + he.prev.v.y*he.prev.v.y;
+  for(Vertex v : tri.verticies)
+    v.weight = -1;
+  JQueue<HalfEdge> q = new JQueue<HalfEdge>();
+  q.add(he);
+  while(!q.isEmpty())
+  {
+    HalfEdge he2 = q.remove();
+    if(visited.containsKey(he2))// || !he.next.v.internal)  
+      continue;
+    
+    if(he.twin.v.weight<0)
+    {
+      
+    }
+
+    visited.put(he, true);
+    q.add(he.next);
+    q.add(he.twin);
+  }
+  visited.clear();
+  
+}
+void simulate(Triangulation t)
+{
+ for(int i =0; i < 100; i++)
+ {
+    JQueue<HalfEdge> q = new JQueue<HalfEdge>();
+    q.add(t.verticies.get(0).h);
+    while(!q.isEmpty())
+    {
+      HalfEdge he = q.remove();
+      if(visited.containsKey(he))// || !he.next.v.internal)  
+        continue;
+        
+      float vx = (he.v.x - he.next.v.x)*hetoe.get(he).spring/10000;
+      float vy = (he.v.y - he.next.v.y)*hetoe.get(he).spring/10000;
 
       if(!he.next.v.internal)
       {
@@ -83,13 +147,13 @@ void simulate(Triangulation t)
 
       he.next.v.x += vx;
       he.next.v.y += vy;
-      //he.next.v.setPos(vz);
+
       visited.put(he, true);
       q.add(he.next);
       q.add(he.twin);
     }
+    updateStress(t);
     visited.clear();
-    //updateStress(t);
   }
 }
 
