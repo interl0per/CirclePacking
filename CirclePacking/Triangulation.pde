@@ -9,7 +9,7 @@ class Triangulation
   public Triangulation(int n)
   {
     //create outer face
-    Vertex center = new Vertex(512, 256, 1000);
+    Vertex center = new Vertex(img.width/2, img.height/2, 1000);
     float step = 2*PI/n;//angle between adjacent verticies
     //place the verticies on the outer face
     for(int i = 0; i < n; i++)
@@ -76,10 +76,11 @@ class Triangulation
         stroke(20,20,20);
         if(drawDualEdge && he.twin.v.internal && he.twin.ocx>-999999)
           line(he.ocx, he.ocy, he.twin.ocx, he.twin.ocy);
-        stroke(255,0,0);
+          noStroke();
+        //stroke(255,0,0);
         if(drawOrtho)
           ellipse(cx, cy, 2*r, 2*r);
-        stroke(0,0,0);
+        //stroke(0,0,0);
       }
       visited.put(he, true);
       q.add(he.next);
@@ -103,18 +104,17 @@ class Triangulation
       h = h.next;
     }
   }
-  void addVertex(int x, int y, float r)
+  boolean addVertex(Vertex v)
   {
-    Vertex v = new Vertex(x, y,r);
-    if(r < 2*EPSILON)  
+    if(v.weight < 2*EPSILON)  
       v.weight = 2;
     verticies.add(v);
     HalfEdge tri = findHE(outerVerts.get(0).h, v);    //the face this new vertex sits in
-  
-    if(tri!=null)
+    if(tri==null)
+      return false;
+    else
     {
       triangulate(tri, v);
-  
       JStack<Edge> edgesToCheck = new JStack<Edge>();
       HashMap<Edge, Boolean> inStack = new HashMap<Edge, Boolean>();
       for(Edge e : edges)
@@ -224,7 +224,8 @@ class Triangulation
           }
         }
       }
-    }
+    return true;  
+  }
   }
 }
 

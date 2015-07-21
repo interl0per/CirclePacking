@@ -93,22 +93,29 @@ class Edge {
 }
 
 class Vertex {
+  color shade = 0;
   boolean internal = true, processed = false, placed = false, f = false;
   HalfEdge h;
   float x, y, z, weight; // z = f(x,y,weight)
   Vertex(float _x, float _y, float _w) {
     x = _x; y = _y; weight = _w;
     h = null;
+    Random rand = new Random();
+    z = rand.nextInt(20);
   }
   void draw(){
-    if(f)  fill(0);
+//    println(x);
+    if(x > 0 && x < width && y > 0 && y < height)
+    {
+      fill(shade);
+    }
     ellipse(x, y,2*weight,2*weight);
-    //z = getZ()/1000;
-    //translate(x, y, z); 
-    //sphereDetail(6);
-    //sphere(10);
-    //translate(-x, -y, -z); 
-    fill(255,0);
+//    z = getZ()/1000;
+//    translate(x, y, z); 
+//    sphereDetail(6);
+//    sphere(10);
+//    translate(-x, -y, -z); 
+    //fill(255,0);
   }
   float getZ()
   {
