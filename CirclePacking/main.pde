@@ -93,6 +93,8 @@ float ax = 0, ay=0, az=0;
 float tx = 0, ty=0, tz=0;
 PImage img;
 boolean drawBack = true;
+boolean d = true, e= true;
+ArrayList<Float> oldr;
 void draw()
 {
   if(keyPressed)
@@ -119,39 +121,28 @@ void draw()
         computePacking(tri);
         break;
      case '7':
-        float val = 100;
-        
-        JQueue<HalfEdge> q = new JQueue<HalfEdge>();
-        q.add(tri.verticies.get(0).h);
-        
-        while(!q.isEmpty())
-        {
-          HalfEdge he = q.remove();
-          if(visited.containsKey(he))  
-            continue;
-          
-          Vertex v1 = he.v;
-          Vertex v2 = he.next.v;
-          Vertex v3 = he.prev.v;
-          float x = (1.1*v1.x + v2.x + v3.x)/3;
-          float y = (1.1*v1.y + v2.y + v3.y)/3;
-          //println(x + " " + y);
-          Vertex v = he.v;
-          
-          HalfEdge test = v.h.prev.twin;
-          while(test != v.h)
-          {
-            hetoe.get(test).spring += val;
-            test = test.prev.twin;
-          }        
-          visited.put(he, true);
-          q.add(he.next);
-          q.add(he.twin);
-          val/=1.1;
-        }
-        visited.clear();
+       if(e)
+       {
+        oldr =  new ArrayList<Float>();
+
+       for(int i =0; i < tri.verticies.size(); i++)
+       {
+           oldr.add(i, tri.verticies.get(i).weight);
+       }
+        Edge nxt = edges.get(20);
+            attach(nxt.h2.prev.v, nxt.h1.prev.v);
+            nxt.h1.detach();
+            e = false;
+       }
         break;
-        
+
+     case 'g':
+     for(int i =0; i < tri.verticies.size(); i++)
+     {
+         tri.verticies.get(i).shade = (int)min(255, 10*(abs(oldr.get(i) - tri.verticies.get(i).weight)));
+         println(tri.verticies.get(i).shade);
+     }
+     break;
      case '8':
          Random rand = new Random();
         for(Edge e : edges)
@@ -238,8 +229,8 @@ void draw()
   rotateZ(az);
   translate(tx,ty,tz);
   background(255);
-  if(img!=null && drawBack)
-        image(img, 0, 0);
+  ///if(img!=null && drawBack)
+  //      image(img, 0, 0);
   tri.draw();
 
 

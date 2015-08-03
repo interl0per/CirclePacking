@@ -77,10 +77,10 @@ class Triangulation
         if(drawDualEdge && he.twin.v.internal && he.twin.ocx>-999999)
           line(he.ocx, he.ocy, he.twin.ocx, he.twin.ocy);
           noStroke();
-        //stroke(255,0,0);
+        stroke(255,0,0);
         if(drawOrtho)
           ellipse(cx, cy, 2*r, 2*r);
-        //stroke(0,0,0);
+        stroke(0,0,0);
       }
       visited.put(he, true);
       q.add(he.next);
