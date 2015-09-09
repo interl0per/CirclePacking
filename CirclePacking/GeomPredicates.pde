@@ -38,3 +38,14 @@ boolean inOrthocircle(Vertex a, Vertex b, Vertex c, Vertex d)//is d in the circu
   return alift * bcdet + blift * cadet + clift * abdet < 0;
 }
 
+void drawCircumcircle(Vertex a, Vertex b, Vertex c)
+{
+  float mr = (b.y-a.y) / (b.x-a.x);
+  float mt = (c.y-b.y) / (c.x-b.x);
+  float x = (mr*mt*(c.y-a.y) + mr*(b.x+c.x) - mt*(a.x+b.x)) / (2*(mr-mt));
+  float y = (a.y+b.y)/2 - (x - (a.x+b.x)/2) / mr;
+  float r = sqrt(((b.x-x)*(b.x-x) +  (b.y-y)*(b.y-y)));
+  stroke(255, 0, 0);
+  ellipse(x, y,2*r, 2*r);
+  stroke(0);
+}
