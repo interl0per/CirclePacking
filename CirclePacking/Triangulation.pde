@@ -1,19 +1,20 @@
-ArrayList<Edge> edges = new ArrayList<Edge>();
+    ArrayList<Edge> edges = new ArrayList<Edge>();
 
 class Triangulation
 {
   //HalfEdge data structure, and a stack and queue implementation.
   //Also there are some methods to use on the HalfEdge data structure.
-    ArrayList<Vertex> verticies = new ArrayList<Vertex>();//internal verticies
-    ArrayList<Vertex> outerVerts = new ArrayList<Vertex>();
-    
+    public ArrayList<Vertex> verticies = new ArrayList<Vertex>();//internal verticies
+    public ArrayList<Vertex> outerVerts = new ArrayList<Vertex>();
+
     public Triangulation(){}
     public Triangulation(int n)
     {
-      //create outer face
+      //create outer face (a regular n-gon)
       Vertex center = new Vertex(width/2, height/2, 1000);
       float step = 2*PI/n;//angle between adjacent verticies
       //place the verticies on the outer face
+      
       for(int i = 0; i < n; i++)
       {
         Vertex bv = new Vertex(-100,-100,700);
@@ -21,7 +22,7 @@ class Triangulation
         placeVertex(bv, i*step, center);
         outerVerts.add(bv);
       }
-      //center.weight = 0;
+
       for(int i =1; i < n+1; i++)
         outerVerts.get(i%n).attach(outerVerts.get(i-1)); 
     }
@@ -34,10 +35,17 @@ class Triangulation
     }
     
     void draw()
-    {//draw the triangulation
+    {
+      for(Vertex v : verticies)
+      //if(!showCircles)
+        v.draw();
+      for(Vertex v : outerVerts)
+        v.draw();
+        
       HashMap<HalfEdge, Boolean> visited = new HashMap<HalfEdge, Boolean>();
       JQueue<HalfEdge> q = new JQueue<HalfEdge>();
       q.add(outerVerts.get(0).h);
+      outerVerts.get(0).draw();
       while(!q.isEmpty())
       {
         HalfEdge he = q.remove();
@@ -52,46 +60,45 @@ class Triangulation
   //        line(he.v.x, he.v.y, he.v.z, 
   //             he.next.v.x, he.next.v.y, he.next.v.z);
           
-        //if(!showCircles)
-          he.v.draw();
-        //if((drawDualEdge || drawOrtho) && he.v.internal && he.next.v.internal && he.prev.v.internal)
-        {//draw orthocircle of internal triangles
-          Vertex v1 = new Vertex(he.v.x, he.v.y, he.v.weight);
-          Vertex v2 = new Vertex(he.next.v.x, he.next.v.y,he.next.v.weight);
-          Vertex v3 = new Vertex(he.prev.v.x, he.prev.v.y,he.prev.v.weight);
-          
-          float v1h = v1.getZ();
-          float v2h = v2.getZ();
-          float v3h = v3.getZ();
-  
-          float ach = v1h - v3h;
-          float bch = v2h - v3h;
-          
-          float acx = v1.x - v3.x;
-          float acy = v1.y - v3.y;
-          
-          float bcx = v2.x - v3.x;
-          float bcy = v2.y - v3.y;
-          
-          float det1 = acx*bcy - acy*bcx;
-          float det2 = ach*bcy - acy*bch;
-          float det3 = acx*bch - ach*bcx;
-          float det4 = v1h*(v2.x*v3.y - v2.y*v3.x) - v1.x*(v2h*v3.y - v2.y*v3h) + v1.y*(v2h*v3.x - v2.x*v3h);
-          
-          float cx = det2/(2*det1);
-          float cy = det3/(2*det1);
-          float r = sqrt(cx*cx + cy*cy + det4/det1);
-          he.ocx = cx;
-          he.ocy = cy;
-          stroke(20,20,20);
-          if(drawDualEdge && he.twin.v.internal && he.twin.ocx>-999999)
-            line(he.ocx, he.ocy, he.twin.ocx, he.twin.ocy);
-            noStroke();
+        //draw orthocircle of internal triangles
+        Vertex v1 = new Vertex(he.v.x, he.v.y, he.v.weight);
+        Vertex v2 = new Vertex(he.next.v.x, he.next.v.y,he.next.v.weight);
+        Vertex v3 = new Vertex(he.prev.v.x, he.prev.v.y,he.prev.v.weight);
+        
+        float v1h = v1.getZ();
+        float v2h = v2.getZ();
+        float v3h = v3.getZ();
+
+        float ach = v1h - v3h;
+        float bch = v2h - v3h;
+        
+        float acx = v1.x - v3.x;
+        float acy = v1.y - v3.y;
+        
+        float bcx = v2.x - v3.x;
+        float bcy = v2.y - v3.y;
+        
+        float det1 = acx*bcy - acy*bcx;
+        float det2 = ach*bcy - acy*bch;
+        float det3 = acx*bch - ach*bcx;
+        float det4 = v1h*(v2.x*v3.y - v2.y*v3.x) - v1.x*(v2h*v3.y - v2.y*v3h) + v1.y*(v2h*v3.x - v2.x*v3h);
+        
+        float cx = det2/(2*det1);
+        float cy = det3/(2*det1);
+        float r = sqrt(cx*cx + cy*cy + det4/det1);
+        he.ocx = cx;
+        he.ocy = cy;
+        stroke(20,20,20);
+        if(drawDualEdge && he.twin.v.internal && he.twin.ocx>-INF)
+          line(he.ocx, he.ocy, he.twin.ocx, he.twin.ocy);
+        //noStroke();
+        if(drawOrtho)
+        {
           stroke(255,0,0);
-          if(drawOrtho)
-            ellipse(cx, cy, 2*r, 2*r);
-          stroke(0,0,0);
+          noFill();
+          ellipse(cx, cy, 2*r, 2*r);
         }
+        stroke(0,0,0);
         visited.put(he, true);
         q.add(he.next);
         q.add(he.twin);
@@ -140,7 +147,6 @@ class Triangulation
           if(nxt.h1.e==null)  continue; //removed edge
           if(inOrthocircle(nxt.h2.v, nxt.h2.next.v, nxt.h2.prev.v, nxt.h1.prev.v) || inOrthocircle(nxt.h1.v, nxt.h1.next.v, nxt.h1.prev.v, nxt.h2.prev.v))
           {//edge is not ld
-            //ld = false;
             if(turn(nxt.h2.prev.v, nxt.h1.next.v, nxt.h1.prev.v))
             {//concave case 1
               if(nxt.h1.next.v.degree().size()==3)

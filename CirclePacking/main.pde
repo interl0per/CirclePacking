@@ -1,6 +1,6 @@
 import java.util.Random;
 
-final int NUM_OUTER_VERTS = 4;
+final int NUM_OUTER_VERTS = 3;
 final int INF = 1<<30;
 
 Packing CPack;
@@ -46,7 +46,7 @@ void draw()
         drawDualEdge = false;
         break;
       case '5':
-        CPack.simulate();
+        CPack.test();
         break;
      case '6':
         CPack.computePacking();

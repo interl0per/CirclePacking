@@ -1,7 +1,8 @@
 public class Packing extends Triangulation
 {
   final float SPRING = 0.01;
-  
+  final float CORRECTION = 0.01;
+
   public Packing(int n) 
   {
     super(n);
@@ -33,8 +34,6 @@ public class Packing extends Triangulation
     }
   }
   
-  float CORRECTION = 0.01;
-  
   void updateStress()
   {
     for(Edge e : edges)
@@ -57,21 +56,10 @@ public class Packing extends Triangulation
       }
     }
   }
-  
-  void updateStress2(Triangulation t)
+  void test()
   {
-    for(Edge e : edges)
-    {
-      if(!(e.h1.v.internal && e.h2.v.internal)) continue;
-  
-      float target = sqrt((e.h1.v.x-e.h2.v.x)*(e.h1.v.x-e.h2.v.x) + (e.h1.v.y-e.h2.v.y)*(e.h1.v.y-e.h2.v.y) + (e.h1.v.z-e.h2.v.z)*(e.h1.v.z-e.h2.v.z));
-      if(target > 200)     //increase the stress on this edge
-        e.spring += CORRECTION;
-      else
-        e.spring -= CORRECTION;
-    }
+    simulate(); 
   }
-
   void simulate()
   {
   //  for(Edge e: edges)
@@ -107,28 +95,14 @@ public class Packing extends Triangulation
     }
   }
   
-  float angleSum(Vertex v)
-  {
-    float res = 0;
-    ArrayList<Vertex> adjacent = v.degree();
-    float x = v.weight;
-    for(int i = 1; i < adjacent.size()+1; i++)
-    {
-      float y = adjacent.get(i-1).weight;
-      float z = adjacent.get(i%adjacent.size()).weight;
-      res += Math.acos(((x+y)*(x+y) + (x+z)*(x+z) - (y+z)*(y+z))/(2*(x+y)*(x+z)));
-    }
-    return res;
-  }
-  
-  //stephenson/collin's algorithm
+  //Thurston's algorithm
   void computePacking()
   {
    for(Vertex v : outerVerts)
      v.placed = false;
    for(int i = 0; i < verticies.size(); i++)
    {
-     verticies.get(i).weight = 20;
+     //verticies.get(i).weight = 20;
      if(verticies.get(i).h==null)
      {
        verticies.remove(verticies.get(i));
@@ -140,68 +114,69 @@ public class Packing extends Triangulation
    }
    //compute radii to some threshhold
    float error = 10;
-   while(error>188);
+   //for(int ff = 0; ff < 100; ff++)//while(error > 9);
    {
-     error = 0;
-     for(int j = 0; j <  verticies.size(); j++)
-     {
-       float csum = angleSum(verticies.get(j));
-       error+=abs(csum-2*PI);
-       println(csum);
-       if(csum < 2*PI)
-          verticies.get(j).weight -= 0.01;///(1+abs(verticies.get(j).weight - 20));
-       else if(csum > 2*PI)
-          verticies.get(j).weight +=0.01;///(1+abs(verticies.get(j).weight - 20));  
-     }
+    error = 0;
+    for(int j = 0; j <  verticies.size(); j++)
+    {
+      float csum = verticies.get(j).angleSum();
+      error+=abs(csum-2*PI);
+      
+      if(csum < 2*PI)
+        verticies.get(j).weight -= 0.25;///(1+abs(verticies.get(j).weight - 20));
+      
+      else if(csum > 2*PI)
+        verticies.get(j).weight += 0.25;///(1+abs(verticies.get(j).weight - 20));  
+    }
      error/= verticies.size();
    }
-   ////fix an arbitrary internal vertex
-   // verticies.get(0).placed = true;
+   //fix an arbitrary internal vertex
+   verticies.get(0).placed = true;
   
-   //JQueue<Vertex> q = new JQueue<Vertex>();
+   JQueue<Vertex> q = new JQueue<Vertex>();
   
-   //q.add(verticies.get(0));
-   //int cnt = 0;
-   //while(!q.isEmpty())
-   //{
-   //  cnt++;
-   //  Vertex iv = q.remove();
+   q.add(verticies.get(0));
+   int cnt = 0;
+   while(!q.isEmpty())
+   {
+    cnt++;
+    Vertex iv = q.remove();
       
-   //  ArrayList<Vertex> adjacent = iv.degree();//ordered neighbors
-   //  int i,j;
-   //  for(i = 0; i < adjacent.size() && !adjacent.get(i).placed; i++);
-   //  //find a placed petal, if there is one
-   //  float lastAngle = 0;
+    ArrayList<Vertex> adjacent = iv.degree();//ordered neighbors
+    int i,j;
+    for(i = 0; i < adjacent.size() && !adjacent.get(i).placed; i++);
+    //find a placed petal, if there is one
+    float lastAngle = 0;
       
-   //  if(i==adjacent.size() && !adjacent.get(i-1).placed)  
-   //  {//initialization
-   //    i--; 
-   //    lastAngle = atan2(adjacent.get(i).y-iv.y,adjacent.get(i).x-iv.x);
-   //    placeVertex(adjacent.get(i), lastAngle, iv);
-   //    if(adjacent.get(i).internal)  
-   //      q.add(adjacent.get(i));
-   //  }
+    if(i==adjacent.size() && !adjacent.get(i-1).placed)  
+    {//initialization
+      i--; 
+      lastAngle = atan2(adjacent.get(i).y-iv.y,adjacent.get(i).x-iv.x);
+      placeVertex(adjacent.get(i), lastAngle, iv);
+      if(adjacent.get(i).internal)  
+        q.add(adjacent.get(i));
+    }
   
-   //  j = i;
+    j = i;
      
-   //  while(++j % adjacent.size() != i)
-   //  {
-   //    Vertex v = adjacent.get(j % adjacent.size());
-   //    if(!v.placed)
-   //    {
-   //      Vertex lastKnown = adjacent.get((j-1)%adjacent.size());
-   //      lastAngle = atan2(lastKnown.y-iv.y,lastKnown.x-iv.x);
+    while(++j % adjacent.size() != i)
+    {
+      Vertex v = adjacent.get(j % adjacent.size());
+      if(!v.placed)
+      {
+        Vertex lastKnown = adjacent.get((j-1)%adjacent.size());
+        lastAngle = atan2(lastKnown.y-iv.y,lastKnown.x-iv.x);
   
-   //      float x = iv.weight;
-   //      float y = lastKnown.weight;
-   //      float z = v.weight;
-   //      float theta = (float)Math.acos(((x+y)*(x+y) + (x+z)*(x+z) - (y+z)*(y+z))/(2*(x+y)*(x+z)));
-   //      placeVertex(v, lastAngle-theta, iv);
-   //    }
-   //    if(!v.processed && v.internal)
-   //      q.add(v);
-   //  }
-   //  iv.processed = true;
-   //}
+        float x = iv.weight;
+        float y = lastKnown.weight;
+        float z = v.weight;
+        float theta = (float)Math.acos(((x+y)*(x+y) + (x+z)*(x+z) - (y+z)*(y+z))/(2*(x+y)*(x+z)));
+        placeVertex(v, lastAngle-theta, iv);
+      }
+      if(!v.processed && v.internal)
+        q.add(v);
+    }
+    iv.processed = true;
+   }
   }
 }

@@ -118,19 +118,21 @@ class Edge
 
 class Vertex extends Triangulation
 {
- color shade = 0;
- boolean internal = true, processed = false, placed = false, f = false;
- HalfEdge h;
- float x, y, z, weight; // z = f(x,y,weight)
+   color shade = 200;
+   boolean internal = true, processed = false, placed = false, f = false;
+   HalfEdge h;
+   float x, y, z, weight; // z = f(x,y,weight) //<>//
   
- Vertex(float _x, float _y, float _w) 
- {
-   x = _x; y = _y; weight = _w;
-   h = null;
-   Random rand = new Random();
-   z = rand.nextInt(20);
- }
-  
+   Vertex(float _x, float _y, float _w) 
+   {
+     x = _x; 
+     y = _y; 
+     weight = _w;
+     //h = null;
+     //Random rand = new Random();
+     //z = rand.nextInt(20);
+   }
+
  void draw()
  {
    if(x > 0 && x < width && y > 0 && y < height)
@@ -145,10 +147,12 @@ class Vertex extends Triangulation
    return (x*x+y*y-weight*weight);
  }
   
- HalfEdge handle(Vertex u) {
-   if (isIsolated() || isLeaf()) { return h; }
+ HalfEdge handle(Vertex u) 
+ {
+   if (isIsolated() || isLeaf()) return h;
    HalfEdge h1 = h, h2 = h.prev.twin;
-   while (!ordered(h1.twin.v, u, h2.twin.v)) {
+   while (!ordered(h1.twin.v, u, h2.twin.v)) 
+   {
      h1 = h2;
      h2 = h1.prev.twin;      
    }
@@ -180,9 +184,9 @@ class Vertex extends Triangulation
  ArrayList<Vertex> degree()//returns neighbors in ccw order
  {
    ArrayList<Vertex> neighbors = new ArrayList<Vertex>();
-   neighbors.add(this.h.next.v);
-   HalfEdge test = this.h.prev.twin;
-   while(test != this.h)
+   neighbors.add(h.next.v);
+   HalfEdge test = h.prev.twin;
+   while(test != h)
    {
      neighbors.add(test.next.v);
      test = test.prev.twin;
@@ -212,11 +216,13 @@ class Vertex extends Triangulation
    HalfEdge h2 = new HalfEdge(t);
    h1.twin = h2;
    h2.twin = h1;
-   if (this.h == null) {
+   if (this.h == null) 
+   {
      h2.connectTo(h1);
      this.h = h1;
    }
-   if (t.h == null) {
+   if (t.h == null) 
+   {
      h1.connectTo(h2);
      t.h = h2;    
    }
@@ -232,4 +238,17 @@ class Vertex extends Triangulation
    h1.e = edges.get(edges.size()-1);
    h2.e = edges.get(edges.size()-1);
  }
+  float angleSum()
+  {
+    float res = 0;
+    ArrayList<Vertex> adjacent = degree();
+    float x = weight;
+    for(int i = 1; i < adjacent.size()+1; i++)
+    {
+      float y = adjacent.get(i-1).weight;
+      float z = adjacent.get(i%adjacent.size()).weight;
+      res += Math.acos(((x+y)*(x+y) + (x+z)*(x+z) - (y+z)*(y+z))/(2*(x+y)*(x+z)));
+    }
+    return res;
+  }
 }
