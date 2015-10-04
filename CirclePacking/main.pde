@@ -14,7 +14,7 @@ boolean d = true, e= true;
 float ax = 0, ay=0, az=0;
 float tx = 0, ty=0, tz=0;
 
-int sx, sy;
+float sx, sy;
 
 void setup()
 {
@@ -51,7 +51,9 @@ void draw()
      case '6':
         CPack.computePacking();
         break;
-        
+     case '7':
+        ty = 0;
+        tx = 0;
       case 'w':
         ty+=10;
         break;
@@ -95,13 +97,13 @@ void draw()
   else if(mousePressed && drawing)
   {
     float r = sqrt((mouseX-sx)*(mouseX-sx) + (mouseY-sy)*(mouseY-sy));
-    ellipse(sx, sy, 2*r,2*r);
+    ellipse(sx - tx, sy - ty, 2*r,2*r);
   }
 }
 
 void mouseReleased()
 {
   drawing = false;
-  CPack.addVertex(new Vertex(sx, sy, sqrt((mouseX-sx)*(mouseX-sx) + (mouseY-sy)*(mouseY-sy))));
+  CPack.addVertex(new Vertex(sx - tx, sy - ty, sqrt((mouseX-sx)*(mouseX-sx) + (mouseY-sy)*(mouseY-sy))));
   CPack.computeSprings();
 }
