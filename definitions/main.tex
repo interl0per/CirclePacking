@@ -1,26 +1,25 @@
 \documentclass{article}
 \usepackage[utf8]{inputenc}
 \usepackage{tikz}
+\usepackage{natbib}
+\usepackage{graphicx}
+\usepackage{url}
 
 \title{Project Definitions}
 \author{Connor Riley }
 \date{September 2015}
 
-\usepackage{natbib}
-\usepackage{graphicx}
-
 \begin{document}
 \maketitle
 
-\section{Introduction}
-Introduction coming soon to a pdf near you.
+
 \section{Definitions}
 \subsection{Graphs}
 A graph, is an ordered pair $G=(V,E)$ which represents a set of objects where some of these objects are linked. In the denotation $G=(V,E)$, $V$ stands for the vertexes or objects, and $E$ stands for the edges or links. Edges in a graph can be directed or undirected, however, we will focus on undirected edges in our application.
-\subsubsection{Componenets}
+\subsubsection{Components}
 A component or connected component of a graph is a subgraph in which any two vertices are connected to each other by paths, and which is connected to no additional vertices in the supergraph.
 \subsubsection{Loops}
-A loop is when a vertex has an edge connecting it to itself.
+A loop is when a vertex has an edge connecting it to itself. \citep{NIST:self-loop}
 \begin{center}
 \begin{tikzpicture}[scale=0.2]
 \tikzstyle{every node}+=[inner sep=0pt]
@@ -48,13 +47,13 @@ A graph with multiple edges is one which has two or more edges connect the same 
 \end{center}
 \subsection{Types of Graphs}
 \subsubsection{Connected Graphs}
-A graph is connected when there is a path between every pair of vertices. In a connected graph every vertex is reachable. A graph with just one vertex is connected.
+A graph is connected when there is a path between every pair of vertices. In a connected graph every vertex is reachable. A graph with just one vertex is connected. \citep{mathworld:ConnectedGraphs}
 \subsubsection{Simple Graphs}
-Is an unweighted, undirected graph, containing no loops or multiple edges. A simple graph may either be connected or disconnected. 
-\subsubsection{Planer Graphs}
-A planer graph is one that can be embedded in the plane. This means that it can be drawn on the plane in such a way that its edges intersect only at their endpoints (no edges cross each other).
+Is an unweighted, undirected graph, containing no loops or multiple edges. A simple graph may either be connected or disconnected. \citep{mathworld:SimpleGraphs}
+\subsubsection{Planar Graphs}
+A planar graph is one that can be embedded in the plane. This means that it can be drawn on the plane in such a way that its edges intersect only at their endpoints (no edges cross each other). \citep{mathworld:PlanarGraph}
 \begin{itemize}
-\item[$\bullet$] A triangulation, also referred to as a maximal planar graph, is a planar graph in which there is no way to add another edge and have the graph continue to be planar. In practice these means that each face is bounded by three edges.
+\item[$\bullet$] A triangulation, also referred to as a maximal planar graph, is a planar graph in which there is no way to add another edge and have the graph continue to be planar. In practice these means that each face is bounded by three edges. \citep{mathworld:Triangulation}
 \end{itemize}
 \subsection{Embedding}
 An embedding of a graph $G$ on a surface $\Sigma$ is a representation of $G$ on $\Sigma$ in which points of $\Sigma$ are associated to vertices and simple arcs are associated to edges in such a way that:
@@ -79,7 +78,7 @@ We say that two circles drawn in a plane kiss (or osculate) when they intersect 
 \subsubsection{Stereographic Projections}
 The sterographic projection is a mapping that projects a sphere onto a plane. The projection is defined on the entire sphere expect for the projection point. The mapping is bijective which means that it can be reversed.
 \subsubsection{Mobius Transformations}
-A Mobius Transformation of a plane can be obtained by performing the stereographic projection of the plane onto a sphere, then rotating or moving the sphere and then performing the sterographic projection back onto the plane. A Mobius Transformation is a funciton of the form:
+A Mobius Transformation of a plane can be obtained by performing the stereographic projection of the plane onto a sphere, then rotating or moving the sphere and then performing the sterographic projection back onto the plane. A Mobius Transformation is a function of the form:
 \begin{equation} 
 f(z) = \frac{az+b}{cz+d}
 \end{equation}
@@ -91,10 +90,6 @@ The dual packing is the circle packing of the dual graph. In this packing, each 
 \section{Data Structures}
 \subsection{Half Edge}
 Also called a doubly-connected edge list, a half edge is a data structure where one edge on the graph corresponds to two half edges. Each half edge stores a vertex, a face, the next half edge, the previous half edge and the twin, which is the half edge going in the other direction. Half edges are typically directional, going counter clockwise with respect to the face which they define.
-\section{Conclusion}
-This is how you cite a source.
-\citep{adams1995hitchhiker}
-
 \bibliographystyle{plain}
 \bibliography{references}
 \end{document}
