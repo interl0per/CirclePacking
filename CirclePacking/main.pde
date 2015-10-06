@@ -50,8 +50,18 @@ void draw()
         break;
      case '6':
         CPack.computePacking();
+        CPack.layout();
         break;
-        
+      case '7':
+        CPack.test2();
+        break;
+      case '8':
+        CPack.layout();
+        break;
+      case '9':
+        ty = 0;
+        tx = 0;
+        break;
       case 'w':
         ty+=10;
         break;
@@ -95,13 +105,13 @@ void draw()
   else if(mousePressed && drawing)
   {
     float r = sqrt((mouseX-sx)*(mouseX-sx) + (mouseY-sy)*(mouseY-sy));
-    ellipse(sx, sy, 2*r,2*r);
+    ellipse(sx - tx, sy - ty, 2*r,2*r);
   }
 }
 
 void mouseReleased()
 {
   drawing = false;
-  CPack.addVertex(new Vertex(sx, sy, sqrt((mouseX-sx)*(mouseX-sx) + (mouseY-sy)*(mouseY-sy))));
+  CPack.addVertex(new Vertex(sx - tx, sy - ty, sqrt((mouseX-sx)*(mouseX-sx) + (mouseY-sy)*(mouseY-sy))));
   CPack.computeSprings();
 }

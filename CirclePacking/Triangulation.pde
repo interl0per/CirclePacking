@@ -6,10 +6,12 @@ class Triangulation
   //Also there are some methods to use on the HalfEdge data structure.
     public ArrayList<Vertex> verticies = new ArrayList<Vertex>();//internal verticies
     public ArrayList<Vertex> outerVerts = new ArrayList<Vertex>();
-
+    Vertex imaginary;// = new Vertex(512, 512, 100);
     public Triangulation(){}
     public Triangulation(int n)
     {
+      imaginary = new Vertex(width/2, height/2, -400);
+      imaginary.fake = true;
       //create outer face (a regular n-gon)
       Vertex center = new Vertex(width/2, height/2, 1000);
       float step = 2*PI/n;//angle between adjacent verticies
@@ -36,25 +38,24 @@ class Triangulation
     
     void draw()
     {
+      imaginary.draw();
       for(Vertex v : verticies)
-      //if(!showCircles)
         v.draw();
-      for(Vertex v : outerVerts)
-        v.draw();
+      //for(Vertex v : outerVerts)
+      //  v.draw();
         
       HashMap<HalfEdge, Boolean> visited = new HashMap<HalfEdge, Boolean>();
       JQueue<HalfEdge> q = new JQueue<HalfEdge>();
       q.add(outerVerts.get(0).h);
-      outerVerts.get(0).draw();
+      //outerVerts.get(0).draw();
       while(!q.isEmpty())
       {
         HalfEdge he = q.remove();
         
         if(visited.containsKey(he))  continue;
-        
-        //if(he.v.internal && he.next.v.internal)  
-        if(!drawDualEdge)
-          line(he.v.x, he.v.y, he.next.v.x, he.next.v.y);
+        if(he.v.internal && he.next.v.internal && !he.v.fake && !he.next.v.fake)  
+          if(!drawDualEdge)
+            line(he.v.x, he.v.y, he.next.v.x, he.next.v.y);
           
   //       if(he.v.internal && he.next.v.internal)  
   //        line(he.v.x, he.v.y, he.v.z, 
@@ -239,7 +240,35 @@ class Triangulation
             }
           }
         }
+
       return true;  
     }
+  }
+  void test2()
+  {
+       //ArrayList<Vertex> prevOuter = imaginary.degree();
+       //for(Vertex vv : prevOuter)
+        // imaginary.detach();
+      //imaginary = new Vertex(width/2, height/2, 400);
+
+     int count = 0;
+      for(Vertex vv : outerVerts)
+      {
+        ArrayList<Vertex> adj = vv.degree();
+        for(Vertex uv : adj)
+        {
+          if(uv.internal)
+          {
+            if(count < 2)
+              uv.fixed = true;
+            imaginary.attach(uv);
+            count++;
+            uv.almostOuter = true;
+          }
+        }
+       // println(imaginary.degree().size());
+      }
+      //for(Vertex vv : outerVerts)
+      //  vv.detach();
   }
 }

@@ -98,65 +98,72 @@ public class Packing extends Triangulation
   //Thurston's algorithm
   void computePacking()
   {
-   for(Vertex v : outerVerts)
-     v.placed = false;
-   for(int i = 0; i < verticies.size(); i++)
+    
+   for(int i = 0; i < verticies.size(); i++)//enumerate over internal verticies
    {
-     //verticies.get(i).weight = 20;
      if(verticies.get(i).h==null)
      {
        verticies.remove(verticies.get(i));
        i--;
        continue;
      }
-     verticies.get(i).placed = false;
-     verticies.get(i).processed = false;
    }
    //compute radii to some threshhold
-   float error = 10;
-   //for(int ff = 0; ff < 100; ff++)//while(error > 9);
-   {
-    error = 0;
     for(int j = 0; j <  verticies.size(); j++)
     {
+      if(verticies.get(j).fixed)  continue;
       float csum = verticies.get(j).angleSum();
-      error+=abs(csum-2*PI);
-      
       if(csum < 2*PI)
-        verticies.get(j).weight -= 0.25;///(1+abs(verticies.get(j).weight - 20));
+      {
+          verticies.get(j).weight -= 0.1;
+      }
       
       else if(csum > 2*PI)
-        verticies.get(j).weight += 0.25;///(1+abs(verticies.get(j).weight - 20));  
+      {
+          verticies.get(j).weight += 0.1;
+      }
     }
-     error/= verticies.size();
+  }
+  
+  void layout()
+  {
+   for(Vertex v : outerVerts)
+     v.placed = false;
+   for(Vertex v : verticies)
+   {
+     v.placed = false;
+     v.processed = false;
    }
    //fix an arbitrary internal vertex
    verticies.get(0).placed = true;
-  
    JQueue<Vertex> q = new JQueue<Vertex>();
-  
    q.add(verticies.get(0));
-   int cnt = 0;
+
    while(!q.isEmpty())
    {
-    cnt++;
-    Vertex iv = q.remove();
-      
-    ArrayList<Vertex> adjacent = iv.degree();//ordered neighbors
-    int i,j;
-    for(i = 0; i < adjacent.size() && !adjacent.get(i).placed; i++);
-    //find a placed petal, if there is one
-    float lastAngle = 0;
-      
-    if(i==adjacent.size() && !adjacent.get(i-1).placed)  
-    {//initialization
-      i--; 
-      lastAngle = atan2(adjacent.get(i).y-iv.y,adjacent.get(i).x-iv.x);
-      placeVertex(adjacent.get(i), lastAngle, iv);
-      if(adjacent.get(i).internal)  
-        q.add(adjacent.get(i));
-    }
-  
+     Vertex iv = q.remove();
+     if(iv.fake)  continue;
+     ArrayList<Vertex> adjacent = iv.degree();//ordered neighbors
+      for(int i =0; i< adjacent.size(); i++)
+        if(adjacent.get(i).fake)
+         {
+           adjacent.remove(i);
+           break;
+         }
+     int i,j;
+     for(i = 0; i < adjacent.size() && !adjacent.get(i).placed; i++);
+     //find a placed petal, if there is one
+     float lastAngle = 0;
+        
+     if(i==adjacent.size() && !adjacent.get(i-1).placed)  
+     {//initialization
+       i--; 
+       lastAngle = atan2(adjacent.get(i).y-iv.y,adjacent.get(i).x-iv.x);
+       placeVertex(adjacent.get(i), lastAngle, iv);
+       if(adjacent.get(i).internal)  
+         q.add(adjacent.get(i));
+     }
+     
     j = i;
      
     while(++j % adjacent.size() != i)
@@ -166,10 +173,11 @@ public class Packing extends Triangulation
       {
         Vertex lastKnown = adjacent.get((j-1)%adjacent.size());
         lastAngle = atan2(lastKnown.y-iv.y,lastKnown.x-iv.x);
-  
+    
         float x = iv.weight;
         float y = lastKnown.weight;
         float z = v.weight;
+ 
         float theta = (float)Math.acos(((x+y)*(x+y) + (x+z)*(x+z) - (y+z)*(y+z))/(2*(x+y)*(x+z)));
         placeVertex(v, lastAngle-theta, iv);
       }
@@ -177,6 +185,7 @@ public class Packing extends Triangulation
         q.add(v);
     }
     iv.processed = true;
+    //return;
    }
   }
 }

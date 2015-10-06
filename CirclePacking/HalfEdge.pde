@@ -120,6 +120,7 @@ class Vertex extends Triangulation
 {
    color shade = 200;
    boolean internal = true, processed = false, placed = false, f = false;
+   boolean fake = false, fixed = false, almostOuter = false;
    HalfEdge h;
    float x, y, z, weight; // z = f(x,y,weight) //<>//
   
@@ -193,7 +194,18 @@ class Vertex extends Triangulation
    }
    return neighbors;
  }
-  
+ void detach()//returns neighbors in ccw order
+ {
+   //if(h == null || h.prev == null)
+   //  return;
+   HalfEdge test = h;
+   ArrayList<Vertex> num = degree();
+   //for(int i=0; i< num.size(); i++)
+   //{
+     h.detach();
+     //h = h.prev.twin;
+   //}
+ }
  void attach(Vertex t) 
  {
    //don't connect verticies that are already connected
@@ -238,17 +250,36 @@ class Vertex extends Triangulation
    h1.e = edges.get(edges.size()-1);
    h2.e = edges.get(edges.size()-1);
  }
+ 
   float angleSum()
   {
     float res = 0;
     ArrayList<Vertex> adjacent = degree();
-    float x = weight;
-    for(int i = 1; i < adjacent.size()+1; i++)
+    for(int i= 0; i < adjacent.size(); i++)
     {
-      float y = adjacent.get(i-1).weight;
-      float z = adjacent.get(i%adjacent.size()).weight;
-      res += Math.acos(((x+y)*(x+y) + (x+z)*(x+z) - (y+z)*(y+z))/(2*(x+y)*(x+z)));
+      if(!adjacent.get(i).internal)
+      {
+        adjacent.remove(i);
+        i--;
+      }
     }
+    
+    int cnt = 0;
+    float x = weight;
+
+    for(int i = 1; i <= adjacent.size(); i++)
+    {
+       float y = adjacent.get(i-1).weight;
+       float z = adjacent.get(i%adjacent.size()).weight;
+       if(z < 0 || y < 0)
+       {
+         res += PI - Math.acos(((x+y)*(x+y) + (x+z)*(x+z) - (y+z)*(y+z))/abs(2*(x+y)*(x+z)));
+       }
+       else
+         res += Math.acos(((x+y)*(x+y) + (x+z)*(x+z) +- (y+z)*(y+z))/(2*(x+y)*(x+z)));
+       cnt++;
+    }
+    println(res);
     return res;
   }
 }
