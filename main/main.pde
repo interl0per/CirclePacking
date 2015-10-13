@@ -18,7 +18,8 @@ int sx, sy;
 boolean TEST = false;
 void setup()
 {
-  size(800, 800, P3D);
+  fullScreen(P3D);
+  //size(width, height, P3D);
   background(255);
   fill(0,0);
   CPack = new Packing(NUM_OUTER_VERTS);
