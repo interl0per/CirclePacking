@@ -16,9 +16,15 @@ float tx = 0, ty=0, tz=0;
 boolean DEBUG1 = false;
 int sx, sy;
 boolean TEST = false;
+
+void settings() {
+  fullScreen(P3D);
+  //size(displayWidth, displayHeight, P3D);
+}
+
 void setup()
 {
-  fullScreen(P3D);
+  //fullScreen(P3D);
   //size(width, height, P3D);
   background(255);
   fill(0,0);
