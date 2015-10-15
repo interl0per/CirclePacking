@@ -194,6 +194,7 @@ void draw()
 
 void mouseReleased()
 {
+  circleDrawn = true;
   in = false;
   if(!TEST)
   {
