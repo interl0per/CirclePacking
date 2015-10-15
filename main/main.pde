@@ -16,7 +16,7 @@ float tx = 0, ty=0, tz=0;
 boolean DEBUG1 = false;
 int sx, sy;
 boolean TEST = false;
-
+boolean circleDrawn = false;
 void settings() {
   fullScreen(P3D);
   //size(displayWidth, displayHeight, P3D);
@@ -54,21 +54,30 @@ void draw()
         drawDualEdge = false;
         break;
       case '5':
-       CPack.test();
+        if(circleDrawn) {
+         CPack.test();
+        }
        break;
       case '6':
-       CPack.computePacking();
-       CPack.layout();
+        if(circleDrawn) {
+         CPack.computePacking();
+         CPack.layout();
+        }
        break;
       case '7':
        //CPack.test2();
        break;
       case '8':
-       CPack.layout();
+        if(circleDrawn) {
+         CPack.layout();
+       }
        break;
-      case '9':
+      case '9':    // reset display to original position
         ty = 0;
         tx = 0;
+        az = 0;
+        ax = 0;
+        tz = 0;
         break;
       case '\\':
         Random rand = new Random();
