@@ -16,7 +16,10 @@ boolean circleDrawn = false;
 boolean DEBUG1 = false;
 
 float ax = 0, ay=0, az=0;
-float tx = 0, ty=0, tz=0;
+float tx = 0, ty=0, tz=1;
+float fov = PI/3.0;
+float eyeX, eyeY, eyeZ;
+float eyeZStart = 800; // approximate value for now ;//(height/2.0)/tan(PI*30.0 / 180.0);
 int sx, sy;
 
 ArrayList<Point> stereoUp = new ArrayList<Point>();
@@ -29,16 +32,34 @@ void settings() {
 void setup() {
   //fullScreen(P3D);
   //size(width, height, P3D);
+  eyeX = width/2;
+  eyeY = height/2;
+  eyeZ = eyeZStart;
   background(255);
   fill(0, 0);
   CPack = new Packing(NUM_OUTER_VERTS);
 }
 
 void draw() {
+   // CAMERA:
+  /*if (eyeZ<0) {
+    camera(eyeX, eyeY, eyeZ, 
+    width/2, height/2, 0, 
+    0, -1, 0);
+  }
+  else {
+    camera(eyeX, eyeY, eyeZ, 
+    width/2, height/2, 0, 
+    0, 1, 0);
+  }*/
   translate(width/2, height/2, 0);  
   keyPressedCall();
-
-  translate(tx, ty, tz);
+  //scale(tz);
+  //float cameraZ = (height/2.0) / tan(fov/2.0);
+  //perspective(fov - tz, float(width)/float(height), 
+  //          cameraZ/10.0, cameraZ*10.0);
+  translate(tx, ty, 0);
+  scale(tz);
   rotateX(ax);
   rotateZ(az);
   background(255);
@@ -79,8 +100,13 @@ void mousePressedCall() {
     sx = mouseX;
     sy = mouseY;
   } else if (drawing) {
+    //float x = modelX(mouseX, mouseY,0);
+    //float y = modelY(mouseX,mouseY,0);
+    float x = (sx - tx - width/2) / tz;
+    float y = (sy - ty - height/2) / tz;
     float r = sqrt((mouseX-sx)*(mouseX-sx) + (mouseY-sy)*(mouseY-sy));
-    ellipse(sx - tx - width/2, sy - ty - height/2, 2*r, 2*r);
+    ellipse(x,y,2*r,2*r);
+    //ellipse(sx - tx - width/2, sy - ty - height/2, 2*r, 2*r);
   }
 }
 void keyPressedCall() {
@@ -143,10 +169,12 @@ void keyPressedCall() {
       tx-=10;
       break;
     case '=':
-      tz+=10;
+      tz += .01;
+      //tz+= 10;
       break;
     case '-':
-      tz-=10;
+      //tz-= 10;
+      tz -= .01;
       break;
     case 'v':
       drawSphere = !drawSphere;
@@ -190,7 +218,12 @@ void mouseReleased() {
   in = false;
   if (!TEST) {
     drawing = false;
-    CPack.addVertex(new Vertex(sx - tx - width/2, sy - ty-height/2, sqrt((mouseX-sx)*(mouseX-sx) + (mouseY-sy)*(mouseY-sy))));
+    System.out.println("mouseX: " + sx + " mouseY: " + sy);
+    float x = (sx - tx - width/2) / tz;
+    float y = (sy - ty - height/2) /tz;
+    System.out.println("X: " + x + " Y: " + y);
+    CPack.addVertex(new Vertex(x, y, sqrt((mouseX-sx)*(mouseX-sx) + (mouseY-sy)*(mouseY-sy))));
+    //CPack.addVertex(new Vertex(sx - tx - width/2, sy - ty-height/2, sqrt((mouseX-sx)*(mouseX-sx) + (mouseY-sy)*(mouseY-sy))));
     CPack.computeSprings();
   }
 }
