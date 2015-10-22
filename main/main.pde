@@ -53,32 +53,6 @@ void draw() {
   if(mousePressed) {
     mousePressedCall();
   }
-  /*if (mousePressed && TEST) {
-    if (in) {
-      //handle rotations
-      float dxt = sx - mouseX, dyt = sy - mouseY;
-
-      for (Vertex v : CPack.verticies) {
-        v.stereoUp.rotate('y', dxt/700);
-        v.stereoUp.rotate('x', dyt/700);
-        //v.weight = 10;
-      }
-      for (Vertex v : CPack.outerVerts) {
-        v.stereoUp.rotate('y', dxt/700);
-        v.stereoUp.rotate('x', dyt/700);
-      }
-    } else
-      in = true;
-      sx = mouseX;
-      sy = mouseY;
-  } else if (mousePressed && !drawing) {
-    drawing = true;
-    sx = mouseX;
-    sy = mouseY;
-  } else if (mousePressed && drawing) {
-    float r = sqrt((mouseX-sx)*(mouseX-sx) + (mouseY-sy)*(mouseY-sy));
-    ellipse(sx - tx - width/2, sy - ty - height/2, 2*r, 2*r);
-  } */
 }
 
 void mousePressedCall() {
