@@ -1,5 +1,5 @@
 ArrayList<Edge> edges = new ArrayList<Edge>();
-
+boolean flag = true;
 class Triangulation
 {
   ////HalfEdge data structure, and a stack and queue implementation.
@@ -11,7 +11,7 @@ class Triangulation
     public Triangulation(int n)
     {
      //create outer face (a regular n-gon)
-     Vertex center = new Vertex(0, 0, 1000);
+     Vertex center = new Vertex(0, 0, 900);
      float step = 2*PI/n;//angle between adjacent verticies
      //place the verticies on the outer face
       
@@ -33,15 +33,8 @@ class Triangulation
      targ.loc.y = (ref.weight + targ.weight)*sin(theta) + ref.loc.y;
      targ.placed = true;
     }
-    
-    void draw()
+    void rot(char dir, float theta)
     {
-     for(Vertex v : verticies)
-       v.draw();
-     if(!TEST)
-       for(Vertex v : outerVerts)
-        v.draw();
-
      HashMap<HalfEdge, Boolean> visited = new HashMap<HalfEdge, Boolean>();
      JQueue<HalfEdge> q = new JQueue<HalfEdge>();
      q.add(outerVerts.get(0).h);
@@ -49,19 +42,66 @@ class Triangulation
      while(!q.isEmpty())
      {
        HalfEdge he = q.remove();
-        
+
        if(visited.containsKey(he))  continue;
-       if(he.v.internal && he.next.v.internal)  
-         if(!drawDualEdge)
+       he.ixnp.rotate(dir, theta);
+       visited.put(he, true);
+       q.add(he.next);
+       q.add(he.twin);
+     }
+    }
+    
+    void draw()
+    {
+     if(!TEST)
+     {
+       for(Vertex v : verticies)
+         v.draw();
+       for(Vertex v : outerVerts)
+        v.draw();
+     }
+     
+     HashMap<HalfEdge, Boolean> visited = new HashMap<HalfEdge, Boolean>();
+     JQueue<HalfEdge> q = new JQueue<HalfEdge>();
+     q.add(outerVerts.get(0).h);
+
+     while(!q.isEmpty())
+     {
+       HalfEdge he = q.remove();
+
+       if(visited.containsKey(he))  continue;
+       //if(he.v.internal && he.next.v.internal)  
+         if(!drawDualEdge && !TEST)
          {
            line(he.v.loc.x, he.v.loc.y, he.next.v.loc.x, he.next.v.loc.y);
-           strokeWeight(5);
-           line(he.v.stereoUp.x, he.v.stereoUp.y, he.v.stereoUp.z, he.next.v.stereoUp.x, he.next.v.stereoUp.y, he.next.v.stereoUp.z);
+           //line(he.v.stereoUp.x, he.v.stereoUp.y, he.v.stereoUp.z, he.next.v.stereoUp.x, he.next.v.stereoUp.y, he.next.v.stereoUp.z);
            //shows that stereographic projection works..
-           //line(0,0,100, he.v.loc.x, he.v.loc.y, he.v.loc.z);
-           strokeWeight(1);
+           //line(0,0,orthoSphereR, he.v.loc.x, he.v.loc.y, he.v.loc.z);
          }
-
+        if(cool_stuff)
+        {
+          if(he.ixnp!=null && he.next.ixnp != null && he.next.twin.next.ixnp != null)
+          {
+            stroke(0);
+            drawCircumcircle(he.ixnp, he.next.ixnp, he.next.twin.next.ixnp);
+            stroke(255,0,0);
+          }
+        }
+        
+        else
+        {
+          if(he.ixn!=null && he.next.ixn != null && he.next.twin.next.ixn != null)
+          {
+            stroke(0);
+            drawCircumcircle(he.ixn, he.next.ixn, he.next.twin.next.ixn);
+            stroke(255,0,0);
+          }
+        }
+        
+        if(!flag)
+        {
+          //he.ixnp = project2(
+        }
         //////////////////////////////
         //draw orthocircle of internal triangles
         
@@ -95,7 +135,7 @@ class Triangulation
          he.ocy = cy;
          he.ocr = r;
        }
-       else
+       else if (TEST) //if(he.v.internal && he.next.v.internal)
        {
          //calculate the incenter and incircle radius.
          //assuming we're given a packing, it's a dual packing.
@@ -132,6 +172,19 @@ class Triangulation
          he.v.weight = drA.magnitude();
          he.next.v.weight = drB.magnitude();
          //ellipse(ix,iy,10,10);
+        // println("here");
+        if(he.ixn == null)
+        {
+           he.ixn = new Point(ix,iy,0);
+           he.ixnp = project(he.ixn);
+           he.twin.ixnp = he.ixnp;
+        }
+        if(he.ixnp != null && he.next.ixnp != null && he.next.next.ixnp != null)
+        {
+                     he.ixn = project2(he.ixnp);
+           he.next.ixn = project2(he.next.ixnp);
+           he.next.next.ixn = project2(he.next.next.ixnp);
+        }
        }
        
        stroke(20,20,20);
@@ -140,19 +193,30 @@ class Triangulation
          line(he.ocx, he.ocy, he.twin.ocx, he.twin.ocy);
        }
 
-       if(drawOrtho&& he.v.internal && he.next.v.internal)
-       {
-         stroke(255,0,0);
-         //noFill();
-         ellipse(he.ocx, he.ocy, 2*he.ocr, 2*he.ocr);
+       if(drawOrtho)//&& he.v.internal && he.next.v.internal)
+       {           stroke(255,0,0);
+
+         if(TEST)
+         {
+
+           drawCircumcircle(he.ixn, he.next.ixn, he.next.next.ixn);
+           //ellipse(he.ixn.x, he.ixn.y, 10, 10);
+           //ellipse(he.next.ixn.x, he.next.ixn.y, 10, 10);
+           //ellipse(he.next.next.ixn.x, he.next.next.ixn.y, 10, 10);
+         }
+         else
+         {
+           //noFill();
+           ellipse(he.ocx, he.ocy, 2*he.ocr, 2*he.ocr);
+         }
        }
-       
        stroke(0,0,0);
        visited.put(he, true);
        q.add(he.next);
        q.add(he.twin);
      }
     }  
+    
     void triangulate(HalfEdge h, Vertex v)
     {
      int sides = 1;
@@ -169,6 +233,7 @@ class Triangulation
        h = h.next;
      }
     }
+    
     boolean addVertex(Vertex v)
     {
      if(v.weight < 2*EPSILON)  

@@ -1,7 +1,7 @@
 public class Packing extends Triangulation
 {
  final float SPRING = 0.01;
- final float CORRECTION = 0.01;
+ final float CORRECTION = 0.001;
 
  public Packing(int n) 
  {
@@ -86,7 +86,6 @@ public class Packing extends Triangulation
   
        he.next.v.loc.x += vx;
        he.next.v.loc.y += vy;
-
        visited.put(he, true);
        q.add(he.next);
        q.add(he.twin);

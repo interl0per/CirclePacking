@@ -37,16 +37,16 @@ boolean inOrthocircle(Vertex a, Vertex b, Vertex c, Vertex d)//is d in the circu
  return alift * bcdet + blift * cadet + clift * abdet < 0;
 }
 
-void drawCircumcircle(Vertex a, Vertex b, Vertex c)
+void drawCircumcircle(Point a, Point b, Point c)
 {
- float mr = (b.loc.y-a.loc.y) / (b.loc.x-a.loc.x);
- float mt = (c.loc.y-b.loc.y) / (c.loc.x-b.loc.x);
- float x = (mr*mt*(c.loc.y-a.loc.y) + mr*(b.loc.x+c.loc.x) - mt*(a.loc.x+b.loc.x)) / (2*(mr-mt));
- float y = (a.loc.y+b.loc.y)/2 - (x - (a.loc.x+b.loc.x)/2) / mr;
- float r = sqrt(((b.loc.x-x)*(b.loc.x-x) +  (b.loc.y-y)*(b.loc.y-y)));
- stroke(255, 0, 0);
+ float mr = (b.y-a.y) / (b.x-a.x);
+ float mt = (c.y-b.y) / (c.x-b.x);
+ float x = (mr*mt*(c.y-a.y) + mr*(b.x+c.x) - mt*(a.x+b.x)) / (2*(mr-mt));
+ float y = (a.y+b.y)/2 - (x - (a.x+b.x)/2) / mr;
+ float r = sqrt(((b.x-x)*(b.x-x) +  (b.y-y)*(b.y-y)));
+ //stroke(255, 0, 0);
  ellipse(x, y,2*r, 2*r);
- stroke(0);
+ //stroke(0);
 }
 //Point calcIncircle(Point a, Point b, Point c)
 //{
@@ -54,14 +54,14 @@ void drawCircumcircle(Vertex a, Vertex b, Vertex c)
 //}
 Point project(Point init)
 {
-  float x = init.x/100, y = init.y/100;
+  float x = init.x/orthoSphereR, y = init.y/orthoSphereR;
   float denom = (x*x + y*y +1);
-  return new Point(100*2*x/denom, 100*2*y/denom, 100*(x*x + y*y -1)/denom);
+  return new Point(orthoSphereR*2*x/denom, orthoSphereR*2*y/denom, orthoSphereR*(x*x + y*y -1)/denom);
 }
 
 Point project2(Point init)
 {
-  return new Point(init.x*100/(100-init.z), init.y*100/(100-init.z), 0);
+  return new Point(init.x*orthoSphereR/(orthoSphereR-init.z), init.y*orthoSphereR/(orthoSphereR-init.z), 0);
 }
 float det(float[][] m)
 {

@@ -2,123 +2,123 @@
 //Also there are some methods to use on the HalfEdge data structure.
 class HalfEdge extends Triangulation
 {
-HalfEdge prev;
-HalfEdge next;
-HalfEdge twin;
-Edge e;
-  
-Vertex v;
-float ocx=-INF, ocy=-INF, ocr = 1;//orthocenter of this face
-  
-HalfEdge(Vertex vv) 
-{
-  v =vv;
-}
-  
-void connectTo(HalfEdge h) 
-{
-  next = h;
-  h.prev = this;
-}
-// Disconnect both a halfedge and its twin.
-void detach() 
-{
-  if (v.isLeaf())  
-    v.h = null;
-  else 
+  HalfEdge prev;
+  HalfEdge next;
+  HalfEdge twin;
+  Edge e;
+  Point ixn, ixnp; 
+  Vertex v;
+  float ocx=-INF, ocy=-INF, ocr = 1;//orthocenter of this face
+    
+  HalfEdge(Vertex vv) 
   {
-    prev.connectTo(twin.next);
-    v.h = twin.next;
+    v =vv;
   }
-  if (twin.v.isLeaf())  
-    twin.v.h = null; 
-  else 
+    
+  void connectTo(HalfEdge h) 
   {
-    twin.prev.connectTo(next);
-    twin.v.h = next;
+    next = h;
+    h.prev = this;
   }
-  this.e = null;
-  twin.e = null;
-  for(int i = 0; i < edges.size(); i++)
+  // Disconnect both a halfedge and its twin.
+  void detach() 
   {
-    if(edges.get(i).h1 == this || edges.get(i).h1 == twin)
+    if(v.isLeaf())
+      v.h = null;
+    else 
     {
-      edges.remove(i);
-      i--;
+      prev.connectTo(twin.next);
+      v.h = twin.next;
+    }
+    if (twin.v.isLeaf())  
+      twin.v.h = null; 
+    else 
+    {
+      twin.prev.connectTo(next);
+      twin.v.h = next;
+    }
+    this.e = null;
+    twin.e = null;
+    for(int i = 0; i < edges.size(); i++)
+    {
+      if(edges.get(i).h1 == this || edges.get(i).h1 == twin)
+      {
+        edges.remove(i);
+        i--;
+      }
     }
   }
-}
- 
-HalfEdge findHE(Point d)//bfs the faces
-{
-  HashMap<HalfEdge, Boolean> visited = new HashMap<HalfEdge, Boolean>();
-  JQueue<HalfEdge> q = new JQueue<HalfEdge>();
-  q.add(this);
-  while(!q.isEmpty())
+   
+  HalfEdge findHE(Point d)//bfs the faces
   {
-    HalfEdge he = q.remove();
-    if(visited.containsKey(he))  continue;
-    if(inFace(he,d))
+    HashMap<HalfEdge, Boolean> visited = new HashMap<HalfEdge, Boolean>();
+    JQueue<HalfEdge> q = new JQueue<HalfEdge>();
+    q.add(this);
+    while(!q.isEmpty())
     {
-      return he;
+      HalfEdge he = q.remove();
+      if(visited.containsKey(he))  continue;
+      if(inFace(he,d))
+      {
+        return he;
+      }
+      visited.put(he, true);
+      q.add(he.next);
+      q.add(he.twin);
     }
-    visited.put(he, true);
-    q.add(he.next);
-    q.add(he.twin);
+    println("it seems that the point is not inside any triangle");
+    return null;
   }
-  println("it seems that the point is not inside any triangle");
-  return null;
-}
 }
 
 class JStack<T>
 {
-ArrayList<T> container = new ArrayList<T>();
-void push(T e)
-{
-  container.add(e);
-}
-T pop()
-{
-  return container.remove(container.size()-1);
-}
-boolean isEmpty()
-{
-  return(container.size()==0);
-}
+  ArrayList<T> container = new ArrayList<T>();
+  void push(T e)
+  {
+    container.add(e);
+  }
+  T pop()
+  {
+    return container.remove(container.size()-1);
+  }
+  boolean isEmpty()
+  {
+    return(container.size()==0);
+  }
 }
 
 class JQueue<T>
 {
-ArrayList<T> container = new ArrayList<T>();
-void add(T e)
-{
-  container.add(e);
-}
-T remove()
-{
-  return container.remove(0);
-}
-boolean isEmpty()
-{
-  return(container.size()==0);
-}
+  ArrayList<T> container = new ArrayList<T>();
+  void add(T e)
+  {
+    container.add(e);
+  }
+  T remove()
+  {
+    return container.remove(0);
+  }
+  boolean isEmpty()
+  {
+    return(container.size()==0);
+  }
 }
 
 class Edge 
 {
-HalfEdge h1, h2;
-float spring;
-public Edge(HalfEdge _h1, HalfEdge _h2) 
-{  
-  h1 = _h1; 
-  h2 = _h2;  
-}
+  HalfEdge h1, h2;
+  float spring;
+  public Edge(HalfEdge _h1, HalfEdge _h2) 
+  {  
+    h1 = _h1; 
+    h2 = _h2;  
+  }
 }
 
 class Vertex extends Triangulation
 {
-  Point stereoUp;
+  //Point stereoUp;
   color shade = 200;
   boolean internal = true, processed = false, placed = false, f = false;
   //boolean fake = false, fixed = false, almostOuter = false;
@@ -130,32 +130,40 @@ class Vertex extends Triangulation
   {
     loc = new Point(_x, _y, 0);
     weight = _w;
-    stereoUp = project(loc);
+    //stereoUp = project(loc);
   }
 
   void draw()
   {
-
-    if(internal && !TEST)
-      stereoUp = project(new Point(loc.x, loc.y, 0));//update
-    if(loc.x > 0 && loc.x < width && loc.y > 0 && loc.y < height)
+    if(!internal)
     {
-      fill(shade);
+      //println(stereoUp.x);
     }
+    if(/*internal &&*/ !TEST)
+    {
+      //stereoUp = project(new Point(loc.x, loc.y, 0));//update
+    }
+    //if(loc.x > 0 && loc.x < width && loc.y > 0 && loc.y < height)
+    //{
+    //  fill(shade);
+    //}
     stroke(0);
     strokeWeight(1.5);
     if(!DEBUG1)
       ellipse((float)loc.x, (float)loc.y,2*weight,2*weight);
     stroke(200, 0, 0);
     strokeWeight(1);
-    if(TEST)
-      loc = project2(stereoUp);
-    if(!internal)
-      return;
-    //fill(200, 0,0);
-    translate((float)stereoUp.x, (float)stereoUp.y,(float)stereoUp.z);
-    sphere(10);
-    translate((float)-stereoUp.x, (float)-stereoUp.y,(float)-stereoUp.z);
+    
+    //if(TEST)
+    //  loc = project2(stereoUp);
+   // if(!internal)
+   //   return;
+    if(h.ixnp!=null)
+    {
+      translate(h.ixnp.x, h.ixnp.y,h.ixnp.z);
+      sphere(10);
+      translate(-h.ixnp.x, -h.ixnp.y,-h.ixnp.z);
+    }
     fill(200);
   }
     
