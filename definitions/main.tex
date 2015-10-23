@@ -99,19 +99,22 @@
   If the circle packing is on the plane or the sphere, then its intersection graph is called a \textbf{coin graph}. 
   Coin graphs are always connected, simple and planar. 
 
-  \subsubsection{Liftings}
-  \subsubsection{Stereographic Projections}
-  A \textbf{sterographic projection} is a bijective mapping that projects a sphere onto a plane.
-  The projection is defined on the entire sphere except for the projection point. 
-  As the mapping is bijective there exists an inverse mapping from the plane to the sphere.
+    Common geometric settings for circle packing are the $euclidean$ $plane$, $the$ $sphere$ and the $hyperbolic$ $plane$. Each pair of circles in a packing forms a tangent pair, and the empty space between each $triple$ forms a $interstice$. A $flower$ is the next level of structure, which consists of a central circle and some number of $petal$ circles. The number of petals defines the $degree$ of the central circle. A condition that we will enforce on all circle packings is that every circle must have a flower. This condition is a $local$ $planarity$ condition. \citep{introCirlceacking}
+    \subsubsection{Koebe Representation Theorem}
+    Given any planar graph $G$ with vertex set $V(G) = \{v_1, ... v_n \}$ and edge set $E(G)$, we can find a packing of n (not necessarily congruent) circular discs $C= \{C_1,... C_n\}$ in the plane with the property that $C_i$ and $C_j$ touch each other if and only if $v_i v_j \epsilon E(G)$ for $1 \le i \le n$. \citep{combinatorialGeometry}
+    \subsubsection{Liftings}
+    \subsubsection{Stereographic Projections}
+    A \textbf{sterographic projection} is a bijective mapping that projects a sphere onto a plane.
+     The projection is defined on the entire sphere except for the projection point. 
+    As the mapping is bijective there exists an inverse mapping from the plane to the sphere.
 
-  \subsubsection{Mobius Transformations}
-  A \textbf{M\"{o}bius Transformation} of a plane can be obtained by performing the stereographic projection of the plane onto a sphere, then rotating or moving the sphere and then performing the sterographic projection back onto the plane. 
-  Formally, a M\"{o}bius Transformation is a rational function defined on the extended complex plane $\CP = \C\cup\{\infty\}$ of the form:
-  \begin{equation} 
-	f(z) = \frac{az+b}{cz+d}
-  \end{equation}
-  where $z\in\CP$ is a complex variable and $a,b,c,d\in\CP$ are complex numbers such that $ad - bc$ $\neq$ $0$.
+    \subsubsection{Mobius Transformations}
+    A \textbf{M\"{o}bius Transformation} of a plane can be obtained by performing the stereographic projection of the plane onto a sphere, then rotating or moving the sphere and then performing the sterographic projection back onto the plane. 
+    Formally, a M\"{o}bius Transformation is a rational function defined on the extended complex plane $\CP = \C\cup\{\infty\}$ of the form:
+    \begin{equation} 
+    	f(z) = \frac{az+b}{cz+d}
+    \end{equation}
+    where $z\in\CP$ is a complex variable and $a,b,c,d\in\CP$ are complex numbers such that $ad - bc$ $\neq$ $0$.
 
  \subsection{Dual Graph}
   The \textbf{dual graph} of a plane graph $G$ is a graph that has a vertex for each face of $G$. 
