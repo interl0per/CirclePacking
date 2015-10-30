@@ -100,7 +100,7 @@ void mousePressedCall() {
     //float y = modelY(mouseX,mouseY,0);
     float x = (sx - tx - width/2) / tz;
     float y = (sy - ty - height/2) / tz;
-    float r = sqrt((mouseX-sx)*(mouseX-sx) + (mouseY-sy)*(mouseY-sy));
+    float r = sqrt((mouseX-sx)*(mouseX-sx) + (mouseY-sy)*(mouseY-sy))/tz;
     ellipse(x,y,2*r,2*r);
     //ellipse(sx - tx - width/2, sy - ty - height/2, 2*r, 2*r);
   }
@@ -206,8 +206,9 @@ void mouseReleased() {
     System.out.println("mouseX: " + sx + " mouseY: " + sy);
     float x = (sx - tx - width/2) / tz;
     float y = (sy - ty - height/2) /tz;
+    float r = sqrt((mouseX-sx)*(mouseX-sx) + (mouseY-sy)*(mouseY-sy))/tz;
     System.out.println("X: " + x + " Y: " + y);
-    CPack.addVertex(new Vertex(x, y, sqrt((mouseX-sx)*(mouseX-sx) + (mouseY-sy)*(mouseY-sy))));
+    CPack.addVertex(new Vertex(x, y, r));
     //CPack.addVertex(new Vertex(sx - tx - width/2, sy - ty-height/2, sqrt((mouseX-sx)*(mouseX-sx) + (mouseY-sy)*(mouseY-sy))));
     CPack.computeSprings();
   }
