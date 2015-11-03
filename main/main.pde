@@ -75,7 +75,41 @@ void draw() {
     mousePressedCall();
   }
 }
-
+Matrix calculateTransitionMatrix(float x, float y) {
+    double[][] tempVector = new double[3][1];
+    tempVector[0][0] = x;
+    tempVector[1][0] = y;
+    tempVector[2][0] = 0;
+    Matrix pointMatrix = new Matrix(tempVector);
+    double[][] tempTransitionX = new double[3][3];
+    double[][] tempTransitionZ = new double[3][3];
+    tempTransitionX[0][0] =  1;
+    tempTransitionX[0][1] =  0;
+    tempTransitionX[0][2] =  0;
+    tempTransitionX[1][0] =  0;
+    tempTransitionX[1][1] =  cos(-ax);
+    tempTransitionX[1][2] =  -sin(-ax);
+    tempTransitionX[2][0] =  0;
+    tempTransitionX[2][1] =  sin(-ax);
+    tempTransitionX[2][2] =  cos(-ax);
+    Matrix transitionX = new Matrix(tempTransitionX);
+    
+    tempTransitionZ[0][0] =  cos(-az);
+    tempTransitionZ[0][1] =  -sin(-az);
+    tempTransitionZ[0][2] =  0;
+    tempTransitionZ[1][0] =  sin(-az);
+    tempTransitionZ[1][1] =  cos(-az);
+    tempTransitionZ[1][2] =  0;
+    tempTransitionZ[2][0] =  0;
+    tempTransitionZ[2][1] =  0;
+    tempTransitionZ[2][2] =  1;
+    Matrix transitionZ = new Matrix(tempTransitionZ);
+    
+    MatrixMathematics matrixMath = new MatrixMathematics();
+    Matrix transition = matrixMath.multiply(transitionX, transitionZ);
+    Matrix newPoints = matrixMath.multiply(transition, pointMatrix);
+    return newPoints;
+}
 void mousePressedCall() {
   if (TEST) 
   {
@@ -98,10 +132,14 @@ void mousePressedCall() {
   } else if (drawing) {
     //float x = modelX(mouseX, mouseY,0);
     //float y = modelY(mouseX,mouseY,0);
-    float x = (sx - tx - width/2) / tz;
+    float x = (sx - tx - width/2) / tz; 
     float y = (sy - ty - height/2) / tz;
+    Matrix newPoints = calculateTransitionMatrix(x,y);
+    float xe = (float) newPoints.getValueAt(0,0);
+    float ye = (float) newPoints.getValueAt(1,0);
+    
     float r = sqrt((mouseX-sx)*(mouseX-sx) + (mouseY-sy)*(mouseY-sy))/tz;
-    ellipse(x,y,2*r,2*r);
+    ellipse(xe,ye,2*r,2*r);
     //ellipse(sx - tx - width/2, sy - ty - height/2, 2*r, 2*r);
   }
 }
@@ -206,9 +244,12 @@ void mouseReleased() {
     System.out.println("mouseX: " + sx + " mouseY: " + sy);
     float x = (sx - tx - width/2) / tz;
     float y = (sy - ty - height/2) /tz;
+    Matrix newPoints = calculateTransitionMatrix(x,y);
+    float xe = (float) newPoints.getValueAt(0,0);
+    float ye = (float) newPoints.getValueAt(1,0);
     float r = sqrt((mouseX-sx)*(mouseX-sx) + (mouseY-sy)*(mouseY-sy))/tz;
     System.out.println("X: " + x + " Y: " + y);
-    CPack.addVertex(new Vertex(x, y, r));
+    CPack.addVertex(new Vertex(xe, ye, r));
     //CPack.addVertex(new Vertex(sx - tx - width/2, sy - ty-height/2, sqrt((mouseX-sx)*(mouseX-sx) + (mouseY-sy)*(mouseY-sy))));
     CPack.computeSprings();
   }
