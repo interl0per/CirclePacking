@@ -16,17 +16,6 @@ class Point
    y*=c;
    z = target;
  }
- void normalize2()
- {
-   float mag = magnitude();
-   x/=mag;
-   y/=mag;
-   z/=mag;
- }
- Point scale(float s)
- {
-   return new Point(x*s, y*s, z*s);
- }
  Point crossp(Point b)
  {
     return(new Point(y*b.z - z*b.y, z*b.x - x*b.z, x*b.y - y*b.x));
@@ -60,13 +49,5 @@ class Point
        y = y*cost-z*sint;
        z = yi*sint+z*cost;
    }
- }
- void drw()
- {
-   fill(100,0,0);
-   translate(x,y,z);
-   sphere(10);
-   translate(-x,-y,-z);
-   fill(0);
  }
 }

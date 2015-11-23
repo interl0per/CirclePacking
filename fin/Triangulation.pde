@@ -12,7 +12,7 @@ class Triangulation
     {
      //create outer face (a regular n-gon)
      Vertex center = new Vertex(0, 0, 900);
-     float step = 2*PI/n;
+     float step = 2*PI/n;//angle between adjacent verticies
      //place the verticies on the outer face
       
      for(int i = 0; i < n; i++)
@@ -82,13 +82,9 @@ class Triangulation
         {
           if(he.ixnp!=null && he.next.ixnp != null && he.next.twin.next.ixnp != null)
           {
-            //stroke(0);
-            //line(he.ixnp.x, he.ixnp.y, he.ixnp.z, he.next.ixnp.x, he.next.ixnp.y, he.next.ixnp.z);
-            //line(he.ixnp.x, he.ixnp.y, he.ixnp.z, he.next.next.ixnp.x, he.next.next.ixnp.y, he.next.next.ixnp.z);
-            //line(he.next.ixnp.x, he.next.ixnp.y, he.next.ixnp.z, he.next.next.ixnp.x, he.next.next.ixnp.y, he.next.next.ixnp.z);
-
-            drawCircumcircle2(he.ixnp, he.next.ixnp, he.next.twin.next.ixnp);
-            //stroke(255,0,0);
+            stroke(0);
+            drawCircumcircle(he.ixnp, he.next.ixnp, he.next.twin.next.ixnp);
+            stroke(255,0,0);
           }
         }
         
@@ -185,7 +181,7 @@ class Triangulation
         }
         if(he.ixnp != null && he.next.ixnp != null && he.next.next.ixnp != null)
         {
-           he.ixn = project2(he.ixnp);
+                     he.ixn = project2(he.ixnp);
            he.next.ixn = project2(he.next.ixnp);
            he.next.next.ixn = project2(he.next.next.ixnp);
         }
