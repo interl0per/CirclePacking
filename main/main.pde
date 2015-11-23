@@ -1,3 +1,4 @@
+
 import java.util.Random;
 
 final int NUM_OUTER_VERTS = 3;
@@ -25,8 +26,8 @@ int sx, sy;
 int orthoSphereR = 200;
 
 void settings() {
-  //fullScreen(P3D);
-  size(1000, 1000, P3D);
+  fullScreen(P3D);
+  //size(displayWidth, displayHeight, P3D);
 }
 
 void setup() {
@@ -41,7 +42,6 @@ void setup() {
 }
 
 void draw() {
-
    // CAMERA:
   /*if (eyeZ<0) {
     camera(eyeX, eyeY, eyeZ, 
@@ -62,7 +62,6 @@ void draw() {
   translate(tx, ty, 0);
   scale(tz);
   rotateX(ax);
-  //rotateY(ay);
   rotateZ(az);
   background(255);
   CPack.draw();
@@ -76,10 +75,42 @@ void draw() {
   if(mousePressed) {
     mousePressedCall();
   }
-  //Point q[] = {new Point(142, 32, 100), new Point(50, 100, 200),new Point(10, 20, 110)};
-  //drawCircumcircle2(q[0], q[1], q[2]);
 }
-
+Matrix calculateTransitionMatrix(float x, float y) {
+    double[][] tempVector = new double[3][1];
+    tempVector[0][0] = x;
+    tempVector[1][0] = y;
+    tempVector[2][0] = 0;
+    Matrix pointMatrix = new Matrix(tempVector);
+    double[][] tempTransitionX = new double[3][3];
+    double[][] tempTransitionZ = new double[3][3];
+    tempTransitionX[0][0] =  1;
+    tempTransitionX[0][1] =  0;
+    tempTransitionX[0][2] =  0;
+    tempTransitionX[1][0] =  0;
+    tempTransitionX[1][1] =  cos(-ax);
+    tempTransitionX[1][2] =  -sin(-ax);
+    tempTransitionX[2][0] =  0;
+    tempTransitionX[2][1] =  sin(-ax);
+    tempTransitionX[2][2] =  cos(-ax);
+    Matrix transitionX = new Matrix(tempTransitionX);
+    
+    tempTransitionZ[0][0] =  cos(-az);
+    tempTransitionZ[0][1] =  -sin(-az);
+    tempTransitionZ[0][2] =  0;
+    tempTransitionZ[1][0] =  sin(-az);
+    tempTransitionZ[1][1] =  cos(-az);
+    tempTransitionZ[1][2] =  0;
+    tempTransitionZ[2][0] =  0;
+    tempTransitionZ[2][1] =  0;
+    tempTransitionZ[2][2] =  1;
+    Matrix transitionZ = new Matrix(tempTransitionZ);
+    
+    MatrixMathematics matrixMath = new MatrixMathematics();
+    Matrix transition = matrixMath.multiply(transitionX, transitionZ);
+    Matrix newPoints = matrixMath.multiply(transition, pointMatrix);
+    return newPoints;
+}
 void mousePressedCall() {
   if (TEST) 
   {
@@ -102,14 +133,17 @@ void mousePressedCall() {
   } else if (drawing) {
     //float x = modelX(mouseX, mouseY,0);
     //float y = modelY(mouseX,mouseY,0);
-    float x = (sx - tx - width/2) / tz;
+    float x = (sx - tx - width/2) / tz; 
     float y = (sy - ty - height/2) / tz;
-    float r = sqrt((mouseX-sx)*(mouseX-sx) + (mouseY-sy)*(mouseY-sy));
-    ellipse(x,y,2*r,2*r);
+    Matrix newPoints = calculateTransitionMatrix(x,y);
+    float xe = (float) newPoints.getValueAt(0,0);
+    float ye = (float) newPoints.getValueAt(1,0);
+    
+    float r = sqrt((mouseX-sx)*(mouseX-sx) + (mouseY-sy)*(mouseY-sy))/tz;
+    ellipse(xe,ye,2*r,2*r);
     //ellipse(sx - tx - width/2, sy - ty - height/2, 2*r, 2*r);
   }
 }
-
 void keyPressedCall() {
   if (keyPressed) {
     switch (key) {
@@ -146,7 +180,11 @@ void keyPressedCall() {
       }
       break;
     case '9':    // reset display to original position
-      ay+=0.01;
+      ty = 0;
+      tx = 0;
+      az = 0;
+      ax = 0;
+      tz = 0;
       break;
     case '\\':
       Random rand = new Random();
@@ -199,19 +237,20 @@ void keyPressedCall() {
     }
   }
 }
-
-void mouseReleased() 
-{
+void mouseReleased() {
   circleDrawn = true;
   in = false;
-  if (!TEST) 
-  {
+  if (!TEST) {
     drawing = false;
-    //System.out.println("mouseX: " + sx + " mouseY: " + sy);
+    System.out.println("mouseX: " + sx + " mouseY: " + sy);
     float x = (sx - tx - width/2) / tz;
     float y = (sy - ty - height/2) /tz;
-    //System.out.println("X: " + x + " Y: " + y);
-    CPack.addVertex(new Vertex(x, y, sqrt((mouseX-sx)*(mouseX-sx) + (mouseY-sy)*(mouseY-sy))));
+    Matrix newPoints = calculateTransitionMatrix(x,y);
+    float xe = (float) newPoints.getValueAt(0,0);
+    float ye = (float) newPoints.getValueAt(1,0);
+    float r = sqrt((mouseX-sx)*(mouseX-sx) + (mouseY-sy)*(mouseY-sy))/tz;
+    System.out.println("X: " + x + " Y: " + y);
+    CPack.addVertex(new Vertex(xe, ye, r));
     //CPack.addVertex(new Vertex(sx - tx - width/2, sy - ty-height/2, sqrt((mouseX-sx)*(mouseX-sx) + (mouseY-sy)*(mouseY-sy))));
     CPack.computeSprings();
   }
