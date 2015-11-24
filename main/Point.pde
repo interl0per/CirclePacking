@@ -51,8 +51,8 @@ class Point
    else if(dir=='y')
    {
        float xi= x;
-       x = x*cost-z*sint;
-       z = xi*sint+z*cost;
+       x = x*cost+z*sint;
+       z = -xi*sint+z*cost;
    }
    else if(dir=='x')
    {      

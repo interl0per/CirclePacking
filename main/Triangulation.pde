@@ -11,7 +11,7 @@ class Triangulation
     public Triangulation(int n)
     {
      //create outer face (a regular n-gon)
-     Vertex center = new Vertex(0, 0, 900);
+     Vertex center = new Vertex(0, 0, 1300);
      float step = 2*PI/n;
      //place the verticies on the outer face
       
@@ -83,12 +83,13 @@ class Triangulation
           if(he.ixnp!=null && he.next.ixnp != null && he.next.twin.next.ixnp != null)
           {
             //stroke(0);
-            //line(he.ixnp.x, he.ixnp.y, he.ixnp.z, he.next.ixnp.x, he.next.ixnp.y, he.next.ixnp.z);
-            //line(he.ixnp.x, he.ixnp.y, he.ixnp.z, he.next.next.ixnp.x, he.next.next.ixnp.y, he.next.next.ixnp.z);
-            //line(he.next.ixnp.x, he.next.ixnp.y, he.next.ixnp.z, he.next.next.ixnp.x, he.next.next.ixnp.y, he.next.next.ixnp.z);
-
-            drawCircumcircle2(he.ixnp, he.next.ixnp, he.next.twin.next.ixnp);
-            //stroke(255,0,0);
+            line(he.ixnp.x, he.ixnp.y, he.ixnp.z, he.next.ixnp.x, he.next.ixnp.y, he.next.ixnp.z);
+            line(he.ixnp.x, he.ixnp.y, he.ixnp.z, he.next.next.ixnp.x, he.next.next.ixnp.y, he.next.next.ixnp.z);
+            line(he.next.ixnp.x, he.next.ixnp.y, he.next.ixnp.z, he.next.next.ixnp.x, he.next.next.ixnp.y, he.next.next.ixnp.z);
+            Point a2 = new Point(he.ixnp.x, he.ixnp.y, he.ixnp.z), 
+                  b2 = new Point(he.next.ixnp.x, he.next.ixnp.y, he.next.ixnp.z), 
+                  c2 = new Point(he.next.next.ixnp.x, he.next.next.ixnp.y, he.next.next.ixnp.z);
+            drawCircumcircle3D(a2, b2, c2);
           }
         }
         

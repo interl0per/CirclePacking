@@ -42,6 +42,7 @@ void setup() {
 }
 
 void draw() {
+
    // CAMERA:
   /*if (eyeZ<0) {
     camera(eyeX, eyeY, eyeZ, 
@@ -180,11 +181,12 @@ void keyPressedCall() {
       }
       break;
     case '9':    // reset display to original position
-      ty = 0;
-      tx = 0;
-      az = 0;
-      ax = 0;
-      tz = 0;
+      //ty = 0;
+      //tx = 0;
+      //az = 0;
+      //ax = 0;
+      //tz = 0;
+      ay+=0.01;
       break;
     case '\\':
       Random rand = new Random();
@@ -210,9 +212,6 @@ void keyPressedCall() {
     case '-':
       //tz-= 10;
       tz -= .01;
-      break;
-    case 'v':
-      drawSphere = !drawSphere;
       break;
     case 'f':
       DEBUG1 = !DEBUG1;

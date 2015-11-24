@@ -48,47 +48,38 @@ void drawCircumcircle(Point a, Point b, Point c)
  ellipse(x, y,2*r, 2*r);
  //stroke(0);
 }
-void drawCircumcircle2(Point a, Point b, Point c)
+void drawCircumcircle3D(Point a, Point b, Point c)
 { 
- Point ct = c;
- 
- a = a.add(c.negate());
- b = b.add(c.negate());
- c = new Point(0,0,0);
- 
- //translate so all z coordinates are 0
- 
- float rx,ry,rz;
- ry = atan2(a.z, a.x);
- //rotate a so it's z is 0:
- a.rotate('y', -ry);
- b.rotate('y', -ry);
- //now need to rotate so a's y is 0:
- rz = atan2(a.y, a.x);
- a.rotate('z', -rz);
- b.rotate('z', -rz);
- //now rotate so b's z is 0:
- rx = atan2(b.y, -b.z);
- a.rotate('x', PI/2-rx);
- b.rotate('x', PI/2-rx);
- //a.drw();
-  
-    translate(ct.x, ct.y, ct.z);
+   Point ct = c;
+   a = a.add(c.negate());
+   b = b.add(c.negate());
+   c = new Point(0,0,0);
+   //b.drw();
 
-  rotateX(PI/2-rx);
-  rotateZ(rz);
-  rotateY(ry);
-  
- b.drw();
- a.drw();
- c.drw();
- //drawCircumcircle(a,b,c);
+   //translate so all z coordinates are 0
+   
+   float rx,ry,rz;
+   ry = atan2(a.z, a.x);
+   //rotate a so it's z is 0:
+   a.rotate('y', ry);
+   b.rotate('y', ry);
+   //now need to rotate so a's y is 0:
+   rz = -atan2(a.y, a.x);
+   a.rotate('z', rz);
+   b.rotate('z', rz);
+   //now rotate so b's z is 0:
+   rx = PI/2 - atan2(b.y, -b.z);
+   a.rotate('x', rx);
+   b.rotate('x', rx);
 
-  rotateY(-ry);
-  rotateZ(-rz);
-  rotateX(-PI/2+rx);
-    translate(-ct.x, -ct.y, -  ct.z);
+   pushMatrix();
+   translate(ct.x, ct.y, ct.z);
 
+   rotateY(-ry);
+   rotateZ(-rz);
+   rotateX(-rx);
+   drawCircumcircle(a,b,c);
+   popMatrix();
 }
 
 Point project(Point init)
