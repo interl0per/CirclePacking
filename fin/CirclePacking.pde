@@ -1,12 +1,9 @@
 public class Packing extends Triangulation
 {
- final float SPRING = 0.01;
- final float CORRECTION = 0.001;
+ final float SPRING = 0.1;
+ final float CORRECTION = 0.01;
 
- public Packing(int n) 
- {
-   super(n);
- }
+ public Packing(int n) {  super(n);  }
   
  void computeSprings()
  {
@@ -20,12 +17,12 @@ public class Packing extends Triangulation
      if(visited.containsKey(he))  
        continue;
         
-     Point grad1 = new Point(he.ocx, he.ocy, 0);
-     Point grad2 = new Point(he.twin.ocx, he.twin.ocy, 0);
-     Point force = new Point(grad1.x - grad2.x, grad1.y - grad2.y, 0);
+     Vertex grad1 = new Vertex(he.ocx, he.ocy, 0, 0);
+     Vertex grad2 = new Vertex(he.twin.ocx, he.twin.ocy, 0, 0);
+     Vertex force = new Vertex(grad1.x - grad2.x, grad1.y - grad2.y, 0, 0);
 
-     float magnitude = sqrt((float)(force.x*force.x + force.y*force.y));
-     float disp = sqrt((float)((he.v.loc.x-he.next.v.loc.x)*(he.v.loc.x-he.next.v.loc.x) + (he.v.loc.y-he.next.v.loc.y)*(he.v.loc.y-he.next.v.loc.y)));
+     float magnitude = force.magnitude();
+     float disp = sqrt((float)((he.v.x-he.next.v.x)*(he.v.x-he.next.v.x) + (he.v.y-he.next.v.y)*(he.v.y-he.next.v.y)));
      he.e.spring = magnitude/disp;
 
      visited.put(he, true);
@@ -38,7 +35,7 @@ public class Packing extends Triangulation
  {
    for(Edge e : edges)
    {
-     float target = sqrt((float)(((e.h1.v.loc.x-e.h2.v.loc.x)*(e.h1.v.loc.x-e.h2.v.loc.x) + (e.h1.v.loc.y-e.h2.v.loc.y)*(e.h1.v.loc.y-e.h2.v.loc.y))));
+     float target = sqrt((float)(((e.h1.v.x-e.h2.v.x)*(e.h1.v.x-e.h2.v.x) + (e.h1.v.y-e.h2.v.y)*(e.h1.v.y-e.h2.v.y))));
       
      if(e.h1.v.weight + e.h2.v.weight < target)
      {      //increase the stress on this edge
@@ -56,10 +53,13 @@ public class Packing extends Triangulation
      }
    }
  }
+ 
  void test()
  {
-   simulate(); 
+   if(verticies.size() > 0)
+     simulate(); 
  }
+ 
  void simulate()
  {
  //  for(Edge e: edges)
@@ -75,8 +75,8 @@ public class Packing extends Triangulation
        if(visited.containsKey(he))// || !he.next.v.internal)  
          continue;
           
-       double vx = (he.v.loc.x - he.next.v.loc.x)*he.e.spring/100000;
-       double vy = (he.v.loc.y - he.next.v.loc.y)*he.e.spring/100000;
+       double vx = (he.v.x - he.next.v.x)*he.e.spring/100000;
+       double vy = (he.v.y - he.next.v.y)*he.e.spring/100000;
 
        if(!he.next.v.internal)
        {
@@ -84,8 +84,8 @@ public class Packing extends Triangulation
          vy = 0;
        }
   
-       he.next.v.loc.x += vx;
-       he.next.v.loc.y += vy;
+       he.next.v.x += vx;
+       he.next.v.y += vy;
        visited.put(he, true);
        q.add(he.next);
        q.add(he.twin);
@@ -99,7 +99,7 @@ public class Packing extends Triangulation
  {
   for(int i = 0; i < verticies.size(); i++)//enumerate over internal verticies
   {
-    if(verticies.get(i).h==null)
+    if(verticies.get(i).h == null)
     {
       verticies.remove(verticies.get(i));
       i--;
@@ -148,7 +148,7 @@ public class Packing extends Triangulation
     if(i==adjacent.size() && !adjacent.get(i-1).placed)  
     {//initialization
       i--; 
-      lastAngle = atan2((float)(adjacent.get(i).loc.y-iv.loc.y),(float)(adjacent.get(i).loc.x-iv.loc.x));
+      lastAngle = atan2((float)(adjacent.get(i).y-iv.y),(float)(adjacent.get(i).x-iv.x));
       placeVertex(adjacent.get(i), lastAngle, iv);
       if(adjacent.get(i).internal)  
         q.add(adjacent.get(i));
@@ -162,7 +162,7 @@ public class Packing extends Triangulation
      if(!v.placed)
      {
        Vertex lastKnown = adjacent.get((j-1)%adjacent.size());
-       lastAngle = atan2((float)(lastKnown.loc.y-iv.loc.y),(float)(lastKnown.loc.x-iv.loc.x));
+       lastAngle = atan2((float)(lastKnown.y-iv.y),(float)(lastKnown.x-iv.x));
     
        float x = iv.weight;
        float y = lastKnown.weight;

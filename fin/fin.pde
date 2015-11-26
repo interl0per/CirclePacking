@@ -2,68 +2,51 @@ import java.util.Random;
 
 final int NUM_OUTER_VERTS = 3;
 final int INF = 1<<30;
-Packing CPack;
+final int orthoSphereR = 200;
 
-boolean drawSphere = false;
-boolean drawOrtho = false;
 boolean drawing = false;
-boolean drawDualEdge = false;
-boolean drawBack = true;
-boolean d = true, e= true;
-boolean in = false;  
-boolean TEST = false;
-boolean circleDrawn = true;//false;
-boolean DEBUG1 = false;
-boolean cool_stuff = false;
+boolean in = true;
 
 float ax = 0, ay=0, az=0;
 float tx = 0, ty=0, tz=1;
-float fov = PI/3.0;
-float eyeX, eyeY, eyeZ;
-float eyeZStart = 800; // approximate value for now ;//(height/2.0)/tan(PI*30.0 / 180.0);
 int sx, sy;
-int orthoSphereR = 200;
 
-void settings() {
-  fullScreen(P3D);
-  //size(displayWidth, displayHeight, P3D);
-}
+Packing CPack;
+Vertex planeNormal = new Vertex(0,0,10);
 
-void setup() {
-  //fullScreen(P3D);
-  //size(width, height, P3D);
-  eyeX = width/2;
-  eyeY = height/2;
-  eyeZ = eyeZStart;
+void setup() 
+{
+  size(1024, 768, P3D);
   background(255);
   fill(0, 0);
   CPack = new Packing(NUM_OUTER_VERTS);
 }
 
-void draw() {
+void draw() 
+{
   translate(width/2, height/2, 0);  
-  keyPressedCall();
+  translate(tx, ty, tz);
 
-  translate(tx, ty, 0);
-  scale(tz);
   rotateX(ax);
   rotateZ(az);
   background(255);
   CPack.draw();
-  fill(0, 0, 255, 40);
   noStroke();
 
-  if (drawSphere) {
-    sphere(100);
-  }
   fill(200);
-  if(mousePressed) {
+
+  if(mousePressed) 
     mousePressedCall();
-  }
+   if(keyPressed)
+    keyPressedCall();
+    
+  planeNormal.draw();
+
 }
 
-void mousePressedCall() {
-  if (TEST) 
+void mousePressedCall() 
+{
+  if (CPack.mobius) 
   {
     if(in)
     {
@@ -76,68 +59,54 @@ void mousePressedCall() {
       in = true;
     sx = mouseX;
     sy = mouseY;
-
-  } else if (!drawing) {
+  } 
+  else if (!drawing) 
+  {
     drawing = true;
     sx = mouseX;
     sy = mouseY;
-  } else if (drawing) {
-    //float x = modelX(mouseX, mouseY,0);
-    //float y = modelY(mouseX,mouseY,0);
+  } 
+  else if (drawing) 
+  {
     float x = (sx - tx - width/2) / tz;
     float y = (sy - ty - height/2) / tz;
     float r = sqrt((mouseX-sx)*(mouseX-sx) + (mouseY-sy)*(mouseY-sy));
     ellipse(x,y,2*r,2*r);
-    //ellipse(sx - tx - width/2, sy - ty - height/2, 2*r, 2*r);
   }
 }
-void keyPressedCall() {
-  if (keyPressed) {
-    switch (key) {
+
+void keyReleased()
+{
+  switch(key)
+  {
     case '1':
-      drawOrtho = true;
+      CPack.drawOrtho = !CPack.drawOrtho;
       break;
     case '2':
-      drawOrtho = false;
+      CPack.drawDualEdge = !CPack.drawDualEdge;
+    case '7':
+      CPack.drawKoebe = !CPack.drawKoebe;
       break;
-    case '3':
-      drawBack = false;
-      drawDualEdge = true;
-      break;
-    case '4':
-      drawDualEdge = false;
-      break;
+  }
+}
+
+void keyPressedCall()
+{
+  switch(key)
+  {
     case '5':
-      if (circleDrawn) {
-        CPack.test();
-      }
+      CPack.test();
       break;
     case '6':
-      if (circleDrawn) {
-        CPack.computePacking();
-        CPack.layout();
-      }
-      break;
-    case '7':
-      cool_stuff = !cool_stuff;
-      break;
-    case '8':
-      if (circleDrawn) {
-        CPack.layout();
-      }
-      break;
-    case '9':    // reset display to original position
-      ty = 0;
-      tx = 0;
-      az = 0;
-      ax = 0;
-      tz = 0;
+      CPack.computePacking();
+      CPack.layout();
       break;
     case '\\':
       Random rand = new Random();
       int x = rand.nextInt(width) - width/2, y = rand.nextInt(height)-height/2;
-      CPack.addVertex(new Vertex(x, y, 10));//varRadii[x][y]));
+      CPack.addVertex(new Vertex(x, y, 0, 10));//varRadii[x][y]));
       break;
+
     case 'w':
       ty+=10;
       break;
@@ -151,49 +120,47 @@ void keyPressedCall() {
       tx-=10;
       break;
     case '=':
-      tz += .01;
-      //tz+= 10;
+      tz += 10;
       break;
     case '-':
-      //tz-= 10;
-      tz -= .01;
+      tz -= 10;
       break;
-    case 'v':
-      drawSphere = !drawSphere;
-      break;
-    case 'f':
-      DEBUG1 = !DEBUG1;
-      break;
-    }
-    switch (keyCode) {
+  }
+  switch (keyCode) 
+  {
     case UP:
       ax+=0.01;
+      planeNormal.rotate('x', 0.01);
       break;
     case DOWN:
-      ax-=0.01;  
+      ax-=0.01;
+      planeNormal.rotate('x', -0.01);
       break;
     case LEFT:
       az+=0.01;
+      planeNormal.rotate('z', 0.01);
       break;
     case RIGHT:
       az-=0.01;
+     planeNormal.rotate('z', -0.01);
       break;
     case ENTER:
-      TEST = true;
+      CPack.mobius = true;
       break;
-    }
   }
 }
-void mouseReleased() {
-  circleDrawn = true;
+
+void mouseReleased() 
+{
+  //float ixnZ = -(planeNormal.x*mouseX + planeNormal.y*mouseY)/planeNormal.z;
+  //Vertex test = new Vertex(mouseX-width/2, mouseY-height/2, ixnZ,0);
+  //test.draw();
+  //noLoop();
+
   in = false;
-  if (!TEST) {
-    drawing = false;
-    System.out.println("mouseX: " + sx + " mouseY: " + sy);
-    float x = (sx - tx - width/2) / tz;
-    float y = (sy - ty - height/2) /tz;
-    System.out.println("X: " + x + " Y: " + y);
-    CPack.addVertex(new Vertex(x, y, sqrt((mouseX-sx)*(mouseX-sx) + (mouseY-sy)*(mouseY-sy))));
-    CPack.computeSprings();
-  }
+  drawing = false;
+  float x = (sx - tx - width/2) / tz;
+  float y = (sy - ty - height/2) /tz;
+  CPack.addVertex(new Vertex(x, y, 0, sqrt((mouseX-sx)*(mouseX-sx) + (mouseY-sy)*(mouseY-sy))));
+  //CPack.computeSprings();
 }
