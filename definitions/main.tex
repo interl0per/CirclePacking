@@ -3,29 +3,32 @@
 \usepackage{amsfonts}
 \usepackage{tikz}
 \usepackage{natbib}
-\usepackage{graphicx}
 \usepackage{url}
-
+\usepackage{graphicx,amsmath,amsthm,amssymb}
+\usepackage{fullpage}
+\usepackage{eucal}
+\usepackage{color}
+\newcommand{\vect}[2]{\bigl[\begin{smallmatrix}#1\\#2\end{smallmatrix}\bigr]}
+\newcommand{\vectt}[3]{\bigl[\begin{smallmatrix}#1\\#2\\#3\end{smallmatrix}\bigr]}
 \newcommand{\Z}{\mathbb{Z}}
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\C}{\mathbb{C}}
 \newcommand{\CP}{\hat{\mathbb{C}}}
 
-\title{Project Definitions}
-\author{Connor Riley }
-\date{September 2015}
+\title{A Space of Circle Packing Algorithms}
+\author{Connor Riley, Don Sheehy, Kevin Pratt, Kirk Gardner}
+\date{February 2016}
 
 \begin{document}
 \maketitle
-
+\section{Introduction}
+The Circle packing theorem was first discovered by Paul Koebe and then later reintroduced by William Thurston in 1985. As a result, this is a relatively new topic to many mathematicians and Computer Scientists. 
 \section{Definitions}
  \subsection{Graphs}
   A \textbf{graph} is an ordered pair $G=(V,E)$ which represents a set of objects where some of these objects are linked. In the denotation $G=(V,E)$, $V$ stands for the vertexes or objects, and $E$ stands for the edges or links. Edges in a graph can be directed or undirected, however, we will focus on undirected edges in our application.
 
- \subsubsection{Components}
   A component or \textbf{connected component} of a graph is a subgraph in which any two vertices are connected to each other by a path which is connected to no additional vertices in the supergraph.
 
- \subsubsection{Loops}
   A \textbf{loop} is when a vertex has an edge connecting it to itself. \citep{NIST:self-loop}
   \begin{center}
 	\begin{tikzpicture}[scale=0.2]\tikzstyle{every node}+=[inner sep=0pt]
@@ -37,7 +40,6 @@
     \end{tikzpicture}
   \end{center}
 
- \subsubsection{Multiple Edges}
   A graph with multiple edges is one which has two or more edges connect the same two vertices.
   \begin{center}
 	\begin{tikzpicture}[scale=0.2]\tikzstyle{every node}+=[inner sep=0pt]
@@ -52,24 +54,24 @@
 	\end{tikzpicture}
   \end{center}
 
- \subsection{Types of Graphs}
- \subsubsection{Connected Graphs}
+ \subsubsection{Types of Graphs}
   A graph is \textbf{connected} when there is a path between every pair of vertices. 
-  In a connected graph every vertex is reachable. A graph with just one vertex is connected~\citep{mathworld:ConnectedGraphs}.
-
- \subsubsection{Simple Graphs}
+  In a connected graph every vertex is reachable. A graph with just one vertex is connected~\citep{mathworld:ConnectedGraphs}. A graph is said to be k-connected if there does not exist a set of k-1 vertices whose removal disconnects the graph. Typically we will work with 3-connected graphs - this means that three vertices would have to be removed to disconnect the graph.
+  
   A \textbf{simple graph} is an unweighted, undirected graph, containing no loops or multiple edges. 
   A simple graph may either be connected or disconnected~\citep{mathworld:SimpleGraphs}.
-
-  \subsubsection{Planar Graphs}
+  
   A \textbf{planar graph} is one that can be embedded in the plane. 
-  In other words, the graph can be drawn on the plane in such a way that its edges intersect only at their endpoints (no edges cross each other)~\citep{mathworld:PlanarGraph}.
-  \begin{itemize}
-	\item A triangulation, also referred to as a maximal planar graph, is a planar graph in which there is no way to add another edge and have the graph continue to be planar. 
-	In practice these means that each face is bounded by three edges~\citep{mathworld:Triangulation}.
-  \end{itemize}
-
- \subsection{Embedding}
+  In other words, the graph can be drawn on the plane in such a way that its edges intersect only at their endpoints (no edges cross each other)~\citep{mathworld:PlanarGraph}. By $Whitney's$ $Theorem$ if a graph is planar and 3-connected, all the faces of the graph will be the same shape. A Triangulated graph, or triangulation is an example of this property.
+  
+  A \textbf{triangulation}, also referred to as a \textbf{maximal planar graph}, is a planar graph in which there is no way to add another edge and have the graph continue to be planar. In practice this means that each face is bounded by three edges~\citep{mathworld:Triangulation}.
+  
+  \textbf{Euler's formula} states that if a finite, connected, planar graph is drawn in the plane without any edge intersections, and $v$ is the number of vertices, $e$ is the number of edges and $f$ is the number of faces (including the outer region), then: 
+  \begin{equation} 
+	v-e+f=2
+  \end{equation}
+  
+  \subsection{Embedding}
   An \textbf{embedding} of a graph $G$ on a surface $\Sigma$ is a representation of $G$ on $\Sigma$ in which points of $\Sigma$ are associated to vertices and simple arcs are associated to edges in such a way that:
   \begin{itemize}
 	\item The endpoints of the arc associated to the edge $e$ are the points associated to the end vertices of $e$.
@@ -80,29 +82,51 @@
   \subsubsection{Straight-Line Embedding}
   A \textbf{straight-line embedding} is a embedding of a planar graph in which all arcs are straight.
 
- \subsection{Euler's Formula}
-  Euler's formula states that if a finite, connected, planar graph is drawn in the plane without any edge intersections, and $v$ is the number of vertices, $e$ is the number of edges and $f$ is the number of faces (including the outer region), then: 
-  \begin{equation} 
-	v-e+f=2
-  \end{equation}
 
   If $c$ is the number of components in a graph, then a more general form of Euler's formula is:
   \begin{equation} 
 	v-e+f= 1 + c
   \end{equation}
-
+  
+  \subsubsection{Delaunay Triangulation}
+  The \textbf{circumcircle} of a triangle is the circle which passes through all three of its vertices. The center of the circumcircle is called the \textbf{circumcenter} and the radius is the \textbf{circumradius}.
+  The \textbf{altitudes} of a triangle are formed by drawing a perpendicular line from each vertex to the opposite side of the triangle. The \textbf{orthocenter} of a triangle is the point where all three altitudes of the triangle intersect.
+  A \textbf{Delaunay Triangulation} for a set of points $P$ is the triangulation of those points such that no point in $P$ is inside the circumcircle of any other triangle. These triangulations are intimately connected to Circle Packings, described later.
+  
+  The \textbf{Voronoi Diagram} is the dual of the Delaunay Triangulation. If you input $n$ points in $\R^2$ $P=\{p_1,..p_n\}$ the output is a polyhedral complex with $n$ 2-face (2-cells) where cell $v_i$ is $v_i = \{x \in \R^2 : \| x - p_i \| \leq \| x - p_j\|\}$
+  
+ \subsection{Maxwell-Cremona Correspondence}
+ A \textbf{lifting} (of a planar straight line graph) is an assignment of heights to vertices such that the vertices of each face are coplanar in $\R^3$ (the faces are flat).
+ 
+ The \textbf{Maxwell-Cremona Correspondence}: There is a natural correspondence between equilibrium stresses of planar linkage and the liftings of that linkage.
+ 
+ $Equalibruim$  $Stress \leftrightarrow Reciprocal$ $Diagrams \leftrightarrow Liftings$
+ 
+ \subsection{Tutte Embedding}
+  
+  A \textbf{Tutte embedding} or barycentric embedding of a simple 3-connected planar graph is a crossing-free straight-line embedding with the properties that the outer face is a convex polygon and that each interior vertex is at the average (or barycenter) of its neighbor's positions. If the outer polygon is fixed, this condition on the interior vertices determines their position uniquely as the solution to a system of linear equations. Solving the equations geometrically produces a planar embedding. 
+  
+  Tutte's spring theorem states that this unique solution is always crossing-free, and more strongly that every face of the resulting planar embedding is convex. It is called the spring theorem because such an embedding can be found as the equilibrium position for a system of springs representing the edges of the graph.
+  
+  Algorithm: First, fix one face of a simple, planar, 3-connected graph in convex position. Next, place each other vertex at the barycenter(centroid) of its neighbors. The result is a non-crossing, convex drawing.
+  
+ \subsection{Topology}
+ Topology is concerned with the properties of space that are preserved under continuous deformations, such as stretching and bending, but not tearing or gluing. This can be studied by considering a collection of subsets, called open sets, that satisfy certain properties, turning the given set into what is known as a topological space. 
+  \subsubsection{Riemann Surface}
+  To understand Riemann surfaces, one must first understand the complex plane. The complex plane is a geometric representation of the complex numbers, where the x-axis represents the real part of a complex number and the y-axis the complex part. Riemann surfaces may be thought of as deformed versions of the complex plane. These surfaces are important for studying Holomorphic functions, also called conformal maps, which are complex-valued functions of one or more complex variables that is complex differentiable in a neighborhood of every point in its domain.
+  
+  The most important Riemann surface for Circle Packing is the Riemann Sphere which is a model of the complex plane plus a point at infinity. The Riemann sphere can be visualized as the unit sphere in $\mathbb{R}^3$. 
  \subsection{Circle Packing}
   We say that two circles drawn in a plane kiss (or osculate) when they intersect in exactly one point. 
-  A \textbf{circle packing} is a graph formed by a set of circles which have no overlapping interiors where each circle kisses its surrounding circles. 
+  A \textbf{circle packing} is a graph formed by a set of circles which have no overlapping interiors, where each circle kisses its surrounding circles. 
   Formally, a circle packing is a connected collection of circles whose interiors are disjoint. 
   The \textbf{intersection graph} of a circle packing is the graph having a vertex for each circle and an edge for every pair of circles that are tangent. 
   If the circle packing is on the plane or the sphere, then its intersection graph is called a \textbf{coin graph}. 
   Coin graphs are always connected, simple and planar. 
 
-    Common geometric settings for circle packing are the $euclidean$ $plane$, $the$ $sphere$ and the $hyperbolic$ $plane$. Each pair of circles in a packing forms a tangent pair, and the empty space between each $triple$ forms a $interstice$. A $flower$ is the next level of structure, which consists of a central circle and some number of $petal$ circles. The number of petals defines the $degree$ of the central circle. A condition that we will enforce on all circle packings is that every circle must have a flower. This condition is a $local$ $planarity$ condition. \citep{introCirlceacking}
+    Common geometric settings for circle packing are the $euclidean$ $plane$, $the$ $sphere$ and the $hyperbolic$ $plane$. Each pair of circles in a packing forms a tangent pair, and the empty space between each $triple$ forms a $interstice$. A $flower$ is the next level of structure, which consists of a central circle and some number of $petal$ circles. The number of petals defines the $degree$ of the central circle. A condition that we will enforce on all circle packings is that every circle must have a flower. This condition is a $local$ $planarity$ condition. \citep{introCirlceacking} Note that while not all circle packings are unilevant, the ones created by our application will all be unilevant. This means that the interior of all the circles will be mutually disjoint and that the angle sum at each label will be $2\pi$.
     \subsubsection{Koebe Representation Theorem}
-    Given any planar graph $G$ with vertex set $V(G) = \{v_1, ... v_n \}$ and edge set $E(G)$, we can find a packing of n (not necessarily congruent) circular discs $C= \{C_1,... C_n\}$ in the plane with the property that $C_i$ and $C_j$ touch each other if and only if $v_i v_j \epsilon E(G)$ for $1 \le i \le n$. \citep{combinatorialGeometry}
-    \subsubsection{Liftings}
+    Given any planar graph $G$ with vertex set $V(G) = \{v_1, ... v_n \}$ and edge set $E(G)$, we can find a packing of n (not necessarily congruent) circular discs $C= \{C_1,... C_n\}$ in the plane with the property that $C_i$ and $C_j$ touch each other if and only if $v_i v_j \epsilon E(G)$ for $1 \le i \le n$. \citep{combinatorialGeometry} 
     \subsubsection{Stereographic Projections}
     A \textbf{sterographic projection} is a bijective mapping that projects a sphere onto a plane.
      The projection is defined on the entire sphere except for the projection point. 
@@ -115,8 +139,10 @@
     	f(z) = \frac{az+b}{cz+d}
     \end{equation}
     where $z\in\CP$ is a complex variable and $a,b,c,d\in\CP$ are complex numbers such that $ad - bc$ $\neq$ $0$.
-
- \subsection{Dual Graph}
+ 
+ \subsection{Dual}
+  The dual of a point is a line. The mapping is as follows: $p : point = \vect{p_x}{p_y} \rightarrow p^* : line = \vect{2p_x}{-p_y}$ The mapping from a line to a point is: $\ell : line = \vect{\ell_n}{\ell_b} \rightarrow \ell^* : point = \vect{\frac{1}{2}\ell_n}{-\ell_b}$.
+  
   The \textbf{dual graph} of a plane graph $G$ is a graph that has a vertex for each face of $G$. 
   The dual graph has an edge whenever two faces of $G$ are separated from each other by an edge. 
   Thus each edge $e$ of $G$ has a corresponding dual edge, the edge that connects the two faces on either side of $e$. 
@@ -125,12 +151,17 @@
   The \textbf{dual packing} is the circle packing of the dual graph. 
   In this packing, each circle passes through the points where the original circles kiss. 
   The dual packing does not form a triangulation whereas the original circle packing does.
+  The dual radii are the radii of the circles in the dual packing, the dual stress and dual lifting are calculated similarly.
 
-\section{Data Structures}
+\section{Data Structure}
  \subsection{Half Edge}
   Also called a doubly-connected edge list, the \textbf{half edge} data structure associates two directed half edges to each edge on the graph. 
   Each half edge stores a vertex, a face, the next half edge, the previous half edge and the twin, which is the half edge going in the other direction. 
   Half edges are typically directed counter clockwise with respect to the face they define.
+\subsection{Graph Structure}
+  Let $G=(V,E)$ be a simple, planar, 3-connected graph. This graph will be composed of: $E$ edges, each bi-directional and made up of 2 Half Edge; $V$ vertices; and $F$ faces where a face is defined as $f(u,v) =$ face left of $\overrightarrow{uv}$ if $(u,v)\in E$.
+\subsection{Enriched Embedding}
+  In addition to storing the graph, we store other objects to allow for easier computation and to facilitate the switching of visual representations of the packing. These objects include the Embedding $\pi : V \rightarrow \mathbb{R}^2$, the Dual Embedding $\overline{\pi} : F \rightarrow \mathbb{R}^2$, the Stress $S : E \rightarrow \mathbb{R}$, the Lift $h : V \rightarrow \mathbb{R}$, the radii $r : V \rightarrow \mathbb{R}$ and the Dual Radii $\overline{r} : F \rightarrow \mathbb{R}$.
 
 \bibliographystyle{plain}
 \bibliography{references}
