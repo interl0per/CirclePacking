@@ -31,9 +31,9 @@ boolean inOrthocircle(Vertex a, Vertex b, Vertex c, Vertex d)//is d in the circu
  float abdet = adx * bdy - bdx * ady;
  float bcdet = bdx * cdy - cdx * bdy;
  float cadet = cdx * ady - adx * cdy;
- float alift = adx * adx + ady * ady - d.weight*d.weight - a.weight*a.weight;
- float blift = bdx * bdx + bdy * bdy - d.weight*d.weight - b.weight*b.weight;
- float clift = cdx * cdx + cdy * cdy - d.weight*d.weight - c.weight*c.weight;
+ float alift = adx * adx + ady * ady - d.r*d.r - a.r*a.r;
+ float blift = bdx * bdx + bdy * bdy - d.r*d.r - b.r*b.r;
+ float clift = cdx * cdx + cdy * cdy - d.r*d.r - c.r*c.r;
  return alift * bcdet + blift * cadet + clift * abdet < 0;
 }
 
