@@ -1,18 +1,18 @@
 //HalfEdge data structure, and a stack and queue implementation.
 //Also there are some methods to use on the HalfEdge data structure.
-class HalfEdge extends Triangulation
+class HalfEdge
 {
   HalfEdge prev;
   HalfEdge next;
   HalfEdge twin;
   Edge e;
-  Point ixn, ixnp; 
   Vertex v;
+  
   float ocx=-INF, ocy=-INF, ocr = 1;//orthocenter of this face
     
-  HalfEdge(Vertex vv) 
+  public HalfEdge(Vertex _v) 
   {
-    v =vv;
+    v = _v;
   }
     
   void connectTo(HalfEdge h) 
@@ -20,9 +20,10 @@ class HalfEdge extends Triangulation
     next = h;
     h.prev = this;
   }
-  // Disconnect both a halfedge and its twin.
+  
   void detach() 
   {
+    // Disconnect both a halfedge and its twin.
     if(v.isLeaf())
       v.h = null;
     else 
@@ -39,17 +40,18 @@ class HalfEdge extends Triangulation
     }
     this.e = null;
     twin.e = null;
-    for(int i = 0; i < edges.size(); i++)
+    
+    for(int i = 0; i < v.parent.edges.size(); i++)
     {
-      if(edges.get(i).h1 == this || edges.get(i).h1 == twin)
-      {
-        edges.remove(i);
-        i--;
-      }
+     if(v.parent.edges.get(i).h1 == this || v.parent.edges.get(i).h1 == twin)
+     {
+       v.parent.edges.remove(i);
+       i--;
+     }
     }
   }
    
-  HalfEdge findHE(Point d)//bfs the faces
+  HalfEdge findFace(Vertex d)//find the face containing this vertex
   {
     HashMap<HalfEdge, Boolean> visited = new HashMap<HalfEdge, Boolean>();
     JQueue<HalfEdge> q = new JQueue<HalfEdge>();
@@ -66,7 +68,7 @@ class HalfEdge extends Triangulation
       q.add(he.next);
       q.add(he.twin);
     }
-    println("it seems that the point is not inside any triangle");
+    println("The input vertex does not lie in any face");
     return null;
   }
 }
@@ -108,175 +110,14 @@ class JQueue<T>
 class Edge 
 {
   HalfEdge h1, h2;
-  float spring;
+  Vertex v1, v2;
+  float stress;
+  Edge dual;
   public Edge(HalfEdge _h1, HalfEdge _h2) 
   {  
     h1 = _h1; 
-    h2 = _h2;  
+    h2 = _h2;
+    v1 = h1.v;
+    v2 = h2.v;
   }
-}
-
-class Vertex extends Triangulation
-{
-  //Point stereoUp;
-  color shade = 200;
-  boolean internal = true, processed = false, placed = false, f = false;
-  //boolean fake = false, fixed = false, almostOuter = false;
-  HalfEdge h;
-  Point loc;
-  float weight; // z = f(x,y,weight)
-  
-  Vertex(float _x, float _y, float _w) 
-  {
-    loc = new Point(_x, _y, 0);
-    weight = _w;
-    //stereoUp = project(loc);
-  }
-
-  void draw()
-  {
-    if(!internal)
-    {
-      //println(stereoUp.x);
-    }
-    if(/*internal &&*/ !TEST)
-    {
-      //stereoUp = project(new Point(loc.x, loc.y, 0));//update
-    }
-    //if(loc.x > 0 && loc.x < width && loc.y > 0 && loc.y < height)
-    //{
-    //  fill(shade);
-    //}
-    stroke(0);
-    strokeWeight(1.5);
-    if(!DEBUG1)
-      ellipse((float)loc.x, (float)loc.y,2*weight,2*weight);
-    stroke(200, 0, 0);
-    strokeWeight(1);
-    
-    //if(TEST)
-    //  loc = project2(stereoUp);
-   // if(!internal)
-   //   return;
-    if(h.ixnp!=null)
-    {
-      translate(h.ixnp.x, h.ixnp.y,h.ixnp.z);
-      sphere(10);
-      translate(-h.ixnp.x, -h.ixnp.y,-h.ixnp.z);
-    }
-    fill(200);
-  }
-    
-  float getZ()
-  {
-    return (loc.x*loc.x + loc.y*loc.y - weight*weight);
-  }
-  
-  HalfEdge handle(Vertex u) 
-  {
-    if (isIsolated() || isLeaf()) return h;
-    HalfEdge h1 = h, h2 = h.prev.twin;
-    while (!ordered(h1.twin.v, u, h2.twin.v)) 
-    {
-      h1 = h2;
-      h2 = h1.prev.twin;      
-    }
-    return h1;
-  }
-    
-boolean isIsolated() 
-{
-  return (h == null);
-}
-  
-boolean isLeaf() 
-{
-  return (!isIsolated()) && (h.twin == h.prev);
-}
-  
-boolean ccw(Vertex a, Vertex b) 
-{
-  return ((a.loc.y-loc.y) * (b.loc.x-loc.x) - (a.loc.x-loc.x) * (b.loc.y-loc.y) >= 0);
-}
-  
-boolean ordered(Vertex a, Vertex b, Vertex c) 
-{
-  boolean I   = ccw(a,b);
-  boolean II  = ccw(b,c);
-  boolean III = ccw(c,a);
-  return ((I && (II || III)) || (II && III)); // at least two must be true
-}
-ArrayList<Vertex> degree()//returns neighbors in ccw order
-{
-  ArrayList<Vertex> neighbors = new ArrayList<Vertex>();
-  neighbors.add(h.next.v);
-  HalfEdge test = h.prev.twin;
-  while(test != h)
-  {
-    neighbors.add(test.next.v);
-    test = test.prev.twin;
-  }
-  return neighbors;
-}
-
-void attach(Vertex t) 
-{
-  //don't connect verticies that are already connected
-  if(this.h!=null&&this.h.next!=null && this.h.next.v == t)
-    return;
-      
-  HalfEdge test = null;
-    
-  if(this.h!=null&&this.h.prev!=null)
-    test = this.h.prev.twin;
-      
-  while(test!=null&&test!=this.h)
-  {
-    if(test.next.v==t)  
-      return;
-    test = test.prev.twin;
-  }
-  
-  HalfEdge h1 = new HalfEdge(this);
-  HalfEdge h2 = new HalfEdge(t);
-  h1.twin = h2;
-  h2.twin = h1;
-  if (this.h == null) 
-  {
-    h2.connectTo(h1);
-    this.h = h1;
-  }
-  if (t.h == null) 
-  {
-    h1.connectTo(h2);
-    t.h = h2;    
-  }
-  
-  HalfEdge sh = this.handle(t);
-  HalfEdge th = t.handle(this);
-  sh.prev.connectTo(h1);
-  th.prev.connectTo(h2);
-  h2.connectTo(sh);
-  h1.connectTo(th);
-  
-  edges.add(new Edge(h1, h2));
-  h1.e = edges.get(edges.size()-1);
-  h2.e = edges.get(edges.size()-1);
-}
- 
- float angleSum()
- {
-   float res = 0;
-   ArrayList<Vertex> adjacent = degree();
-
-   float x = weight;
-
-   for(int i = 1; i <= adjacent.size(); i++)
-   {
-      float y = adjacent.get(i-1).weight;
-      float z = adjacent.get(i%adjacent.size()).weight;
-      res += Math.acos(((x+y)*(x+y) + (x+z)*(x+z) +- (y+z)*(y+z))/(2*(x+y)*(x+z)));
-   }
-   return res;
- }
 }
