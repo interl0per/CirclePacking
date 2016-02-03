@@ -92,7 +92,3 @@ Vertex stereoProjI(Vertex init)
 {
   return new Vertex(init.x*orthoSphereR/(orthoSphereR-init.z), init.y*orthoSphereR/(orthoSphereR-init.z), 0, 0);
 }
-float det(float[][] m)
-{
-  return m[0][0]*m[1][1] - m[0][1]*m[1][0];
-}

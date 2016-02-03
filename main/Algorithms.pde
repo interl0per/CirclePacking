@@ -3,11 +3,20 @@ EnrichedEmbedding radii_update(EnrichedEmbedding ebd)
   return ebd;
 }
 
-EnrichedEmbedding force_sim(EnrichedEmbedding ebd)
+void force_sim(EnrichedEmbedding t)
 {
-  while(!ebd.isPacking())
+  if(!t.isPacking())
   {
-    ///...
+    for(Vertex v : t.G.verts)
+    {
+      if(v.angleSum() > 2*PI)
+      {
+        v.r += 0.5;
+      }
+      else
+      {
+        v.r -= 0.5;
+      }
+    }
   }
-  return ebd;
 }

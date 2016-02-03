@@ -1,10 +1,10 @@
 class EnrichedEmbedding
 {
-  Triangulation G;
+  Complex G;
   
   public EnrichedEmbedding(int n)
   {
-    G = new Triangulation(n);
+    G = new Complex(n);
   }
   /////////////////
   //Drawing methods
@@ -62,10 +62,67 @@ class EnrichedEmbedding
       e.stress = (e.dual.v1.r + e.dual.v2.r) / (e.v1.r + e.v2.r);
     }
   }
+  
+  
   void cEmbedding_radii()
   {
-    //layout algorithm
+    //layout algorithm, gives correct embedding given good radii
+    G.verts.get(0).x = width/2;
+    G.verts.get(0).y = height/2;
     
+    for(Vertex v : G.outerVerts)
+      v.placed = false;
+    for(Vertex v : G.verts)
+    {
+      v.placed = false;
+      v.processed = false;
+    }
+    //fix an arbitrary internal vertex
+    G.verts.get(0).placed = true;
+    JQueue<Vertex> q = new JQueue<Vertex>();
+    q.add(G.verts.get(0));
+
+    while(!q.isEmpty())
+    {
+      Vertex iv = q.remove();
+      ArrayList<Vertex> adjacent = iv.neighbors();//ordered neighbors
+  
+      int i,j;
+      for(i = 0; i < adjacent.size() && !adjacent.get(i).placed; i++);
+      //find a placed petal, if there is one
+      float lastAngle = 0;
+          
+      if(i==adjacent.size() && !adjacent.get(i-1).placed)  
+      {//initialization
+        i--; 
+        lastAngle = atan2((float)(adjacent.get(i).y-iv.y),(float)(adjacent.get(i).x-iv.x));
+        G.placeVertex(adjacent.get(i), lastAngle, iv);
+        if(adjacent.get(i).internal)  
+          q.add(adjacent.get(i));
+      }
+       
+     j = i;
+       
+     while(++j % adjacent.size() != i)
+     {
+       Vertex v = adjacent.get(j % adjacent.size());
+       if(!v.placed)
+       {
+         Vertex lastKnown = adjacent.get((j-1)%adjacent.size());
+         lastAngle = atan2((float)(lastKnown.y-iv.y),(float)(lastKnown.x-iv.x));
+      
+         float x = iv.r;
+         float y = lastKnown.r;
+         float z = v.r;
+   
+         float theta = (float)Math.acos(((x+y)*(x+y) + (x+z)*(x+z) - (y+z)*(y+z))/(2*(x+y)*(x+z)));
+         G.placeVertex(v, lastAngle-theta, iv);
+       }
+       if(!v.processed && v.internal)
+         q.add(v);
+     }
+     iv.processed = true;
+    }
   }
   
   void cDualRadii_embedding()

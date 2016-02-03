@@ -4,9 +4,9 @@ class Vertex
  float x, y, z, r;
  boolean internal = true, processed = false, placed = false, f = false;
  HalfEdge h;
- Triangulation parent;//triangulation this vertex belongs to 
+ Complex parent;//Complex this vertex belongs to 
  
- public Vertex(float _x, float _y, float _z, float _w, Triangulation _p)
+ public Vertex(float _x, float _y, float _z, float _w, Complex _p)
  {
    x = _x; y = _y; z = _z; r = _w; parent = _p;
  }
@@ -136,7 +136,7 @@ class Vertex
   void attach(Vertex t) 
   {
     
-    //don't connect verticies that are already connected or not in same triangulation
+    //don't connect verticies that are already connected or not in same Complex
     if(t.parent != parent || this.h!=null&&this.h.next!=null && this.h.next.v == t)
       return;
         

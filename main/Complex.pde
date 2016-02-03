@@ -1,16 +1,16 @@
 //
 
-class Triangulation
+class Complex
 {
     public ArrayList<Vertex> verts = new ArrayList<Vertex>();//internal verticies
     public ArrayList<Vertex> outerVerts = new ArrayList<Vertex>();
     public ArrayList<Edge> edges = new ArrayList<Edge>();
     
-    Triangulation dual;
+    Complex dual;
     
-    public Triangulation(){}
+    public Complex(){}
     
-    public Triangulation(int n)
+    public Complex(int n)
     {
      //create outer face (a regular n-gon)
      Vertex center = new Vertex(width/2, height/2, 0, 700, this);
@@ -68,7 +68,7 @@ class Triangulation
     
     boolean addVertex(Vertex v)
     {
-      //add a vertex to the weighted delaunay triangulation
+      //add a vertex to the complex (delaunay triangulation)
      if(v.r < EPSILON)  
        v.r = 10;
        
@@ -94,7 +94,7 @@ class Triangulation
          Edge nxt = edgesToCheck.pop();
          inStack.put(nxt, false);//mark as out of the stack
     
-         if(nxt.h1.e==null)  continue; //removed edge
+         if(nxt.h1.e==null)  continue; //already removed edge
          
          if(inOrthocircle(nxt.h2.v, nxt.h2.next.v, nxt.h2.prev.v, nxt.h1.prev.v) || inOrthocircle(nxt.h1.v, nxt.h1.next.v, nxt.h1.prev.v, nxt.h2.prev.v))
          {//edge is not ld
@@ -141,7 +141,7 @@ class Triangulation
  }
  
  void checkEdges(Edge[] checkEdge, HashMap<Edge, Boolean> inStack, JStack<Edge> edgesToCheck)
- {//delaunay triangulation helper
+ {//delaunay Complex helper
     for(Edge e : checkEdge)
     {
        if(inStack.get(e) == null || !inStack.get(e))

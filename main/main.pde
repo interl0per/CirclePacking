@@ -1,6 +1,6 @@
 import java.util.Random;
 
-final int NUM_OUTER_VERTS = 6;
+final int NUM_OUTER_VERTS = 3;
 final int INF = 1<<30;
 final int orthoSphereR = 200;
 
@@ -18,8 +18,22 @@ void draw()
   background(255);
   test.drawPSLG();
   test.drawRadii();
+  if(keyPressed)
+    switch(key)
+    {
+      case(TAB):
+      {
+        force_sim(test);
+        test.cEmbedding_radii();
+        break;
+      }
+    }
 }
 void mouseReleased()
 {
   test.addVertex(mouseX, mouseY, 1);
+}
+void keyPressed()
+{
+
 }
