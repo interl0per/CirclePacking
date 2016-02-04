@@ -1,13 +1,18 @@
 class Vertex
 {
  color shade = 200;
- float x, y, z, weight;
+ float x, y, z, r;
  boolean internal = true, processed = false, placed = false, f = false;
  HalfEdge h;
-
- public Vertex(float _x, float _y, float _z, float _w)
+ Complex parent;//Complex this vertex belongs to 
+ 
+ public Vertex(float _x, float _y, float _z, float _w, Complex _p)
  {
-   x = _x; y = _y; z = _z; weight = _w;
+   x = _x; y = _y; z = _z; r = _w; parent = _p;
+ }
+  public Vertex(float _x, float _y, float _z, float _w)
+ {
+   x = _x; y = _y; z = _z; r = _w;
  }
  public Vertex(float _x, float _y, float _z)
  {
@@ -27,19 +32,19 @@ class Vertex
  }
  Vertex scale(float s)
  {
-   return new Vertex(x*s, y*s, z*s, weight);
+   return new Vertex(x*s, y*s, z*s, r);
  }
  Vertex crossp(Vertex b)
  {
-    return(new Vertex(y*b.z - z*b.y, z*b.x - x*b.z, x*b.y - y*b.x, weight));
+    return(new Vertex(y*b.z - z*b.y, z*b.x - x*b.z, x*b.y - y*b.x, r));
  }
  Vertex negate()
  {
-   return new Vertex(-x, -y, -z, weight);
+   return new Vertex(-x, -y, -z, r);
  }
  Vertex add(Vertex b)
  {
-   return new Vertex(x+b.x, y+b.y, z+b.z, weight);
+   return new Vertex(x+b.x, y+b.y, z+b.z, r);
  }
  void rotate(char dir, float theta)
  {
@@ -66,16 +71,17 @@ class Vertex
  void draw()
  {
     pushStyle();
-    stroke(0);
-    strokeWeight(1.5);
+    
+    noStroke();
     fill(0,0,200);
-    ellipse(x, y,2*weight,2*weight);
+    ellipse(x, y,2*r,2*r);
+    
     popStyle();
  }
  
   float getZ()
   {
-    return (x*x + y*y - weight*weight);
+    return (x*x + y*y - r*r);
   }
   
    float angleSum()
@@ -83,13 +89,11 @@ class Vertex
      float res = 0;
      ArrayList<Vertex> adjacent = neighbors();
   
-     float x = weight;
-  
      for(int i = 1; i <= adjacent.size(); i++)
      {
-        float y = adjacent.get(i-1).weight;
-        float z = adjacent.get(i%adjacent.size()).weight;
-        res += Math.acos(((x+y)*(x+y) + (x+z)*(x+z) +- (y+z)*(y+z))/(2*(x+y)*(x+z)));
+        float y = adjacent.get(i-1).r;
+        float z = adjacent.get(i%adjacent.size()).r;
+        res += Math.acos(((r+y)*(r+y) + (r+z)*(r+z) +- (y+z)*(y+z))/(2*(r+y)*(r+z)));
      }
      return res;
    }
@@ -131,8 +135,9 @@ class Vertex
   
   void attach(Vertex t) 
   {
-    //don't connect verticies that are already connected
-    if(this.h!=null&&this.h.next!=null && this.h.next.v == t)
+    
+    //don't connect verticies that are already connected or not in same Complex
+    if(t.parent != parent || this.h!=null&&this.h.next!=null && this.h.next.v == t)
       return;
         
     HalfEdge test = null;
@@ -169,9 +174,9 @@ class Vertex
     h2.connectTo(sh);
     h1.connectTo(th);
     
-    edges.add(new Edge(h1, h2));
-    h1.e = edges.get(edges.size()-1);
-    h2.e = edges.get(edges.size()-1);
+    parent.edges.add(new Edge(h1, h2));
+    h1.e = parent.edges.get(parent.edges.size()-1);
+    h2.e = parent.edges.get(parent.edges.size()-1);
   }
   
   ArrayList<Vertex> neighbors()//returns neighbors in ccw order
