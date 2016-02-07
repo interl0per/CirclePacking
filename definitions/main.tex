@@ -24,6 +24,7 @@
 \section{Introduction}
 The Circle packing theorem was first discovered by Paul Koebe and then later reintroduced by William Thurston in 1985. As a result, this is a relatively new topic to many mathematicians and Computer Scientists. 
 \section{Definitions}
+The following section contains definitions needed either to explain other definitions or to understand Circle Packings to their fullest.
  \subsection{Graphs}
   A \textbf{graph} is an ordered pair $G=(V,E)$ which represents a set of objects where some of these objects are linked. In the denotation $G=(V,E)$, $V$ stands for the vertexes or objects, and $E$ stands for the edges or links. Edges in a graph can be directed or undirected, however, we will focus on undirected edges in our application.
 
@@ -72,6 +73,12 @@ The Circle packing theorem was first discovered by Paul Koebe and then later rei
   A \textbf{planar graph} is one that can be embedded in the plane. 
   In other words, the graph can be drawn on the plane in such a way that its edges intersect only at their endpoints (no edges cross each other)~\citep{mathworld:PlanarGraph}. By $Whitney's$ $Theorem$ if a graph is planar and 3-connected, all the faces of the graph will be the same shape. A Triangulated graph, or triangulation is an example of this property.
   
+  A graph $G' = (V',E')$ is a \textbf{subgraph} of $G$ ($G' \subseteq G$), if $V' \subseteq V$ and $E' \subseteq E$. Two important types of subgraphs are:
+  \begin{itemize}
+  \item A $path$ between two vertices $v_1$ and $v_k$ in $G$ is a subgraph $G' \subseteq G$ with $V' = \{v_1,...v_k\}$ and $E' 	= \{\{v_1,v_2\},...\{v_{k-1}, v_k\}\}$. We write $G' = G_{v_1}^{v_k}$.
+  \item A $k-cycle$ in $G$ is a subgraph $G'\subseteq G$ with $V' = \{v_1,...,v_k\}$ and $E' = \{\{v_1,v_2\},...\{v_{k-1}, v_k\}, \{v_k,_1\}\}$
+  \item A $Y-Graph$ in $G$ that connects $v_1,v_2, v_3 \in V$ is a subgraph $G' \subseteq G$ such that there exists a vertex $w \in V \backslash \{v_1,v_2, v_3\}$ and paths $G_{v_1}^w, G_{v_2}^w, G_{v_3}^w$ that are disjoint except for the common endpoint $w$.
+  \end{itemize}
   A \textbf{triangulation}, also referred to as a \textbf{maximal planar graph}, is a planar graph in which there is no way to add another edge and have the graph continue to be planar. In practice this means that each face is bounded by three edges\citep{mathworld:Triangulation}.
   
   \textbf{Euler's formula} states that if a finite, connected, planar graph is drawn in the plane without any edge intersections, and $v$ is the number of vertices, $e$ is the number of edges and $f$ is the number of faces (including the outer region), then: 
@@ -152,7 +159,7 @@ Another variant of Tutte's theorem for non-strictly convex boundaries is as foll
  
  $Equalibruim$  $Stress \leftrightarrow Reciprocal$ $Diagrams \leftrightarrow Liftings$
  
- \subsection{Topology}
+  \subsection{Topology}
  Topology is concerned with the properties of space that are preserved under continuous deformations, such as stretching and bending, but not tearing or gluing. This can be studied by considering a collection of subsets, called open sets, that satisfy certain properties, turning the given set into what is known as a topological space. 
   \subsubsection{Riemann Surface}
   To understand Riemann surfaces, one must first understand the complex plane. The complex plane is a geometric representation of the complex numbers, where the x-axis represents the real part of a complex number and the y-axis the complex part. Riemann surfaces may be thought of as deformed versions of the complex plane. These surfaces are important for studying Holomorphic functions, also called conformal maps, which are complex-valued functions of one or more complex variables that is complex differentiable in a neighborhood of every point in its domain.
@@ -212,6 +219,58 @@ Another variant of Tutte's theorem for non-strictly convex boundaries is as foll
 \subsection{Enriched Embedding}
   In addition to storing the graph, we store other objects to allow for easier computation and to facilitate the switching of visual representations of the packing. These objects include the Embedding $\pi : V \rightarrow \mathbb{R}^2$, the Dual Embedding $\overline{\pi} : F \rightarrow \mathbb{R}^2$, the Stress $S : E \rightarrow \mathbb{R}$, the Lift $h : V \rightarrow \mathbb{R}$, the radii $r : V \rightarrow \mathbb{R}$ and the Dual Radii $\overline{r} : F \rightarrow \mathbb{R}$.
 
+\section{Steinitz's Theorem}
+ A graph $G$ is the edge graph of a 3-polytope if and only if $G$ is simple, planar and 3-connected.
+ 
+ To prove this theorem, we must prove it in both directions. This proof will rely on the following facts:
+ Let $G$ be a graph.
+ \begin{enumerate}
+ 	\item (Menger's Theorem) If $G$ is 3-connected, then between any pair of vertices there are three paths $G_1, G_2, G_3$ in $G$ that are disjoint except for the endpoints.
+	\item If there are three vertices $u,v,w$ that are connected by three different Y-graphs $Y_1, Y_2, Y_3$ that are disjoint except for $u,v,w,$ then $G$ is not planar.
+	\item (Whitney's Theorem) If G is planar and 3-connected then the set $cells(G,D)$ is independent on the particular choice of drawing $D$ of $G$.
+	\item (Euler's Theorem) If $G$ is planar and 2-connected and $D$ is a drawing of $G$ then the numbers of cells $c= \|cells(G,D)\|$, vertices $v = \|V\|,$ and edges $e = \|E\|$ are related by  $v+c = e+2$.
+	
+ \end{enumerate}
+ 
+\subsection{Proof of Tutte's Theorem}
+Let $\omega : E \rightarrow \R$ be an assignment of weights to the edges of a graph and let $p:V \rightarrow \R^2$ be an assignment of positions in $\R^2$ for the vertices of $G$. A vertex $v \in V$ is in equilibrium if  $\sum\limits_{\{v,w\} \in E} \omega_{v,w}(p_v - p_w) = 0$
+
+\textsc {Proof of Existence and Uniqueness}  Assume that the positions of the peripheral points $p_v = (x_v,y_v); v \in \{k+1,...,n\}$ are given. We have to prove that suitable positions $p_v = (x_v,y_v); v \in \{1,...,k\}$ for the interior vertices exist and that these positions are unique. Without loss of generality we may assume that $p_n = (0,0)$. Consider the function
+\begin{center}
+$E(x_1,...,x_k,y_1,...,y_k) = \frac{1}{2} \sum\limits_{\{v,w\} \in E'} \omega_{v,w}((x_v - x_w)^2 + (y_v - y_w)^2) 
+= \frac{1}{2} \sum\limits_{\{v,w\} \in E'} \omega_{v,w} \|p_v - p_w\|^2$. \\
+\end{center}
+$E$ is a quadratic function that is non-negative everywhere. Assume that $z=(x_1,...x_k,y_1,...y_k)$ has at least one entry (say $x_i$) with large absolute value. This implies that $p_i$ is far away from the point $p_n = (0,0)$. Since $G$ is connected, there is a path that connects $p_i$ with $p_n$ and for at least one edge $(v,w)$ in this path the distance $\|p_v - p_w\|$ is large. Since the squared distances are weighted with positive coefficients $E(z)$ is also large. Thus for sufficiently large $\alpha > 0, \|z\| > \alpha$ implies $E(z) > E(0)$. This means that $E$ must be strictly convex and thus takes its unique minimum on $\{z | |z| < \alpha \}$. The assertion follows from the observation that the condition for a critical point $(\triangledown E = 0)$ of $E$ is
+\begin{center}
+$\frac{\delta E}{\delta x_i} = \sum\limits_{\{v,w\} \in E'} \omega_{v,w}(x_v - x_w) = 0$ and $\frac{\delta E}{\delta x_i} = \sum\limits_{\{v,w\} \in E'} \omega_{v,w}(y_v - y_w) = 0$
+\end{center}
+for all $i \in \{1,..,k\}$. This is exactly the equilibrium condition for the interior vertices.
+
+
+
+
+
+
+
+
+
+
+
 \bibliographystyle{plain}
 \bibliography{references}
 \end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
