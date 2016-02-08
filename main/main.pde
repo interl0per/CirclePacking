@@ -23,8 +23,13 @@ void draw()
     {
       case(TAB):
       {
-        force_sim(test);
+        radii_update(test);
         test.cEmbedding_radii();
+        break;
+      }
+      case(ENTER):
+      {
+        test.cEmbedding_stress();
         break;
       }
     }

@@ -111,7 +111,7 @@ class Edge
 {
   HalfEdge h1, h2;
   Vertex v1, v2;
-  float stress;
+  float stress = 1;
   Edge dual;
   public Edge(HalfEdge _h1, HalfEdge _h2) 
   {  

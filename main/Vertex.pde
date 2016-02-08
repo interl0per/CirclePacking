@@ -2,7 +2,7 @@ class Vertex
 {
  color shade = 200;
  float x, y, z, r;
- boolean internal = true, processed = false, placed = false, f = false;
+ boolean internal = true, f = false;
  HalfEdge h;
  Complex parent;//Complex this vertex belongs to 
  

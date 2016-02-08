@@ -34,7 +34,7 @@ class Complex
     {
      targ.x = (ref.r + targ.r)*cos(theta) + ref.x;
      targ.y = (ref.r + targ.r)*sin(theta) + ref.y;
-     targ.placed = true;
+     //targ.placed = true;
     }
     
     void draw()
