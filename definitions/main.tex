@@ -26,7 +26,8 @@ The Circle packing theorem was first discovered by Paul Koebe and then later rei
 \section{Definitions}
 The following section contains definitions needed either to explain other definitions or to understand Circle Packings to their fullest.
  \subsection{Graphs}
-  A \textbf{graph} is an ordered pair $G=(V,E)$ which represents a set of objects where some of these objects are linked. In the denotation $G=(V,E)$, $V$ stands for the vertexes or objects, and $E$ stands for the edges or links. Edges in a graph can be directed or undirected, however, we will focus on undirected edges in our application.
+ 
+ A \textbf{graph} is an ordered pair $G=(V,E)$ which represents a set of objects where some of these objects are linked. In the denotation $G=(V,E)$, $V$ stands for the vertexes or objects, and $E$ stands for the edges or links. Edges in a graph can be directed or undirected, however, we will focus on undirected edges in our application.
 
   A component or \textbf{connected component} of a graph is a subgraph in which any two vertices are connected to each other by a path which is connected to no additional vertices in the supergraph.
 
@@ -85,6 +86,8 @@ The following section contains definitions needed either to explain other defini
   \begin{equation} 
 	v-e+f=2
   \end{equation}
+  
+  A \textbf{polytope} is a geometric object with flat sides that can exist in any number of dimensions. The $edge$ $graph$ $G(P)$ of a polytope $P$ is the graph whose vertex set is the vertex set of the polytope $P$. 
   
   \subsection{Embedding}
   A \textbf{simple arc} is an image of a continuous injective map [0,1] $\rightarrow \Sigma$.\\
@@ -246,14 +249,16 @@ $\frac{\delta E}{\delta x_i} = \sum\limits_{\{v,w\} \in E'} \omega_{v,w}(x_v - x
 \end{center}
 for all $i \in \{1,..,k\}$. This is exactly the equilibrium condition for the interior vertices.
 
+\section{Computing Delaunay Triangulations}
+\subsection{Naive Algorithm}
+If a triangle is not locally Delaunay, one of its edges can be flipped to create a locally Delaunay triangle. Therefore, a simple algorithm is to create a triangulation and flip the edges until all triangles are Delaunay. If $n$ is the number of edges, this algorithm can take $O(n^2)$ in the worst case and also does not work in three dimensions or higher.
+\subsection{Incremental}
+This algorithm functions by repeatedly adding one vertex at a time and retriangulating the affected parts of the graph. When a vertex $v$ is added, the triangle containing $v$ is split into three and then the flip algorithm is applied. It takes $O(n)$ time to find the triangle containing $v$ and $O(n^2)$ time to run the flip algorithm. Therefore the total runtime is the same as the naive approach, $O(n^2)$. However, the incremental algorithm does have some advantages over the naive approach. First, if the vertices are inserted in a random order, on average only $O(1)$ triangles will be flipped. Finding the triangle containing $v$ can also be improved by storing the history of the splits and flips performed. Each triangle can store a pointer to a triangle that contains $v$ until we find a triangle that has not yet been replaced. On average this will take $O(log(n))$, therefore, for all vertices it takes $O(nlog(n))$. Lastly, this technique does extend beyond 2 dimensions, but the runtime can be exponential in the dimension. 
+\subsection{Divide and Conquer}
+This algorithm computes the Triangulation by recursively drawing a line to split the vertices into two sets. The triangulation is computed for each set and then the two sets are merged along the splitting line. The merge operation can be done in $O(n)$ time, so the total time is $O(nlog(n))$.
 
-
-
-
-
-
-
-
+\section{Computing Circle Packings}
+Given a planar, triangulated graph, begin with a set of tentative radii that do not correspond to a valid packing. Next, choose a internal vertex $v$ and calculate the total angle $\theta$ that its $k$ neighboring circles would cover around the circle for $v$, if the neighbors were placed tangent to each other and to the central circle using their tentative radii. Next, determine a representative radius $r$ for the neighboring circles, such that $k$ circles of radius $r$ would give the same covering angle $\theta$ as the neighbors of $v$ give. Lastly, set the new radius for $v$ to be the value for which $k$ circles of radius $r$ would give a covering angle of exactly $2\pi$.
 
 
 \bibliographystyle{plain}
