@@ -47,54 +47,53 @@ class EnrichedEmbedding
   void cEmbedding_stress()
   {
     //force simulation
-    //for(int i =0; i < 100; i++)
-    //{
-    //  HashMap<HalfEdge, Boolean> visited = new HashMap<HalfEdge, Boolean>();
-    //   JQueue<HalfEdge> q = new JQueue<HalfEdge>();
-    //   q.add(G.verts.get(0).h);
-    //   while(!q.isEmpty())
-    //   {
-    //     HalfEdge he = q.remove();
-    //     if(visited.containsKey(he))
-    //       continue;
+    for(int i =0; i < 100; i++)
+    {
+     HashMap<HalfEdge, Boolean> visited = new HashMap<HalfEdge, Boolean>();
+      JQueue<HalfEdge> q = new JQueue<HalfEdge>();
+      q.add(G.verts.get(0).h);
+      while(!q.isEmpty())
+      {
+        HalfEdge he = q.remove();
+        if(visited.containsKey(he))
+          continue;
             
-    //     double vx = (he.v.x - he.next.v.x)*he.e.stress;
-    //     double vy = (he.v.y - he.next.v.y)*he.e.stress;
+        double vx = (he.v.x - he.next.v.x)*he.e.stress/100000;
+        double vy = (he.v.y - he.next.v.y)*he.e.stress/100000;
   
-    //     if(!he.next.v.internal)
-    //     {
-    //       vx = 0;
-    //       vy = 0;
-    //     }
+        if(!he.next.v.internal)
+        {
+          vx = 0;
+          vy = 0;
+        }
     
-    //     he.next.v.x += vx;
-    //     he.next.v.y += vy;
-    //     visited.put(he, true);
-    //     q.add(he.next);
-    //     q.add(he.twin);
-    //   }
-    //   //updateStress();
-    // }
-     for(Edge e : G.edges)
-     {
-       double vx = (e.v1.x - e.v2.x)*e.stress;
-       double vy = (e.v1.y - e.v2.y)*e.stress;
-       if(!e.v2.internal)
-       {
-         vx = 0; vy = 0;
-       }
-       e.v2.x+=vx;
-       e.v2.y+=vy;
+        he.next.v.x += vx;
+        he.next.v.y += vy;
+        visited.put(he, true);
+        q.add(he.next);
+        q.add(he.twin);
+      }
+    }
+     //for(Edge e : G.edges)
+     //{
+     //  double vx = (e.v1.x - e.v2.x)*e.stress;
+     //  double vy = (e.v1.y - e.v2.y)*e.stress;
+     //  if(!e.v2.internal)
+     //  {
+     //    vx = 0; vy = 0;
+     //  }
+     //  e.v2.x+=vx;
+     //  e.v2.y+=vy;
        
-       vx = (e.v2.x - e.v1.x)*e.stress/100000;
-       vy = (e.v2.y - e.v1.y)*e.stress/100000;
-       if(!e.v1.internal)
-       {
-         vx = 0; vy = 0;
-       }
-       e.v1.x+=vx;
-       e.v1.y+=vy;
-     }
+     //  vx = (e.v2.x - e.v1.x)*e.stress/100000;
+     //  vy = (e.v2.y - e.v1.y)*e.stress/100000;
+     //  if(!e.v1.internal)
+     //  {
+     //    vx = 0; vy = 0;
+     //  }
+     //  e.v1.x+=vx;
+     //  e.v1.y+=vy;
+     //}
   }
   void cStress_embedding()
   {

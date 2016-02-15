@@ -19,17 +19,17 @@ void draw()
   test.drawPSLG();
   test.drawRadii();
   if(keyPressed)
-    switch(key)
+    switch(keyCode)
     {
-      case(TAB):
+      case(LEFT):
       {
         radii_update(test);
         test.cEmbedding_radii();
         break;
       }
-      case(ENTER):
+      case(RIGHT):
       {
-        test.cEmbedding_stress();
+        stress_update(test);
         break;
       }
     }

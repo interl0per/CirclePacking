@@ -1,5 +1,3 @@
-//
-
 class Complex
 {
     public ArrayList<Vertex> verts = new ArrayList<Vertex>();//internal verticies
@@ -76,9 +74,13 @@ class Complex
      
      HalfEdge tri = outerVerts.get(0).h.findFace(v);    //the face this new vertex sits in
      if(tri==null)
+     {
+       println("The input vertex does not lie in any face");
        return false;
+     }
      else
      {
+       //println(tri);
        triangulate(tri, v);
        
        JStack<Edge> edgesToCheck = new JStack<Edge>();

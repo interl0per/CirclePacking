@@ -68,7 +68,6 @@ class HalfEdge
       q.add(he.next);
       q.add(he.twin);
     }
-    println("The input vertex does not lie in any face");
     return null;
   }
 }
