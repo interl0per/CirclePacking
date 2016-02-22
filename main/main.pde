@@ -13,6 +13,7 @@ void setup()
   fill(0, 0);
   test = new EnrichedEmbedding(NUM_OUTER_VERTS);
 }
+
 void draw()
 {
   background(255);
@@ -32,6 +33,12 @@ void draw()
         stress_update(test);
         break;
       }
+      case (UP):
+        test.cStress_embedding();
+        break;
+      case (DOWN):
+        test.cEmbedding_stress();
+        break;
     }
 }
 void mouseReleased()

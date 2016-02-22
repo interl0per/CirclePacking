@@ -21,20 +21,25 @@ class Vertex
  ///////////////////////////////////////////////////////
  float magnitude()
  {
-   return(sqrt(x*x + y*y + z*z));
+   return sqrt(x*x + y*y + z*z);
  }
- void normalize(float target)
+ void updateZ()
  {
-   float c = target/z;
+   z = (x*x + y*y - r*r);
+ } 
+
+ void normalize()
+ {
+   float c = 1/magnitude();
    x*=c;
    y*=c;
-   z = target;
+   z *=c;
  }
  Vertex scale(float s)
  {
    return new Vertex(x*s, y*s, z*s, r);
  }
- Vertex crossp(Vertex b)
+ Vertex cross(Vertex b)
  {
     return(new Vertex(y*b.z - z*b.y, z*b.x - x*b.z, x*b.y - y*b.x, r));
  }
@@ -45,6 +50,10 @@ class Vertex
  Vertex add(Vertex b)
  {
    return new Vertex(x+b.x, y+b.y, z+b.z, r);
+ }
+ float dot(Vertex b)
+ {
+   return x*b.x + y*b.y + z*b.z;
  }
  void rotate(char dir, float theta)
  {
@@ -190,5 +199,9 @@ class Vertex
       test = test.prev.twin;
     }
     return adj;
+  }
+  void print()
+  {
+    println(x, y, z);
   }
 }
