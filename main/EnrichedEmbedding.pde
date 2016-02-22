@@ -46,81 +46,62 @@ class EnrichedEmbedding
   
   void cEmbedding_stress()
   {
-    //force simulation
-    for(int i =0; i < 100; i++)
+    float maxS = 0;
+    for(Edge e : G.edges)
     {
-     HashMap<HalfEdge, Boolean> visited = new HashMap<HalfEdge, Boolean>();
-      JQueue<HalfEdge> q = new JQueue<HalfEdge>();
-      q.add(G.verts.get(0).h);
-      while(!q.isEmpty())
-      {
-        HalfEdge he = q.remove();
-        if(visited.containsKey(he))
-          continue;
-            
-        double vx = (he.v.x - he.next.v.x)*he.e.stress/100000;
-        double vy = (he.v.y - he.next.v.y)*he.e.stress/100000;
-  
-        if(!he.next.v.internal)
-        {
-          vx = 0;
-          vy = 0;
-        }
-    
-        he.next.v.x += vx;
-        he.next.v.y += vy;
-        visited.put(he, true);
-        q.add(he.next);
-        q.add(he.twin);
-      }
+     maxS = max(maxS, e.stress);
     }
-     //for(Edge e : G.edges)
-     //{
-     //  double vx = (e.v1.x - e.v2.x)*e.stress;
-     //  double vy = (e.v1.y - e.v2.y)*e.stress;
-     //  if(!e.v2.internal)
-     //  {
-     //    vx = 0; vy = 0;
-     //  }
-     //  e.v2.x+=vx;
-     //  e.v2.y+=vy;
-       
-     //  vx = (e.v2.x - e.v1.x)*e.stress/100000;
-     //  vy = (e.v2.y - e.v1.y)*e.stress/100000;
-     //  if(!e.v1.internal)
-     //  {
-     //    vx = 0; vy = 0;
-     //  }
-     //  e.v1.x+=vx;
-     //  e.v1.y+=vy;
-     //}
+    float mul = 1/maxS;
+    for(Edge e : G.edges)
+    {
+     e.stress *= mul;
+    }
+    
+     for(Edge e : G.edges)
+     {
+       double vx = (e.v1.x - e.v2.x)*e.stress/100;
+       double vy = (e.v1.y - e.v2.y)*e.stress/100;
+        
+       if(e.v2.internal)
+       {
+         e.v2.x+=vx;
+         e.v2.y+=vy;
+       }
+  
+       if(e.v1.internal)
+       {
+         e.v1.x-=vx;
+         e.v1.y-=vy;
+       }
+     }
   }
+  
   void cStress_embedding()
   {
     //maxwell
-   //HashMap<HalfEdge, Boolean> visited = new HashMap<HalfEdge, Boolean>();
-   //JQueue<HalfEdge> q = new JQueue<HalfEdge>();
-   //q.add(G.verts.get(0).h);
-   //while(!q.isEmpty())
-   //{
-   //  HalfEdge he = q.remove();
-  
-   //  if(visited.containsKey(he))  
-   //    continue;
-        
-   //  Vertex grad1 = new Vertex(he.ocx, he.ocy, 0, 0);
-   //  Vertex grad2 = new Vertex(he.twin.ocx, he.twin.ocy, 0, 0);
-   //  Vertex force = new Vertex(grad1.x - grad2.x, grad1.y - grad2.y, 0, 0);
+     for(Edge e : G.edges)
+     {
+       Vertex grad1 = grad(e.h1);
+       Vertex grad2 = grad(e.h2);
 
-   //  float magnitude = force.magnitude();
-   //  float disp = sqrt((float)((he.v.x-he.next.v.x)*(he.v.x-he.next.v.x) + (he.v.y-he.next.v.y)*(he.v.y-he.next.v.y)));
-   //  he.e.spring = magnitude/disp;
+       //e.stress = grad1.add(grad2.negate()).magnitude()/distv(e.h1.v, e.h2.v);
 
-   //  visited.put(he, true);
-   //  q.add(he.next);
-   //  q.add(he.twin);
-   //}
+         float num = e.v1.cross(e.v2).dot(e.h1.prev.v.cross(e.h2.prev.v));
+         e.v1.z = 1; e.v2.z = 1; e.h1.prev.v.z = 1; e.h2.prev.v.z = 1;
+         float dt1 = e.v1.dot(e.v2.cross(e.h1.prev.v));
+         float dt2 = e.h2.prev.v.dot(e.v2.cross(e.v1));
+         e.stress = num/(dt1*dt2);
+         
+         if(e.h1.v.internal || e.h2.v.internal)
+         {
+           println(e.stress);
+       }
+     }
+     println();
+     println();
+     
   }
+  
   void cStress_radii()
   {
     //calculate stress from dual+primal radii, assuming packing

@@ -92,3 +92,25 @@ Vertex stereoProjI(Vertex init)
 {
   return new Vertex(init.x*orthoSphereR/(orthoSphereR-init.z), init.y*orthoSphereR/(orthoSphereR-init.z), 0, 0);
 }
+
+Vertex grad(HalfEdge f)
+{
+  f.v.updateZ();
+  f.next.v.updateZ();
+  f.next.next.v.updateZ();
+  
+  Vertex p = f.v, q = f.next.v, r = f.next.next.v;
+  
+  Vertex pq = q.add(p.negate());
+  Vertex pr = r.add(p.negate());
+  return pq.cross(pr);
+}
+
+float distv(Vertex p, Vertex q)
+{
+  float dx = p.x - q.x;
+  float dy = p.y - q.y;
+  float dz = p.z - q.z;
+
+  return sqrt(dx*dx + dy*dy + dz*dz);
+}
