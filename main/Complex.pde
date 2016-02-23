@@ -11,13 +11,13 @@ class Complex
     public Complex(int n)
     {
      //create outer face (a regular n-gon)
-     Vertex center = new Vertex(width/2, height/2, 0, 100, this);
+     Vertex center = new Vertex(width/2, height/2, 0, 700, this);
      float step = 2*PI/n;
      //place the verticies on the outer face
       
      for(int i = 0; i < n; i++)
      {
-       Vertex bv = new Vertex(-100,-100, 0, 100, this);
+       Vertex bv = new Vertex(-100,-100, 0, 700, this);
        bv.internal = false;
        placeVertex(bv, i*step, center);
        outerVerts.add(bv);

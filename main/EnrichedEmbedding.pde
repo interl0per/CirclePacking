@@ -21,10 +21,14 @@ class EnrichedEmbedding
   {
     for(Vertex v : G.verts)
       v.draw();
+    for(Vertex v : G.outerVerts)
+      v.draw();
   }
   void drawDualRadii()
   {
     for(Vertex v : G.dual.verts)
+      v.draw();
+    for(Vertex v : G.dual.outerVerts)
       v.draw();
   }
   void drawKoebe()
@@ -46,34 +50,37 @@ class EnrichedEmbedding
   
   void cEmbedding_stress()
   {
-    float maxS = 0;
-    for(Edge e : G.edges)
+    for(int i =0; i < 200; i++)
     {
-     maxS = max(maxS, e.stress);
-    }
-    float mul = 1/maxS;
-    for(Edge e : G.edges)
-    {
-     e.stress *= mul;
-    }
+      float maxS = 0;
+      for(Edge e : G.edges)
+      {
+       maxS = max(maxS, e.stress);
+      }
+      float mul = 1/maxS;
+      for(Edge e : G.edges)
+      {
+       e.stress *= mul;
+      }
+      
+       for(Edge e : G.edges)
+       {
+         double vx = (e.v1.x - e.v2.x)*e.stress/10000;
+         double vy = (e.v1.y - e.v2.y)*e.stress/10000;
+          
+         if(e.v2.internal)
+         {
+           e.v2.x+=vx;
+           e.v2.y+=vy;
+         }
     
-     for(Edge e : G.edges)
-     {
-       double vx = (e.v1.x - e.v2.x)*e.stress/100;
-       double vy = (e.v1.y - e.v2.y)*e.stress/100;
-        
-       if(e.v2.internal)
-       {
-         e.v2.x+=vx;
-         e.v2.y+=vy;
+         if(e.v1.internal)
+         {
+           e.v1.x-=vx;
+           e.v1.y-=vy;
+         }
        }
-  
-       if(e.v1.internal)
-       {
-         e.v1.x-=vx;
-         e.v1.y-=vy;
-       }
-     }
+    }
   }
   
   void cStress_embedding()
@@ -84,14 +91,8 @@ class EnrichedEmbedding
        Vertex grad1 = grad(e.h1);
        Vertex grad2 = grad(e.h2);
 
-       //e.stress = grad1.add(grad2.negate()).magnitude()/distv(e.h1.v, e.h2.v);
+       e.stress = grad1.add(grad2.negate()).magnitude()/distv(e.h1.v, e.h2.v);
 
-         float num = e.v1.cross(e.v2).dot(e.h1.prev.v.cross(e.h2.prev.v));
-         e.v1.z = 1; e.v2.z = 1; e.h1.prev.v.z = 1; e.h2.prev.v.z = 1;
-         float dt1 = e.v1.dot(e.v2.cross(e.h1.prev.v));
-         float dt2 = e.h2.prev.v.dot(e.v2.cross(e.v1));
-         e.stress = num/(dt1*dt2);
-         
          if(e.h1.v.internal || e.h2.v.internal)
          {
            println(e.stress);
@@ -121,14 +122,6 @@ class EnrichedEmbedding
 
     placed.put(G.verts.get(0), true);
 
-    //for(Vertex v : G.outerVerts)
-    //  placed.put(v, false);
-    //for(Vertex v : G.verts)
-    //{
-    //  placed.put(v, false);
-    //  processed.put(v,false);
-    //}
-    //fix an arbitrary internal vertex
     placed.put(G.verts.get(0), true);
     
     JQueue<Vertex> q = new JQueue<Vertex>();

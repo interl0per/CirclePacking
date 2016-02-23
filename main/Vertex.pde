@@ -82,7 +82,7 @@ class Vertex
     pushStyle();
     
     noStroke();
-    fill(0,0,200);
+    fill(176,196,222);
     ellipse(x, y,2*r,2*r);
     
     popStyle();
@@ -107,7 +107,7 @@ class Vertex
      return res;
    }
    
-       HalfEdge handle(Vertex u) 
+    HalfEdge handle(Vertex u) 
     {
       if (isIsolated() || isLeaf()) return h;
       HalfEdge h1 = h, h2 = h.prev.twin;
@@ -200,6 +200,7 @@ class Vertex
     }
     return adj;
   }
+  
   void print()
   {
     println(x, y, z);

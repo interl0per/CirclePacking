@@ -103,6 +103,7 @@ Vertex grad(HalfEdge f)
   
   Vertex pq = q.add(p.negate());
   Vertex pr = r.add(p.negate());
+  Vertex ansT = pq.cross(pr);
   return pq.cross(pr);
 }
 
