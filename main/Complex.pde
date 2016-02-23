@@ -70,7 +70,6 @@ class Complex
      if(v.r < EPSILON)  
        v.r = 10;
        
-     verts.add(v);
      
      HalfEdge tri = outerVerts.get(0).h.findFace(v);    //the face this new vertex sits in
      if(tri==null)
@@ -138,6 +137,8 @@ class Complex
            }
          }
        }
+            verts.add(v);
+
      return true;  
     }
  }
