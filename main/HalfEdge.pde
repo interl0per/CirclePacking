@@ -49,6 +49,15 @@ class HalfEdge
        i--;
      }
     }
+    
+    for(int i = 0; i < v.parent.verts.size(); i++)
+    {
+     if(v.parent.verts.get(i).h == null)
+     {
+       v.parent.verts.remove(i);
+       i--;
+     }
+    }
   }
    
   HalfEdge findFace(Vertex d)//find the face containing this vertex
