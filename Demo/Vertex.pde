@@ -79,13 +79,13 @@ class Vertex
  }
  void draw()
  {
-    pushStyle();
+ //   pushStyle();
     
     noStroke();
     fill(176,196,222);
     ellipse(x, y,2*r,2*r);
     
-    popStyle();
+ //   popStyle();
  }
  
   float getZ()
@@ -144,7 +144,6 @@ class Vertex
   
   void attach(Vertex t) 
   {
-    
     //don't connect verticies that are already connected or not in same Complex
     if(t.parent != parent || this.h!=null&&this.h.next!=null && this.h.next.v == t)
       return;

@@ -7,9 +7,10 @@ class HalfEdge
   HalfEdge twin;
   Edge e;
   Vertex v;
-  
+  Vertex ixn, ixnp;
+
   float ocx=-INF, ocy=-INF, ocr = 1;//orthocenter of this face
-    
+  
   public HalfEdge(Vertex _v) 
   {
     v = _v;
@@ -46,15 +47,6 @@ class HalfEdge
      if(v.parent.edges.get(i).h1 == this || v.parent.edges.get(i).h1 == twin)
      {
        v.parent.edges.remove(i);
-       i--;
-     }
-    }
-    
-    for(int i = 0; i < v.parent.verts.size(); i++)
-    {
-     if(v.parent.verts.get(i).h == null)
-     {
-       v.parent.verts.remove(i);
        i--;
      }
     }

@@ -44,10 +44,9 @@ void drawCircumcircle2D(Vertex a, Vertex b, Vertex c)
  float x = (mr*mt*(c.y-a.y) + mr*(b.x+c.x) - mt*(a.x+b.x)) / (2*(mr-mt));
  float y = (a.y+b.y)/2 - (x - (a.x+b.x)/2) / mr;
  float r = sqrt(((b.x-x)*(b.x-x) +  (b.y-y)*(b.y-y)));
- //stroke(255, 0, 0);
  ellipse(x, y,2*r, 2*r);
- //stroke(0);
 }
+
 void drawCircumcircle3D(Vertex a, Vertex b, Vertex c)
 { 
    Vertex ct = c;
