@@ -92,7 +92,7 @@ class EnrichedEmbedding
          //fill(0,100, 0);
          noFill();
          stroke  (255,160,122);
-         strokeWeight(5);
+         strokeWeight(2);
          ellipse(cx, cy, 2*r, 2*r);
          popStyle();
          
