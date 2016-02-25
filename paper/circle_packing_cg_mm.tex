@@ -84,20 +84,16 @@
 \section{Background} % (fold)
 \label{sec:background}
 
-  \subsubsection{Weighted Delaunay Triangulation}
+  \textbf{Weighted Delaunay Triangulation.}
   Circle packings are closely related to several other well-known topics in computational geometry.
-  The most notable, being weighted Delaunay triangulations.  
-  This is the dual to the so-called power diagram, a Voronoi diagram on the points where the (squared) distance to a circle $c$ with center $p$ and radius $r$ is defined to be
-  \[
-    \pi_c(x)^2 := \|x-p\|^2 - r^2.
-  \]
+  The most notable, being \emph{weighted Delaunay triangulations}.  
+  This is the dual to the so-called power diagram, a Voronoi diagram on the points where the (squared) distance to a circle $c$ with center $p$ and radius $r$ is defined to be $\pi_c(x)^2 := \|x-p\|^2 - r^2$.
   A circle packing representation of a graph realizes the graph as the weighted Delaunay triangulation where the vertices are the centers of the disks and the weights are the radii.
   
-  \subsection{Equilibrium Stresses} % (fold)
-  \label{sub:equilibrium_stresses}
-    A stress is an assignment of real numbers to edges that may be interpreted as spring constants.
+  \textbf{Equilibrium Stresses.} % (fold)
+    A \emph{stress} is an assignment of real numbers to edges that may be interpreted as spring constants.
     By Hook's Law, the magnitude of the force exerted by a spring is the spring constant times its length.
-    A stress is in Equilibrium if for each vertex, the sum of the forces exerted on it by all its incident edges is exactly zero.
+    A stress is an \emph{equilibrium stress} if for each vertex, the sum of the forces exerted on it by all its incident edges is exactly zero.
     
     Weighted Delaunay triangulations have another interpretation as projections of convex polyhedra in $\R^3$.
     The Maxwell-Cremona Correspondence implies that projections of convex polyhedra always admit an equilibrium stress that is nonnegative on all edges except those of the convex hull.
@@ -106,28 +102,49 @@
     This involves solving one system of linear equations derived from the graph.
   % subsection equilibrium_stresses (end)
   
-  \subsection{Stereographic Mappings} % (fold)
-  \label{sec:stereographic_mappings}
+  \textbf{Stereographic Mappings and M\"{o}bius Tranformations.} % (fold)
     Weighted Delaunay triangulations can also be realized as stereographic projections of convex polyhedra.
     In the case of circle packings this polyhedron is sometime called the Koebe polyhedron.
+    It has the interesting property that the edges are all tangent to a sphere.
   % section stereographic_mappings (end)
 
+  \begin{figure}[ht]
+    \centering
+      \includegraphics[width = 0.45\textwidth]{figures/3D.png}
+      \includegraphics[width = 0.45\textwidth]{figures/3D_2.png}
+    \caption{Stereographic projection of a circle packing.}
+    \label{fig:3D}
+  \end{figure}
 
-  \subsubsection{Mobius Transformations}
-  A \textbf{M\"{o}bius Transformation} of a plane can be obtained by performing the stereographic projection of the plane onto a sphere, then rotating or moving the sphere and then performing the sterographic projection back onto the plane. 
+  A \textbf{M\"{o}bius Transformation} of a plane can be obtained by performing the stereographic projection of the plane onto a sphere, then rotating or moving the sphere and then performing the stereographic projection back onto the plane. 
   Formally, a M\"{o}bius Transformation is a rational function defined on the extended complex plane $\CP = \C\cup\{\infty\}$ of the form:
   \begin{equation} 
   	f(z) = \frac{az+b}{cz+d}
   \end{equation}
   where $z\in\CP$ is a complex variable and $a,b,c,d\in\CP$ are complex numbers such that $ad - bc$ $\neq$ $0$.
-  
-  
-  Tutte's Algorithm
-  Maxwell's Theorem
-  Weighted Delaunay
+  Circle packings in the plane are unique up to M\"{o}bius Transformation.
+    \begin{figure}[ht]
+      \centering
+        \includegraphics[width = 0.40\textwidth]{figures/mobius3.png}
+        \includegraphics[width = 0.40\textwidth]{figures/mobius4.png}
+      \caption{Two M\"{o}bius transformations of a circle packing.}
+      \label{fig:mobius}
+    \end{figure}
 
-  One simple observation about the
-  Dual Packings
+  \textbf{Dual Packings.} % (fold)
+  \label{sub:dual_packings}
+    Circle packings of triangulations always admit a \emph{dual packing} (Fig~\ref{fig:primal_dual}).
+    By pressing the \texttt{'d'} key, the user can see the dual packing.
+    \begin{figure}[ht]
+      \centering
+        \includegraphics[width = 0.40\textwidth]{figures/primal.png}
+        \includegraphics[width = 0.40\textwidth]{figures/dual.png}
+      \caption{A packing and it's dual.}
+      \label{fig:primal_dual}
+    \end{figure}
+  
+  
+  % subsection dual_packings (end)
 
 % section background (end)Background
 
@@ -142,11 +159,18 @@
   An advantage of this approach is that it is very easy to draw approximate circle packings.  
   This allows one to experiment with examples where one has a clear idea of the expected output.
 
-  Circle packings are invariant up to M\"{o}bius transformations of the plane.
-
+  \begin{figure}[ht]
+    \centering
+      \includegraphics[width = 0.40\textwidth]{figures/input.png}
+      \includegraphics[width = 0.40\textwidth]{figures/output.png}
+    \caption{An input of circles (left) and the circle packing output (right).}
+    \label{fig:input_output}
+  \end{figure}
   
-  Mobius Transformations
-  Stereographic Maps?
+  As a M\"{o}bius transformations will give new circle packings of the input graph, we allow the user two transform the plane to explore different packings.
+  This is done by dragging with the right mouse button.
+  
+  If the user presses the \texttt{'k'} key, then dragging with the right mouse button will instead rotate a 3D view of the circle packing mapped stereographically onto a sphere.
   
 % section interactive_input (end)
 
@@ -161,16 +185,18 @@
   
   The second algorithm is based on spring embeddings of graphs such Tutte's algorithm.
   In this algorithm, the embedded graph is interpreted as a system of springs. 
-  The
+  This ``force-directed'' algorithm is not known to terminate, but it seems to be quite effective on small examples.
 
 % section algorithms (end)
 
 \section{Future Work} % (fold)
 \label{sec:future_work}
 
-  Incremental Algorithms
-  Curvature Flows
-
+  We are actively developing new features to provide both new ways to visualize the packings as wella s new heuristics.
+  The current implementation supports two of the major paradigms in circle packing algorithms.
+  Next, we will consider algorithms based on discrete Ricci flow.
+  
+  
 % section future_work (end)
 %%
 %% Bibliography
