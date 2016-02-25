@@ -10,10 +10,11 @@
 %\graphicspath{{./graphics/}}%helpful if your graphic files are in another directory
 
 \bibliographystyle{plain}% the recommended bibstyle
-\newcommand{\R}{\mathbb{R}}
 
 % Author macros::begin %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\CP}{\hat{\mathbb{C}}}
 
 \title{Exploring Circle Packing Algorithms\footnote{This work was partially supported by the National Science Foundation under grants CCF-1525978 and CCF-1464379.}}
 \titlerunning{Exploring Circle Packing Algorithms} %optional, in case that the title is too long; the running title should fit into the top page column
@@ -56,7 +57,7 @@
 \maketitle
 
 \begin{abstract}
-  We present an online, interactive tool for visualizing and experimenting with different circle packing algorithms.
+  We present an interactive tool for visualizing and experimenting with different circle packing algorithms.
 \end{abstract}
 
 \section{Introduction} % (fold)
@@ -73,7 +74,7 @@
   Early proofs of the existence of circle packings were non-constructive, but the work of Colin de Verdiere\cite{colindeverdiere91principe} and others~\cite{mohar93polynomial,bobenko03variational} showed that circle packings can be computed by convex optimization, ushering in several different iterative algorithms.
   A good introduction to the mathematical and algorithmic aspects of circle packings can be found in the book by Stephenson~\cite{stephenson05introduction}.
   
-  As shown in the work of Bobenko and Sprinborn, there are several different energy functionals that one could minimize to arrive at a circle packing~\cite{bobenko03variational}.
+  As shown in the work of Bobenko and Springborn, there are several different energy functionals that one could minimize to arrive at a circle packing~\cite{bobenko03variational}.
   However, there are simple heuristics that are not known to give correct algorithms, yet still seems too produce good circle packings. 
   We present a tool designed to make it easy to mix and match circle packing heuristics. 
   One can quickly generate a triangulated planar graph and then apply different heuristics to move it towards a circle packing representation.
@@ -83,12 +84,49 @@
 \section{Background} % (fold)
 \label{sec:background}
 
+  \subsubsection{Weighted Delaunay Triangulation}
   Circle packings are closely related to several other well-known topics in computational geometry.
   The most notable, being weighted Delaunay triangulations.  
+  This is the dual to the so-called power diagram, a Voronoi diagram on the points where the (squared) distance to a circle $c$ with center $p$ and radius $r$ is defined to be
+  \[
+    \pi_c(x)^2 := \|x-p\|^2 - r^2.
+  \]
+  A circle packing representation of a graph realizes the graph as the weighted Delaunay triangulation where the vertices are the centers of the disks and the weights are the radii.
+  
+  \subsection{Equilibrium Stresses} % (fold)
+  \label{sub:equilibrium_stresses}
+    A stress is an assignment of real numbers to edges that may be interpreted as spring constants.
+    By Hook's Law, the magnitude of the force exerted by a spring is the spring constant times its length.
+    A stress is in Equilibrium if for each vertex, the sum of the forces exerted on it by all its incident edges is exactly zero.
+    
+    Weighted Delaunay triangulations have another interpretation as projections of convex polyhedra in $\R^3$.
+    The Maxwell-Cremona Correspondence implies that projections of convex polyhedra always admit an equilibrium stress that is nonnegative on all edges except those of the convex hull.
+    Thus, an alternative (dual) perspective on circle packings is that rather than looking for the correct radii, one could look for the correct equilibrium stress.
+    Given a stress, one finds the embedding by Tutte's algorithm.
+    This involves solving one system of linear equations derived from the graph.
+  % subsection equilibrium_stresses (end)
+  
+  \subsection{Stereographic Mappings} % (fold)
+  \label{sec:stereographic_mappings}
+    Weighted Delaunay triangulations can also be realized as stereographic projections of convex polyhedra.
+    In the case of circle packings this polyhedron is sometime called the Koebe polyhedron.
+  % section stereographic_mappings (end)
+
+
+  \subsubsection{Mobius Transformations}
+  A \textbf{M\"{o}bius Transformation} of a plane can be obtained by performing the stereographic projection of the plane onto a sphere, then rotating or moving the sphere and then performing the sterographic projection back onto the plane. 
+  Formally, a M\"{o}bius Transformation is a rational function defined on the extended complex plane $\CP = \C\cup\{\infty\}$ of the form:
+  \begin{equation} 
+  	f(z) = \frac{az+b}{cz+d}
+  \end{equation}
+  where $z\in\CP$ is a complex variable and $a,b,c,d\in\CP$ are complex numbers such that $ad - bc$ $\neq$ $0$.
+  
   
   Tutte's Algorithm
   Maxwell's Theorem
   Weighted Delaunay
+
+  One simple observation about the
   Dual Packings
 
 % section background (end)Background
@@ -99,32 +137,31 @@
   One immediate challenge to working interactively with circle packings is the need for input triangulations.
   We would like to be able to produce triangulations with a minimum of effort.  
   The most natural approach is to draw circles and produce the weighted Delaunay triangulation of the circles.
-  This is the dual to the so-called power diagram, a Voronoi diagram on the points where the (squared) distance to a circle $c$ with center $p$ and radius $r$ is defined to be
-  \[
-    \pi_c(x)^2 := \|x-p\|^2 - r^2.
-  \]
-  
-  Weighted Delaunay triangulations have another interpretation as projections of convex polyhedra in $\R^3$.
+  Input is given by clicking a center and dragging to set the radius of an input disk.
+  As new points are added, we incrementally compute the weighted Delaunay triangulation.
+  An advantage of this approach is that it is very easy to draw approximate circle packings.  
+  This allows one to experiment with examples where one has a clear idea of the expected output.
 
-  Drop weighted points and build the weighted Delaunay triangulation incrementally
-  (advantage: you can draw an approximate packing)
+  Circle packings are invariant up to M\"{o}bius transformations of the plane.
+
   
   Mobius Transformations
   Stereographic Maps?
-  Parabolic Lifting?
   
 % section interactive_input (end)
 
 \section{Algorithms} % (fold)
 \label{sec:algorithms}
 
-  Springs
+  Currently we have two different algorithms implemented.
+  The first is based on the algorithm from Stephenson~\cite{stephenson05introduction}.
+  Given any set $\{r_1,\ldots, r_n\}$ of radii, it is possible to compute the angles of the triangles using the law of cosines.
+  The final radii are those for which the angles at any vertex sum to exactly $2\pi$.
+  Thus, the algorithm searches for the radii of the disks by making small incremental updates to the radii, increasing the radius if the angle sum is more than $2\pi$ and decreasing the radius of the angle sum is less than $2\pi$.
   
-  Dual Springs
-  
-  Stephenson Algorithm
-  
-  All are continuous embeddings
+  The second algorithm is based on spring embeddings of graphs such Tutte's algorithm.
+  In this algorithm, the embedded graph is interpreted as a system of springs. 
+  The
 
 % section algorithms (end)
 
