@@ -91,7 +91,7 @@ class EnrichedEmbedding
          //noStroke();
          //fill(0,100, 0);
          noFill();
-         stroke(200,0,0);
+         stroke  (255,160,122);
          strokeWeight(5);
          ellipse(cx, cy, 2*r, 2*r);
          popStyle();
@@ -100,17 +100,13 @@ class EnrichedEmbedding
       }
       //fix this up so it just calculates the whole dual
       pushStyle();
-      stroke(100,100,100);
+      stroke  (100,100,100);
       
       if(dualTwins[1]!=null)
        line(dualTwins[0].x, dualTwins[0].y, dualTwins[1].x, dualTwins[1].y);
         
       popStyle();
-      
-      G.dual.verts.add(dualTwins[0]);
-      G.dual.verts.add(dualTwins[1]);
     }
-    drawDualPSLG();
   }
   /////////////////
   //Drawing methods

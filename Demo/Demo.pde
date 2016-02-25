@@ -120,7 +120,7 @@ void keyPressed()
   {
     setup();
   }
-  else if(key=='o')
+  else if(key=='d')
     drawOrtho = !drawOrtho;
   else if(key == 'k')
   {
