@@ -8,6 +8,7 @@ boolean drawing = false;
 boolean drawOrtho = false;
 boolean rotating = false;
 boolean drawKoebe = false;
+boolean mode2 = false;
 
 EnrichedEmbedding test; 
 
@@ -63,26 +64,27 @@ void draw()
      test.drawOrthocircles();
    if(rotating)
    {
-    test.G.fancy(drawKoebe);
+      float dyt = sx - mouseX, dxt = sy - mouseY;
     
-    HashMap<HalfEdge, Boolean> done = new HashMap<HalfEdge, Boolean>();
-    float dyt = sx - mouseX, dxt = sy - mouseY;
+      HashMap<HalfEdge, Boolean> done = new HashMap<HalfEdge, Boolean>();
 
-    for(int i= 0; i < test.G.edges.size(); i++)
-    {
+      for(int i= 0; i < test.G.edges.size(); i++)
+      {
       if(done.containsKey(test.G.edges.get(i).h1)) continue;
       done.put(test.G.edges.get(i).h1, true);
-      
+        
       Vertex v = test.G.edges.get(i).h1.ixnp;
-      
+       
       v.rotate('x', -dxt/70);
       v.rotate('x', -dxt/70);
       v.rotate('y', dyt/70);
       v.rotate('y', dyt/70);
-      
+        
       test.G.edges.get(i).h1.ixnp = v;
-      test.G.edges.get(i).h2.ixnp = v;
-    }
+      }
+      test.G.down();
+      test.G.fancyDraw(drawKoebe);
+
       sx = mouseX; sy = mouseY;
    }
 }
@@ -93,14 +95,16 @@ void mousePressed()
   {
     sx = mouseX; sy = mouseY;
     drawing = true;
-
   }
   else if(mouseButton == RIGHT)
   {
+    test.G.computeIxn();
     sx = mouseX; sy = mouseY;
     rotating = true;
+    mode2 = true;
   }
 }
+
 void mouseReleased()
 {
   if(mouseButton == LEFT)
@@ -114,16 +118,16 @@ void mouseReleased()
     rotating = false;
   }
 }
+
 void keyPressed()
 {
   if(key == 'c')
   {
+    mode2 = false;
     setup();
   }
   else if(key=='d')
     drawOrtho = !drawOrtho;
   else if(key == 'k')
-  {
     drawKoebe = !drawKoebe;
-  }
 }

@@ -160,10 +160,8 @@ class Complex
     }
  }
  
- 
- void fancy(boolean d3)//this should not be here...
-  {
-   //d3: draw polyhedra
+ void computeIxn()
+ {
    HashMap<HalfEdge, Boolean> visited = new HashMap<HalfEdge, Boolean>();
    JQueue<HalfEdge> q = new JQueue<HalfEdge>();
    q.add(outerVerts.get(0).h);
@@ -173,37 +171,7 @@ class Complex
      HalfEdge he = q.remove();
 
      if(he == null || visited.containsKey(he))  continue;
-
-      if(d3)
-      {
-        if(he.ixnp!=null && he.next.ixnp != null && he.next.next.ixnp != null)
-        {
-          Vertex a2 = new Vertex(he.ixnp.x, he.ixnp.y, he.ixnp.z, 0), 
-                b2 = new Vertex(he.next.ixnp.x, he.next.ixnp.y, he.next.ixnp.z, 0), 
-                c2 = new Vertex(he.next.next.ixnp.x, he.next.next.ixnp.y, he.next.next.ixnp.z, 0);
-                
-          pushStyle();
-          //noFill();
-          strokeWeight(2);
-          stroke(0);
-          drawCircumcircle3D(a2, b2, c2);
-          popStyle();
-        }
-      }
-      
-      else
-      {
-        if(he.ixn!=null && he.next.ixn != null && he.next.twin.next.ixn != null)
-        {
-          pushStyle();
-          //noFill();
-          strokeWeight(2);
-          stroke(0);
-          drawCircumcircle2D(he.ixn, he.next.ixn, he.next.twin.next.ixn);
-          popStyle();
-        }
-      }
-      
+      visited.put(he, true);
        //////////////////////////////
        //draw orthocircle of internal triangles
        //calculate the incenter and incircle radius.
@@ -235,34 +203,69 @@ class Complex
        
        float ix = (b2 - b1)/(m1 - m2);
        float iy = (b2*m1 - b1*m2)/(m1 - m2);
+      
+       he.ixn = new Vertex(ix,iy,0,0);
+       he.ixnp = stereoProj(he.ixn);
+       he.twin.ixnp = he.ixnp;
        
-       //Vertex drA = new Vertex(he.v.x - ix, he.v.y - iy, 0, 0);
-       //Vertex drB = new Vertex(he.next.v.x - ix, he.next.v.y - iy, 0, 0);
-       
-       //he.v.r = drA.magnitude();
-       //he.next.v.r = drB.magnitude();
+       q.add(he.next);
+       q.add(he.twin);
+   }
+ }
+ void down()
+ {
+    HashMap<HalfEdge, Boolean> visited = new HashMap<HalfEdge, Boolean>();
+   JQueue<HalfEdge> q = new JQueue<HalfEdge>();
+   q.add(outerVerts.get(0).h);
 
-      if(he.ixn == null)
+   while(!q.isEmpty())
+   {
+     HalfEdge he = q.remove();
+     if(visited.containsKey(he))  continue;
+           visited.put(he, true);
+
+        he.ixn = stereoProjI(he.ixnp);
+             q.add(he.next);
+     q.add(he.twin);
+   }
+
+ }
+ void fancyDraw(boolean d3)//this should not be here...
+  {
+   //d3: draw polyhedra
+   HashMap<HalfEdge, Boolean> visited = new HashMap<HalfEdge, Boolean>();
+   JQueue<HalfEdge> q = new JQueue<HalfEdge>();
+   q.add(outerVerts.get(0).h);
+
+   while(!q.isEmpty())
+   {
+     HalfEdge he = q.remove();
+
+     if(he == null || visited.containsKey(he))  continue;
+      visited.put(he, true);
+
+      if(d3)
       {
-         he.ixn = new Vertex(ix,iy,0,0);
-         he.ixnp = stereoProj(he.ixn);
-         he.twin.ixnp = he.ixnp;
+        Vertex a2 = new Vertex(he.ixnp.x, he.ixnp.y, he.ixnp.z, 0), 
+              b2 = new Vertex(he.next.ixnp.x, he.next.ixnp.y, he.next.ixnp.z, 0), 
+              c2 = new Vertex(he.next.next.ixnp.x, he.next.next.ixnp.y, he.next.next.ixnp.z, 0);
+              
+        pushStyle();
+        strokeWeight(2);
+        stroke(0);
+        drawCircumcircle3D(a2, b2, c2);
+        popStyle();
       }
-      if(he.ixnp != null && he.next.ixnp != null && he.next.next.ixnp != null)
+      
+      else
       {
-         he.ixn = stereoProjI(he.ixnp);
-         he.next.ixn = stereoProjI(he.next.ixnp);
-         he.next.next.ixn = stereoProjI(he.next.next.ixnp);
+        pushStyle();
+        strokeWeight(2);
+        stroke(0);
+        drawCircumcircle2D(he.ixn, he.next.ixn, he.next.twin.next.ixn);
+        popStyle();
       }
-     
-     //if(drawOrtho)
-     //{           
-     // if(!d3)
-     // {
-     //   drawCircumcircle2D(he.ixn, he.next.ixn, he.next.next.ixn);
-     // }
-     //}
-     visited.put(he, true);
+
      q.add(he.next);
      q.add(he.twin);
    }
