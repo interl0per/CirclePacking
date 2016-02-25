@@ -8,5 +8,5 @@ Download Processing 3 from https://processing.org/. Open main.pde, and click the
 
 Authors
 -------
-Kevin Pratt, Kirk Gardner, Connor Riley, Don Sheehy
+Kevin Pratt, Connor Riley, and Don Sheehy
 The University of Connecticut

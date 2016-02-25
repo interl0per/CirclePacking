@@ -1,6 +1,7 @@
 definitions/main.aux
 definitions/main.log
 definitions/main.pdf
+definitions/main.lb
 definitions/main.synctex.gz
 *.properties
 main/code/
