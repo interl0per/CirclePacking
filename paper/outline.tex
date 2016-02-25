@@ -1,3 +1,5 @@
+
+
 Exploring Circle Packing Algorithms
 
 \section{Background} % (fold)
@@ -13,6 +15,17 @@ Exploring Circle Packing Algorithms
 
 \section{Interactive Input} % (fold)
 \label{sec:interactive_input}
+
+  One immediate challenge to working interactively with circle packings is the need for input triangulations.
+  We would like to be able to produce triangulations with a minimum of effort.  
+  The most natural approach is to draw circles and produce the weighted Delaunay triangulation of the circles.
+  This is the dual to the so-called power diagram, a Voronoi diagram on the points where the (squared) distance to a circle $c$ with center $p$ and radius $r$ is defined to be
+  \[
+    \pi_c(x)^2 := \|x-p\|^2 - r^2.
+  \]
+  
+  Weighted Delaunay triangulations have another interpretation as projections of convex polyhedra in $\R^3$
+
 
   Drop weighted points and build the weighted Delaunay triangulation incrementally
   (advantage: you can draw an approximate packing)
