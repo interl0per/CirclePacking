@@ -183,7 +183,9 @@ class Complex
                 c2 = new Vertex(he.next.next.ixnp.x, he.next.next.ixnp.y, he.next.next.ixnp.z, 0);
                 
           pushStyle();
-          noFill();
+          //noFill();
+          strokeWeight(2);
+          stroke(0);
           drawCircumcircle3D(a2, b2, c2);
           popStyle();
         }
@@ -194,7 +196,9 @@ class Complex
         if(he.ixn!=null && he.next.ixn != null && he.next.twin.next.ixn != null)
         {
           pushStyle();
-          noFill();
+          //noFill();
+          strokeWeight(2);
+          stroke(0);
           drawCircumcircle2D(he.ixn, he.next.ixn, he.next.twin.next.ixn);
           popStyle();
         }
