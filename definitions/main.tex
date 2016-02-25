@@ -234,7 +234,77 @@ Another variant of Tutte's theorem for non-strictly convex boundaries is as foll
 	\item (Euler's Theorem) If $G$ is planar and 2-connected and $D$ is a drawing of $G$ then the numbers of cells $c= \|cells(G,D)\|$, vertices $v = \|V\|,$ and edges $e = \|E\|$ are related by  $v+c = e+2$.
 	
  \end{enumerate}
- 
+\subsection{Proof of Maxwell Cremona Theorem}
+
+Framework:
+Cut Set:
+Annulus
+
+An edge patch is written as $<h,i;j,k>$. We say it joins the vertices $h,i$ and separates the faces $j,k$.
+\begin{figure}[h]
+      \centering
+      \includegraphics[scale=.3]{edge_patch}       
+      \caption{The edge patch $<h,i;j,k>$.}
+      \label{fig: Figure 4}
+  \end{figure}\\
+Def: A self stress on a framework $G(p)$ is an assignment of scalars $\omega_{ij}$ to the edges such that for each vertex $i : \sum_j \omega_{ij}(p_i - p_j) = 0$. 
+A self stress is non-trivial if some $\omega_{ij} \neq 0$.
+A self stress is full if all $\omega_{ij} \neq 0$.
+A framework is independent if it supports only the trivial self stress with all scalars zero.
+The support is the set of edges on which $\omega_{ij} \neq 0$.
+The self stress is full if the support is the entire graph.
+
+A combinatorial oriented polyhedron is a finite set of vertices, faces and edge patches such that:
+\begin{enumerate}
+	\item if $<h,i;j,k> \in E$ then $<i,h;k,j> \in E$ but $<h,i;k,j> \not\in E$ and $<h,i;j,k> \not\in E$.
+	\item For each vertex $a_0$ all edge patches with first entry $a_0$ form a cycle $<0,i_s;j_s,k_s>$ for $1\leq s \leq t$ $t\geq3$ with $k_s = j_s + 1$ and $j_t = k_1$ where all $k_s$ and $i_s$ are distinct. 
+	\item For each face $F^0$ all edge patches with last entry $F^0$ form a cycle $<h_s, i_s;j_s,0>$ for $1\leq s \leq t$ $t\geq3$ with $i_s = h_s + 1$ and $i_t = h_1$ where all $h_s$ and $j_s$ are distinct.
+	\item Each pair $a_0$, $a_1$ is joined by a vertex edge path. Each pair of faces is connected by a face-edge path. 
+\end{enumerate}
+
+A combinatorial polyhedron is spherical if every closed path of faces and distinct edges $<h_r,i_r;j_r,k_r>$ for $1 \leq r \leq t$ such that $j_{r+1} = k_r$ and $j_1 = k_t$ disconnects the vertices. If so, then the dual is also spherical. 
+
+A graph $G$ is a graph of a spherical combinatorial polyhedron if and only if its is vertex 2-connected and edge 3-connected. Ie. the graph of a spherical polyhedron is planar.
+
+Proof:
+
+Part A: We show it is vertex 2-connected, assumption 2 from above shows it is connected.
+Assume the graph can be separated by removing $v_0$. 
+Select $C$ surrounded by an annulus in the sphere, reinserting $v_0$. We must insert wedges from $C$ to $v_0$, around $C$ this breaks the annulus into a single face contacting $v_0$ twice. This contradicts assumption 3.
+We show the graph is edge 3-connected.
+Assume removing 2 edges disconnects the graph. These edges go from $\{a,a^{'}\}$ and $\{b, b^{'}\}$ joining 2 components. The two edges cut out two faces $F^1$ and $F^2$. In the cycle around $F^1$, the face $F^2$ now occurs across two edges. This contradicts 3.
+
+Part B:
+Given any vertex 2-connected, edge 3-connected graph, we form a corresponding combinatorial spherical polyhedron: arcs and vertices surround simple disks which become faces along with the outer face. After placing point $f^j$ in each face we add $<h,i;j,k>$ if and only if the circuit $p_h, f^i,p_i,f^k$ around an arc $d_{ij}$ is clockwise. 
+
+\begin{enumerate}
+	\item Clearly the patches are each vertex form a cycle. Since we do not have a multi-graph the vertices are distinct. If a cycle around a vertex contained a face twice, then the graph could be disconnected by removing this vertex. This contradicts the vertex 2-connectivity. 
+	\item Clearly the patches around a face form a cycle. Assume a vertex occurs twice in a cycle. Since there are no loops removing it violates 2-connectivity. Assume an adjacent face in a cycle occurs twice, removing edges violates 3-connectivity.
+\end{enumerate}
+
+A reciprocal framework $H* = ((F,E);P)$ on the dual combinatorial polyhedron is a framework such that for each edge patch $<h,i;j,k>$  the vector $v_e = p_i - p_h$ is perpendicular to the vector $v^e = p^k - p^j$ from the reciprocal.
+
+A plane framework on a planar vertex 2-connected, edge 3-connected graph, supports a self stress if and only if it has a reciprocal framework.
+
+A note on notation: $90^o$ clockwise rotation will be written $u^\bot$ and $90^o$ counter-clockwise rotation will be written $-u^\bot$
+
+Proof: Starting with a planar drawing of a graph, form the associated spherical polyhedron. 
+Part A: Assume the spherical polyhedron has a reciprocal framework.
+For each edge patch $<h,i;j,k>$ we will use the equation $\omega_{hi}(p_i - p_h) = -(P^k - P^j)^\bot$ or $\omega_ev_e = (V^e)^\bot$ to define scalars $\omega_{hi} = \omega_e$. All scalars will not equal zero because $P^j \neq P^k$ in a framework. From the facial polyhedrons of the reciprocal framework we get $\sum\omega_ev_e = 0 = \sum\omega_{hi}(p_i - p_h)$
+Part B: Assume we have a full self stress on the framework.
+Pick a face $F^0$ and a point $P^0$ for the this face. Any other face is connected by a simple face-edge path of edge patches $\{...e...\}$. We define $P^1 = P^0 + \sum\omega_ev_e^\bot$. This is a consistent definition provided that two different paths from $F^0$ to $F^1$ give the same point $P^1$. Two such paths form a closed path on the spherical polyhedron and therefore the edges of the path form a cut set for the graph of the polyhedron. If we travel on one path and back on the other we see the sums on the two paths are equal, as required $\sum\omega_ev_e = \sum\omega_e^{'}v_e^{'} = 0$ For each edge $e = <i,h;j,k>$ the path from $P^j$ to $P^k$ is this single edge and the difference in position is $P^j - P^k = -\omega_ev_e^\bot$. Thus, we have a true reciprocal.
+
+end proof.
+
+These results generalize to any combinatorial oriented polyhedron. Given a combinatorial oriented polyhedron $(V,F,E)$ and any framework $H = ((V,E);P)$ there is a full self stress on the framework satisfying $\sum \omega_ev_e = 0$ if and only if there is a reciprocal framework $H* = ((F,E);P)$. 
+
+Proof:
+Part A: Given a reciprocal there is a full self stress.
+For any face-edge cycle $\omega_e v_e = (V^e)^{\bot}$ since the vectors $V^e$ form a closed polygon in the reciprocal $\sum_e(V^e)^\bot = 0$.
+Part B: Given a full self-stress $P^1 = P^0 + \sum_e \omega_ev_e^\bot = reciprocal$
+Given any two paths between $F^0$ and $F^1$ we get the same value for $P^1$ since the sum up one path and back the other is a cycle and yields zero.
+
+
 \subsection{Proof of Tutte's Theorem}
 Let $\omega : E \rightarrow \R$ be an assignment of weights to the edges of a graph and let $p:V \rightarrow \R^2$ be an assignment of positions in $\R^2$ for the vertices of $G$. A vertex $v \in V$ is in equilibrium if  $\sum\limits_{\{v,w\} \in E} \omega_{v,w}(p_v - p_w) = 0$
 

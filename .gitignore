@@ -2,3 +2,6 @@ definitions/main.aux
 definitions/main.log
 definitions/main.pdf
 definitions/main.synctex.gz
+*.properties
+main/code/
+main/web-export/
