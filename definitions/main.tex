@@ -1,13 +1,16 @@
-\documentclass{article}
-\usepackage[utf8]{inputenc}
+\documentclass[english]{article}
 \usepackage{amsfonts}
 \usepackage{tikz}
-\usepackage{natbib}
 \usepackage{url}
 \usepackage{graphicx,amsmath,amsthm,amssymb}
 \usepackage{eucal}
 \usepackage{color}
+\usepackage[T1]{fontenc}
+\usepackage{babel}
+\usepackage{float}
+
 \graphicspath{ {images/} }
+
 \newcommand{\vect}[2]{\bigl[\begin{smallmatrix}#1\\#2\end{smallmatrix}\bigr]}
 \newcommand{\vectt}[3]{\bigl[\begin{smallmatrix}#1\\#2\\#3\end{smallmatrix}\bigr]}
 \newcommand{\Z}{\mathbb{Z}}
@@ -16,9 +19,19 @@
 \newcommand{\CP}{\hat{\mathbb{C}}}
 
 \title{A Space of Circle Packing Algorithms}
-\author{Kevin Pratt, Connor Riley, Don Sheehy}
-\date{February 2016}
 
+\author{
+  Kevin Pratt\\
+  \texttt{kevin.pratt@uconn.edu}
+  \and
+  Connor Riley\\
+  \texttt{connor.riley@uconn.edu}
+    \and
+  Donald R. Sheehy\\
+  \texttt{don.r.sheehy@uconn.edu}
+}
+
+\date{February 2016}
 \begin{document}
 \maketitle
 \section{Introduction}
@@ -27,13 +40,13 @@ The Circle packing theorem was first discovered by Paul Koebe and then later rei
 The following section contains definitions needed either to explain other definitions or to understand Circle Packings to their fullest.
  \subsection{Graphs}
  
- A \textbf{graph} is an ordered pair $G=(V,E)$ which represents a set of objects where some of these objects are linked. In the denotation $G=(V,E)$, $V$ stands for the vertexes or objects, and $E$ stands for the edges or links. Edges in a graph can be directed or undirected, however, we will focus on undirected edges in our application.
+ A \textbf{graph} is an ordered pair $G=(V,E)$ which represents a set of objects where some of these objects are linked. In the denotation $G=(V,E)$, $V$ stands for the vertices or objects, and $E$ stands for the edges or links. Edges in a graph can be directed or undirected, however, we will focus on undirected edges in our application.
 
   A component or \textbf{connected component} of a graph is a subgraph in which any two vertices are connected to each other by a path which is connected to no additional vertices in the supergraph.
 
-  A \textbf{loop} is when a vertex has an edge connecting it to itself. \citep{NIST:self-loop}
+  A \textbf{loop} is when a vertex has an edge connecting it to itself.
   
-  \begin{figure}[h]
+  \begin{figure}[H]
   \centering
 	\begin{tikzpicture}[scale=0.2]\tikzstyle{every node}+=[inner sep=0pt]
 	  \draw [black] (25.7,-24.2) circle (3);
@@ -48,7 +61,7 @@ The following section contains definitions needed either to explain other defini
   
   A graph with multiple edges is one which has two or more edges connect the same two vertices.\\
   
-  \begin{figure}[h]
+  \begin{figure}[H]
     \centering
 	\begin{tikzpicture}[scale=0.2]\tikzstyle{every node}+=[inner sep=0pt]
 	  \draw [black] (25.7,-24.2) circle (3);
@@ -66,13 +79,13 @@ The following section contains definitions needed either to explain other defini
 
  \subsubsection{Types of Graphs}
   A graph is \textbf{connected} when there is a path between every pair of vertices. 
-  In a connected graph every vertex is reachable. A graph with just one vertex is connected~\citep{mathworld:ConnectedGraphs}. A graph is said to be k-connected if there does not exist a set of k-1 vertices whose removal disconnects the graph. Typically we will work with 3-connected graphs - this means that three vertices would have to be removed to disconnect the graph.
+  In a connected graph every vertex is reachable. A graph with just one vertex is connected. A graph is said to be \textbf{k-connected} if there does not exist a set of k-1 vertices whose removal disconnects the graph. Typically we will work with 3-connected graphs - this means that three vertices would have to be removed to disconnect the graph.
   
   A \textbf{simple graph} is an unweighted, undirected graph, containing no loops or multiple edges. 
-  A simple graph may either be connected or disconnected~\citep{mathworld:SimpleGraphs}.
+  A simple graph may either be connected or disconnected.
   
   A \textbf{planar graph} is one that can be embedded in the plane. 
-  In other words, the graph can be drawn on the plane in such a way that its edges intersect only at their endpoints (no edges cross each other)~\citep{mathworld:PlanarGraph}. By $Whitney's$ $Theorem$ if a graph is planar and 3-connected, all the faces of the graph will be the same shape. A Triangulated graph, or triangulation is an example of this property.
+  In other words, the graph can be drawn on the plane in such a way that its edges intersect only at their endpoints (no edges cross each other). By $Whitney's$ $Theorem$ if a graph is planar and 3-connected, all the faces of the graph will be the same shape. A Triangulated graph, or triangulation is an example of this property.
   
   A graph $G' = (V',E')$ is a \textbf{subgraph} of $G$ ($G' \subseteq G$), if $V' \subseteq V$ and $E' \subseteq E$. Two important types of subgraphs are:
   \begin{itemize}
@@ -80,7 +93,7 @@ The following section contains definitions needed either to explain other defini
   \item A $k-cycle$ in $G$ is a subgraph $G'\subseteq G$ with $V' = \{v_1,...,v_k\}$ and $E' = \{\{v_1,v_2\},...\{v_{k-1}, v_k\}, \{v_k,_1\}\}$
   \item A $Y-Graph$ in $G$ that connects $v_1,v_2, v_3 \in V$ is a subgraph $G' \subseteq G$ such that there exists a vertex $w \in V \backslash \{v_1,v_2, v_3\}$ and paths $G_{v_1}^w, G_{v_2}^w, G_{v_3}^w$ that are disjoint except for the common endpoint $w$.
   \end{itemize}
-  A \textbf{triangulation}, also referred to as a \textbf{maximal planar graph}, is a planar graph in which there is no way to add another edge and have the graph continue to be planar. In practice this means that each face is bounded by three edges\citep{mathworld:Triangulation}.
+  A \textbf{triangulation}, also referred to as a \textbf{maximal planar graph}, is a planar graph in which there is no way to add another edge and have the graph continue to be planar. In practice this means that each face is bounded by three edges
   
   \textbf{Euler's formula} states that if a finite, connected, planar graph is drawn in the plane without any edge intersections, and $v$ is the number of vertices, $e$ is the number of edges and $f$ is the number of faces (including the outer region), then: 
   \begin{equation} 
@@ -135,8 +148,23 @@ The following section contains definitions needed either to explain other defini
 		\item There are unique equilibrium positions $p_{k+1}, ...p_n \in \R^2$ for the interior vertices. 
 		\item All faces of $G$ are realized as non-overlapping convex polygons.
 	\end{itemize}
-Another variant of Tutte's theorem for non-strictly convex boundaries is as follows:
+	
+	
+\subsubsection{Proof of Tutte's Theorem}
+Let $\omega : E \rightarrow \R$ be an assignment of weights to the edges of a graph and let $p:V \rightarrow \R^2$ be an assignment of positions in $\R^2$ for the vertices of $G$. A vertex $v \in V$ is in equilibrium if  $\sum\limits_{\{v,w\} \in E} \omega_{v,w}(p_v - p_w) = 0$
 
+\textsc {Proof of Existence and Uniqueness}  Assume that the positions of the peripheral points $p_v = (x_v,y_v); v \in \{k+1,...,n\}$ are given. We have to prove that suitable positions $p_v = (x_v,y_v); v \in \{1,...,k\}$ for the interior vertices exist and that these positions are unique. Without loss of generality we may assume that $p_n = (0,0)$. Consider the function
+\begin{center}
+$E(x_1,...,x_k,y_1,...,y_k) = \frac{1}{2} \sum\limits_{\{v,w\} \in E'} \omega_{v,w}((x_v - x_w)^2 + (y_v - y_w)^2) 
+= \frac{1}{2} \sum\limits_{\{v,w\} \in E'} \omega_{v,w} \|p_v - p_w\|^2$. \\
+\end{center}
+$E$ is a quadratic function that is non-negative everywhere. Assume that $z=(x_1,...x_k,y_1,...y_k)$ has at least one entry (say $x_i$) with large absolute value. This implies that $p_i$ is far away from the point $p_n = (0,0)$. Since $G$ is connected, there is a path that connects $p_i$ with $p_n$ and for at least one edge $(v,w)$ in this path the distance $\|p_v - p_w\|$ is large. Since the squared distances are weighted with positive coefficients $E(z)$ is also large. Thus for sufficiently large $\alpha > 0, \|z\| > \alpha$ implies $E(z) > E(0)$. This means that $E$ must be strictly convex and thus takes its unique minimum on $\{z | |z| < \alpha \}$. The assertion follows from the observation that the condition for a critical point $(\triangledown E = 0)$ of $E$ is
+\begin{center}
+$\frac{\delta E}{\delta x_i} = \sum\limits_{\{v,w\} \in E'} \omega_{v,w}(x_v - x_w) = 0$ and $\frac{\delta E}{\delta x_i} = \sum\limits_{\{v,w\} \in E'} \omega_{v,w}(y_v - y_w) = 0$
+\end{center}
+for all $i \in \{1,..,k\}$. This is exactly the equilibrium condition for the interior vertices.
+
+Another variant of Tutte's theorem for non-strictly convex boundaries is as follows:
 
  \subsection{Maxwell-Cremona Theorem}
  Theorem: (1) Let $G[p]$ be a planar framework with a convex outer face $F$. There is a correspondence between
@@ -158,9 +186,94 @@ Another variant of Tutte's theorem for non-strictly convex boundaries is as foll
  
  The boundary of $F$ corresponds to the edges and vertices which vertical supporting planes, and the two planar frameworks correspond to the upper half and the lower half of $P$.
  
- The \textbf{Maxwell-Cremona Correspondence}: There is a natural correspondence between equilibrium stresses of planar linkage and the liftings of that linkage. 
+ The \textbf{Maxwell-Cremona Theorem}: There is a natural correspondence between equilibrium stresses of planar linkage and the liftings of that linkage. 
  
  $Equalibruim$  $Stress \leftrightarrow Reciprocal$ $Diagrams \leftrightarrow Liftings$
+ 
+\subsubsection{Proof of the Maxwell-Cremona Theorem}
+An \textbf{edge patch} is written as $<h,i;j,k>$. We say it joins the vertices $h,i$ and separates the faces $j,k$.
+\begin{figure}[h]
+      \centering
+      \includegraphics[scale=.3]{edge_patch}       
+      \caption{The edge patch $<h,i;j,k>$.}
+      \label{fig: Figure 4}
+  \end{figure}\\
+  
+A \textbf{framework} in the plane is a finite graph $G=(V,E)$ and a mapping $p: V \rightarrow \R^2$ such that $p(a) \neq p(b)$ if $(a,b) \in E$. The notation for frameworks is as follows: 
+
+\begin{itemize}
+	\item The framework is written as $G(p)$
+	\item $p(a)$ is a point treated as a position vector. 
+	\item Joints are written as $p(i)$ or more commonly $p_i$.
+	\item Bars are written as $p_ip_j$ or $\{i,j\}$
+	\item Edges are written $ij$.
+\end{itemize}
+
+The forces exerted by a bar are a pair of forces along the bar equal in magnitude but opposite in direction. $\omega_{ij}(p_j - p_i)$ at $p_i$ and $\omega_{ij}(p_i - p_j)$ at $p_j$. If $\omega_{ij} \geq 0$ the force is a tension force, otherwise it is a compression force. The forces at a joint $p_i$ are at equilibrium if $\sum_j \omega_{ij}(p_j-p_i) = 0$.
+
+A \textbf{cut} is a partition of the vertices of a graph into two disjoints subsets.
+
+An \textbf{annulus} is a ring-shaped object bounded by two concentric circles. 
+
+A \textbf{self stress} on a framework $G(p)$ is an assignment of scalars $\omega_{ij}$ to the edges such that for each vertex $i : \sum_j \omega_{ij}(p_i - p_j) = 0$. 
+\begin{itemize}
+	\item A self stress is non-trivial if some $\omega_{ij} \neq 0$.
+	\item A self stress is full if all $\omega_{ij} \neq 0$.
+	\item A framework is independent if it supports only the trivial self stress with all scalars zero.
+	\item The support is the set of edges on which $\omega_{ij} \neq 0$.
+	\item The self stress is full if the support is the entire graph.
+\end{itemize}
+A \textbf{combinatorial oriented polyhedron} is a finite set of vertices, faces and edge patches such that:
+\begin{enumerate}
+	\item if $<h,i;j,k> \in E$ then $<i,h;k,j> \in E$ but $<h,i;k,j> \not\in E$ and $<h,i;j,k> \not\in E$.
+	\item For each vertex $a_0$ all edge patches with first entry $a_0$ form a cycle $<0,i_s;j_s,k_s>$ for $1\leq s \leq t$ $t\geq3$ with $k_s = j_s + 1$ and $j_t = k_1$ where all $k_s$ and $i_s$ are distinct. 
+	\item For each face $F^0$ all edge patches with last entry $F^0$ form a cycle $<h_s, i_s;j_s,0>$ for $1\leq s \leq t$ $t\geq3$ with $i_s = h_s + 1$ and $i_t = h_1$ where all $h_s$ and $j_s$ are distinct.
+	\item Each pair $a_0$, $a_1$ is joined by a vertex edge path. Each pair of faces is connected by a face-edge path. 
+\end{enumerate}
+
+\subsubsection{Spherical Combinatorial Polyhedron}
+A combinatorial polyhedron is spherical if every closed path of faces and distinct edges $<h_r,i_r;j_r,k_r>$ for $1 \leq r \leq t$ such that $j_{r+1} = k_r$ and $j_1 = k_t$ disconnects the vertices. If so, then the dual is also spherical. 
+
+A graph $G$ is a graph of a spherical combinatorial polyhedron if and only if its is vertex 2-connected and edge 3-connected. Ie. the graph of a spherical polyhedron is planar.
+
+\textsc{Proof}
+Part A: First we must show that the graph is vertex 2-connected and edge 3-connected. We already know the graph is connected from property 2 above. We prove this by contradiction. First we assume the graph an be separated by removing $v_0$. Next we select $C$ surrounded by an annulus in the sphere, reinserting $v_0$. We must insert wedges from $C$ to $v_0$, around $C$ this breaks the annulus into a single face contacting $v_0$ twice. This contradicts property 3 from above.
+To show the graph is edge 3-connected we assume that removing 2 edges disconnects the graph and prove by contradiction. These two edges go from $\{a,a^{'}\}$ and $\{b, b^{'}\}$ joining 2 components. The two edges cut out two faces $F^1$ and $F^2$. In the cycle around $F^1$, the face $F^2$ now occurs across two edges. This contradicts property 3 of the combinatorial oriented polyhedron.
+
+Part B:
+Given any vertex 2-connected, edge 3-connected graph, we form a corresponding combinatorial spherical polyhedron: arcs and vertices surround simple disks which become faces along with the outer face. After placing point $f^j$ in each face we add $<h,i;j,k>$ if and only if the circuit $p_h, f^i,p_i,f^k$ around an arc $d_{ij}$ is clockwise. 
+
+\begin{enumerate}
+	\item Clearly the patches are each vertex form a cycle. Since we do not have a multi-graph the vertices are distinct. If a cycle around a vertex contained a face twice, then the graph could be disconnected by removing this vertex. This contradicts the vertex 2-connectivity. 
+	\item Clearly the patches around a face form a cycle. Assume a vertex occurs twice in a cycle. Since there are no loops removing it violates 2-connectivity. Assume an adjacent face in a cycle occurs twice, removing edges violates 3-connectivity.
+\end{enumerate}
+
+\subsubsection{Proof of Maxwell Cremona Theorem}
+A reciprocal framework $H* = ((F,E);P)$ on the dual combinatorial polyhedron is a framework such that for each edge patch $<h,i;j,k>$  the vector $v_e = p_i - p_h$ is perpendicular to the vector $v^e = p^k - p^j$ from the reciprocal. \\
+\\
+\textsc{Theorem} A plane framework on a planar vertex 2-connected, edge 3-connected graph, supports a self stress if and only if it has a reciprocal framework. \\
+\\
+\textsc{Proof} Starting with a planar drawing of a graph, form the associated spherical polyhedron. 
+
+A note on notation: $90^o$ clockwise rotation will be written $u^\bot$ and $90^o$ counter-clockwise rotation will be written $-u^\bot$
+
+Part A: Assume the spherical polyhedron has a reciprocal framework.
+For each edge patch $<h,i;j,k>$ we will use the equation $\omega_{hi}(p_i - p_h) = -(P^k - P^j)^\bot$ or $\omega_ev_e = (V^e)^\bot$ to define scalars $\omega_{hi} = \omega_e$. All scalars will not equal zero because $P^j \neq P^k$ in a framework. From the facial polyhedrons of the reciprocal framework we get $\sum\omega_ev_e = 0 = \sum\omega_{hi}(p_i - p_h)$
+
+Part B: Assume we have a full self stress on the framework.
+Pick a face $F^0$ and a point $P^0$ for the this face. Any other face is connected by a simple face-edge path of edge patches $\{...e...\}$. We define $P^1 = P^0 + \sum\omega_ev_e^\bot$. This is a consistent definition provided that two different paths from $F^0$ to $F^1$ give the same point $P^1$. Two such paths form a closed path on the spherical polyhedron and therefore the edges of the path form a cut set for the graph of the polyhedron. If we travel on one path and back on the other we see the sums on the two paths are equal, as required $\sum\omega_ev_e = \sum\omega_e^{'}v_e^{'} = 0$ For each edge $e = <i,h;j,k>$ the path from $P^j$ to $P^k$ is this single edge and the difference in position is $P^j - P^k = -\omega_ev_e^\bot$. Thus, we have a true reciprocal.
+
+These results generalize to any combinatorial oriented polyhedron. \\
+\\
+\textsc{Theorem} Given a combinatorial oriented polyhedron $(V,F,E)$ and any framework $H = ((V,E);P)$ there is a full self stress on the framework satisfying $\sum \omega_ev_e = 0$ if and only if there is a reciprocal framework $H* = ((F,E);P)$. 
+
+\textsc{Proof} Part A: Given a reciprocal there is a full self stress.
+For any face-edge cycle $\omega_e v_e = (V^e)^{\bot}$ since the vectors $V^e$ form a closed polygon in the reciprocal $\sum_e(V^e)^\bot = 0$.
+
+Part B: Given a full self-stress $P^1 = P^0 + \sum_e \omega_ev_e^\bot = reciprocal$
+Given any two paths between $F^0$ and $F^1$ we get the same value for $P^1$ since the sum up one path and back the other is a cycle and yields zero.
+
+
  
   \subsection{Topology}
  Topology is concerned with the properties of space that are preserved under continuous deformations, such as stretching and bending, but not tearing or gluing. This can be studied by considering a collection of subsets, called open sets, that satisfy certain properties, turning the given set into what is known as a topological space. 
@@ -180,12 +293,12 @@ Another variant of Tutte's theorem for non-strictly convex boundaries is as foll
   If the circle packing is on the plane or the sphere, then its intersection graph is called a \textbf{coin graph}. 
   Coin graphs are always connected, simple and planar. 
 
-    Common geometric settings for circle packing are the $euclidean$ $plane$, $the$ $sphere$ and the $hyperbolic$ $plane$. Each pair of circles in a packing forms a tangent pair, and the empty space between each $triple$ forms a $interstice$. A $flower$ is the next level of structure, which consists of a central circle and some number of $petal$ circles. The number of petals defines the $degree$ of the central circle. A condition that we will enforce on all circle packings is that every circle must have a flower. This condition is a $local$ $planarity$ condition. \citep{introCirlceacking} Note that while not all circle packings are unilevant, the ones created by our application will all be unilevant. This means that the interior of all the circles will be mutually disjoint and that the angle sum at each label will be $2\pi$.
+    Common geometric settings for circle packing are the $euclidean$ $plane$, $the$ $sphere$ and the $hyperbolic$ $plane$. Each pair of circles in a packing forms a tangent pair, and the empty space between each $triple$ forms a $interstice$. A $flower$ is the next level of structure, which consists of a central circle and some number of $petal$ circles. The number of petals defines the $degree$ of the central circle. A condition that we will enforce on all circle packings is that every circle must have a flower. This condition is a $local$ $planarity$ condition. Note that while not all circle packings are unilevant, the ones created by our application will all be unilevant. This means that the interior of all the circles will be mutually disjoint and that the angle sum at each label will be $2\pi$.
     
-    Every circle packing is also a Delaunay triangulation. In the triangulation the weighted disks assigned to the vertices to find the orthocenter end up being the circles in the packing and the orthocircle becomes the inscribed circle of the triangle. 
+    Every circle packing is also a Weighted Delaunay triangulation. In the triangulation the weighted disks assigned to the vertices to find the orthocenter end up being the circles in the packing and the orthocircle becomes the inscribed circle of the triangle. 
     
     \subsubsection{Koebe Representation Theorem}
-    Given any planar graph $G$ with vertex set $V(G) = \{v_1, ... v_n \}$ and edge set $E(G)$, we can find a packing of n (not necessarily congruent) circular discs $C= \{C_1,... C_n\}$ in the plane with the property that $C_i$ and $C_j$ touch each other if and only if $v_i v_j \epsilon E(G)$ for $1 \le i \le n$. \citep{combinatorialGeometry} 
+    Given any planar graph $G$ with vertex set $V(G) = \{v_1, ... v_n \}$ and edge set $E(G)$, we can find a packing of n (not necessarily congruent) circular discs $C= \{C_1,... C_n\}$ in the plane with the property that $C_i$ and $C_j$ touch each other if and only if $v_i v_j \epsilon E(G)$ for $1 \le i \le n$.
     \subsubsection{Stereographic Projections}
     A \textbf{sterographic projection} is a bijective mapping that projects a sphere onto a plane.
      The projection is defined on the entire sphere except for the projection point. 
@@ -234,96 +347,12 @@ Another variant of Tutte's theorem for non-strictly convex boundaries is as foll
 	\item (Euler's Theorem) If $G$ is planar and 2-connected and $D$ is a drawing of $G$ then the numbers of cells $c= \|cells(G,D)\|$, vertices $v = \|V\|,$ and edges $e = \|E\|$ are related by  $v+c = e+2$.
 	
  \end{enumerate}
-\subsection{Proof of Maxwell Cremona Theorem}
-
-Framework:
-Cut Set:
-Annulus
-
-An edge patch is written as $<h,i;j,k>$. We say it joins the vertices $h,i$ and separates the faces $j,k$.
-\begin{figure}[h]
-      \centering
-      \includegraphics[scale=.3]{edge_patch}       
-      \caption{The edge patch $<h,i;j,k>$.}
-      \label{fig: Figure 4}
-  \end{figure}\\
-Def: A self stress on a framework $G(p)$ is an assignment of scalars $\omega_{ij}$ to the edges such that for each vertex $i : \sum_j \omega_{ij}(p_i - p_j) = 0$. 
-A self stress is non-trivial if some $\omega_{ij} \neq 0$.
-A self stress is full if all $\omega_{ij} \neq 0$.
-A framework is independent if it supports only the trivial self stress with all scalars zero.
-The support is the set of edges on which $\omega_{ij} \neq 0$.
-The self stress is full if the support is the entire graph.
-
-A combinatorial oriented polyhedron is a finite set of vertices, faces and edge patches such that:
-\begin{enumerate}
-	\item if $<h,i;j,k> \in E$ then $<i,h;k,j> \in E$ but $<h,i;k,j> \not\in E$ and $<h,i;j,k> \not\in E$.
-	\item For each vertex $a_0$ all edge patches with first entry $a_0$ form a cycle $<0,i_s;j_s,k_s>$ for $1\leq s \leq t$ $t\geq3$ with $k_s = j_s + 1$ and $j_t = k_1$ where all $k_s$ and $i_s$ are distinct. 
-	\item For each face $F^0$ all edge patches with last entry $F^0$ form a cycle $<h_s, i_s;j_s,0>$ for $1\leq s \leq t$ $t\geq3$ with $i_s = h_s + 1$ and $i_t = h_1$ where all $h_s$ and $j_s$ are distinct.
-	\item Each pair $a_0$, $a_1$ is joined by a vertex edge path. Each pair of faces is connected by a face-edge path. 
-\end{enumerate}
-
-A combinatorial polyhedron is spherical if every closed path of faces and distinct edges $<h_r,i_r;j_r,k_r>$ for $1 \leq r \leq t$ such that $j_{r+1} = k_r$ and $j_1 = k_t$ disconnects the vertices. If so, then the dual is also spherical. 
-
-A graph $G$ is a graph of a spherical combinatorial polyhedron if and only if its is vertex 2-connected and edge 3-connected. Ie. the graph of a spherical polyhedron is planar.
-
-Proof:
-
-Part A: We show it is vertex 2-connected, assumption 2 from above shows it is connected.
-Assume the graph can be separated by removing $v_0$. 
-Select $C$ surrounded by an annulus in the sphere, reinserting $v_0$. We must insert wedges from $C$ to $v_0$, around $C$ this breaks the annulus into a single face contacting $v_0$ twice. This contradicts assumption 3.
-We show the graph is edge 3-connected.
-Assume removing 2 edges disconnects the graph. These edges go from $\{a,a^{'}\}$ and $\{b, b^{'}\}$ joining 2 components. The two edges cut out two faces $F^1$ and $F^2$. In the cycle around $F^1$, the face $F^2$ now occurs across two edges. This contradicts 3.
-
-Part B:
-Given any vertex 2-connected, edge 3-connected graph, we form a corresponding combinatorial spherical polyhedron: arcs and vertices surround simple disks which become faces along with the outer face. After placing point $f^j$ in each face we add $<h,i;j,k>$ if and only if the circuit $p_h, f^i,p_i,f^k$ around an arc $d_{ij}$ is clockwise. 
-
-\begin{enumerate}
-	\item Clearly the patches are each vertex form a cycle. Since we do not have a multi-graph the vertices are distinct. If a cycle around a vertex contained a face twice, then the graph could be disconnected by removing this vertex. This contradicts the vertex 2-connectivity. 
-	\item Clearly the patches around a face form a cycle. Assume a vertex occurs twice in a cycle. Since there are no loops removing it violates 2-connectivity. Assume an adjacent face in a cycle occurs twice, removing edges violates 3-connectivity.
-\end{enumerate}
-
-A reciprocal framework $H* = ((F,E);P)$ on the dual combinatorial polyhedron is a framework such that for each edge patch $<h,i;j,k>$  the vector $v_e = p_i - p_h$ is perpendicular to the vector $v^e = p^k - p^j$ from the reciprocal.
-
-A plane framework on a planar vertex 2-connected, edge 3-connected graph, supports a self stress if and only if it has a reciprocal framework.
-
-A note on notation: $90^o$ clockwise rotation will be written $u^\bot$ and $90^o$ counter-clockwise rotation will be written $-u^\bot$
-
-Proof: Starting with a planar drawing of a graph, form the associated spherical polyhedron. 
-Part A: Assume the spherical polyhedron has a reciprocal framework.
-For each edge patch $<h,i;j,k>$ we will use the equation $\omega_{hi}(p_i - p_h) = -(P^k - P^j)^\bot$ or $\omega_ev_e = (V^e)^\bot$ to define scalars $\omega_{hi} = \omega_e$. All scalars will not equal zero because $P^j \neq P^k$ in a framework. From the facial polyhedrons of the reciprocal framework we get $\sum\omega_ev_e = 0 = \sum\omega_{hi}(p_i - p_h)$
-Part B: Assume we have a full self stress on the framework.
-Pick a face $F^0$ and a point $P^0$ for the this face. Any other face is connected by a simple face-edge path of edge patches $\{...e...\}$. We define $P^1 = P^0 + \sum\omega_ev_e^\bot$. This is a consistent definition provided that two different paths from $F^0$ to $F^1$ give the same point $P^1$. Two such paths form a closed path on the spherical polyhedron and therefore the edges of the path form a cut set for the graph of the polyhedron. If we travel on one path and back on the other we see the sums on the two paths are equal, as required $\sum\omega_ev_e = \sum\omega_e^{'}v_e^{'} = 0$ For each edge $e = <i,h;j,k>$ the path from $P^j$ to $P^k$ is this single edge and the difference in position is $P^j - P^k = -\omega_ev_e^\bot$. Thus, we have a true reciprocal.
-
-end proof.
-
-These results generalize to any combinatorial oriented polyhedron. Given a combinatorial oriented polyhedron $(V,F,E)$ and any framework $H = ((V,E);P)$ there is a full self stress on the framework satisfying $\sum \omega_ev_e = 0$ if and only if there is a reciprocal framework $H* = ((F,E);P)$. 
-
-Proof:
-Part A: Given a reciprocal there is a full self stress.
-For any face-edge cycle $\omega_e v_e = (V^e)^{\bot}$ since the vectors $V^e$ form a closed polygon in the reciprocal $\sum_e(V^e)^\bot = 0$.
-Part B: Given a full self-stress $P^1 = P^0 + \sum_e \omega_ev_e^\bot = reciprocal$
-Given any two paths between $F^0$ and $F^1$ we get the same value for $P^1$ since the sum up one path and back the other is a cycle and yields zero.
-
-
-\subsection{Proof of Tutte's Theorem}
-Let $\omega : E \rightarrow \R$ be an assignment of weights to the edges of a graph and let $p:V \rightarrow \R^2$ be an assignment of positions in $\R^2$ for the vertices of $G$. A vertex $v \in V$ is in equilibrium if  $\sum\limits_{\{v,w\} \in E} \omega_{v,w}(p_v - p_w) = 0$
-
-\textsc {Proof of Existence and Uniqueness}  Assume that the positions of the peripheral points $p_v = (x_v,y_v); v \in \{k+1,...,n\}$ are given. We have to prove that suitable positions $p_v = (x_v,y_v); v \in \{1,...,k\}$ for the interior vertices exist and that these positions are unique. Without loss of generality we may assume that $p_n = (0,0)$. Consider the function
-\begin{center}
-$E(x_1,...,x_k,y_1,...,y_k) = \frac{1}{2} \sum\limits_{\{v,w\} \in E'} \omega_{v,w}((x_v - x_w)^2 + (y_v - y_w)^2) 
-= \frac{1}{2} \sum\limits_{\{v,w\} \in E'} \omega_{v,w} \|p_v - p_w\|^2$. \\
-\end{center}
-$E$ is a quadratic function that is non-negative everywhere. Assume that $z=(x_1,...x_k,y_1,...y_k)$ has at least one entry (say $x_i$) with large absolute value. This implies that $p_i$ is far away from the point $p_n = (0,0)$. Since $G$ is connected, there is a path that connects $p_i$ with $p_n$ and for at least one edge $(v,w)$ in this path the distance $\|p_v - p_w\|$ is large. Since the squared distances are weighted with positive coefficients $E(z)$ is also large. Thus for sufficiently large $\alpha > 0, \|z\| > \alpha$ implies $E(z) > E(0)$. This means that $E$ must be strictly convex and thus takes its unique minimum on $\{z | |z| < \alpha \}$. The assertion follows from the observation that the condition for a critical point $(\triangledown E = 0)$ of $E$ is
-\begin{center}
-$\frac{\delta E}{\delta x_i} = \sum\limits_{\{v,w\} \in E'} \omega_{v,w}(x_v - x_w) = 0$ and $\frac{\delta E}{\delta x_i} = \sum\limits_{\{v,w\} \in E'} \omega_{v,w}(y_v - y_w) = 0$
-\end{center}
-for all $i \in \{1,..,k\}$. This is exactly the equilibrium condition for the interior vertices.
 
 \section{Computing Delaunay Triangulations}
 \subsection{Naive Algorithm}
 If a triangle is not locally Delaunay, one of its edges can be flipped to create a locally Delaunay triangle. Therefore, a simple algorithm is to create a triangulation and flip the edges until all triangles are Delaunay. If $n$ is the number of edges, this algorithm can take $O(n^2)$ in the worst case and also does not work in three dimensions or higher.
 \subsection{Incremental}
-This algorithm functions by repeatedly adding one vertex at a time and retriangulating the affected parts of the graph. When a vertex $v$ is added, the triangle containing $v$ is split into three and then the flip algorithm is applied. It takes $O(n)$ time to find the triangle containing $v$ and $O(n^2)$ time to run the flip algorithm. Therefore the total runtime is the same as the naive approach, $O(n^2)$. However, the incremental algorithm does have some advantages over the naive approach. First, if the vertices are inserted in a random order, on average only $O(1)$ triangles will be flipped. Finding the triangle containing $v$ can also be improved by storing the history of the splits and flips performed. Each triangle can store a pointer to a triangle that contains $v$ until we find a triangle that has not yet been replaced. On average this will take $O(log(n))$, therefore, for all vertices it takes $O(nlog(n))$. Lastly, this technique does extend beyond 2 dimensions, but the runtime can be exponential in the dimension. 
+This algorithm  functions by repeatedly adding one vertex at a time and retriangulating the affected parts of the graph. When a vertex $v$ is added, the triangle containing $v$ is split into three and then the flip algorithm is applied. It takes $O(n)$ time to find the triangle containing $v$ and $O(n^2)$ time to run the flip algorithm. Therefore the total runtime is the same as the naive approach, $O(n^2)$. However, the incremental algorithm does have some advantages over the naive approach. First, if the vertices are inserted in a random order, on average only $O(1)$ triangles will be flipped. Finding the triangle containing $v$ can also be improved by storing the history of the splits and flips performed. Each triangle can store a pointer to a triangle that contains $v$ until we find a triangle that has not yet been replaced. On average this will take $O(log(n))$, therefore, for all vertices it takes $O(nlog(n))$. Lastly, this technique does extend beyond 2 dimensions, but the runtime can be exponential in the dimension. 
 \subsection{Divide and Conquer}
 This algorithm computes the Triangulation by recursively drawing a line to split the vertices into two sets. The triangulation is computed for each set and then the two sets are merged along the splitting line. The merge operation can be done in $O(n)$ time, so the total time is $O(nlog(n))$.
 
