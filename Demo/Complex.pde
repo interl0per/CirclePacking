@@ -33,7 +33,7 @@ class Complex
     //targ.placed = true;
   }
 
-  void draw() {
+  void drawComplex() {
     pushStyle();
     stroke(100, 100, 100, 50);
     for (Edge e : edges) {

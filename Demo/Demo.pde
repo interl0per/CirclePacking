@@ -22,7 +22,6 @@ void setup() {
 void draw() {
   translate(width/2, height/2, 0);  
   background(255);
-
   if (!rotating) {
     test.drawPSLG();
     test.drawRadii();

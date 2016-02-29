@@ -68,7 +68,7 @@ class Vertex {
       z = yi*sint+z*cost;
     }
   }
-  void draw() {
+  void drawVertex() {
     //   pushStyle();
 
     noStroke();

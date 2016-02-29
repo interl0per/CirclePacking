@@ -106,25 +106,25 @@ class EnrichedEmbedding {
   //Drawing methods
   /////////////////
   void drawPSLG() {
-    G.draw();
+    G.drawComplex();
   }
   void drawDualPSLG() {
-    G.dual.draw();
+    G.dual.drawComplex();
   }
   void drawRadii() {
     for (Vertex v : G.verts) {
-      v.draw();
+      v.drawVertex();
     }
     for (Vertex v : G.outerVerts) {
-      v.draw();
+      v.drawVertex();
     }
   }
   void drawDualRadii() {
     for (Vertex v : G.dual.verts) {
-      v.draw();
+      v.drawVertex();
     }
     for (Vertex v : G.dual.outerVerts) {
-      v.draw();
+      v.drawVertex();
     }
   }
   void drawKoebe() {
