@@ -31,11 +31,11 @@ class EnrichedEmbedding {
 
         float ocr = sqrt(s*(s-v1v2)*(s-v1v3)*(s-v2v3))/s;
 
-        pushStyle();
+      //  pushStyle();
         noStroke();
         fill(0, 0, 0, 60);
         ellipse(ocx, ocy, 2*ocr, 2*ocr);
-        popStyle();
+      //  popStyle();
 
         ae.put(he, true);
       }
@@ -81,25 +81,25 @@ class EnrichedEmbedding {
         float cy = det3/(2*det1);
         float r = sqrt(cx*cx + cy*cy + det4/det1);
 
-        pushStyle();
+      //  pushStyle();
         //noStroke();
         //fill(0,100, 0);
         noFill();
         stroke  (255, 160, 122);
         strokeWeight(2);
         ellipse(cx, cy, 2*r, 2*r);
-        popStyle();
+      //  popStyle();
 
         dualTwins[i] = new Vertex(cx, cy, 0, r);
       }
       //fix this up so it just calculates the whole dual
-      pushStyle();
+    //  pushStyle();
       stroke  (100, 100, 100);
 
       if (dualTwins[1]!=null) {
         line(dualTwins[0].x, dualTwins[0].y, dualTwins[1].x, dualTwins[1].y);
       }
-      popStyle();
+    //  popStyle();
     }
   }
   /////////////////
@@ -279,7 +279,7 @@ class EnrichedEmbedding {
       error += abs(v.angleSum() - 2*PI);
 
     error/=G.verts.size();
-    if (error > 0.005)
+    if (error > 0.05)
       return false;
     return true;
   }

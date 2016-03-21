@@ -71,7 +71,7 @@ class Vertex {
   void drawVertex() {
     //   pushStyle();
 
-    noStroke();
+   // noStroke();
     fill(176, 196, 222);
     ellipse(x, y, 2*r, 2*r);
 

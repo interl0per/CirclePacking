@@ -34,12 +34,12 @@ class Complex
   }
 
   void drawComplex() {
-    pushStyle();
+   // pushStyle();
     stroke(100, 100, 100, 50);
     for (Edge e : edges) {
       line(e.v1.x, e.v1.y, e.v2.x, e.v2.y);
     }
-    popStyle();
+  //  popStyle();
   }  
 
   void triangulate(HalfEdge h, Vertex v) {
@@ -219,17 +219,17 @@ class Complex
           b2 = new Vertex(he.next.ixnp.x, he.next.ixnp.y, he.next.ixnp.z, 0), 
           c2 = new Vertex(he.next.next.ixnp.x, he.next.next.ixnp.y, he.next.next.ixnp.z, 0);
 
-        pushStyle();
+     //   pushStyle();
         strokeWeight(2);
         stroke(0);
         drawCircumcircle3D(a2, b2, c2);
-        popStyle();
+      //  popStyle();
       } else {
-        pushStyle();
+    //    pushStyle();
         strokeWeight(2);
         stroke(0);
         drawCircumcircle2D(he.ixn, he.next.ixn, he.next.twin.next.ixn);
-        popStyle();
+     //   popStyle();
       }
 
       q.add(he.next);

@@ -17,11 +17,18 @@ void setup() {
   background(255);
   fill(0, 0);
   test = new EnrichedEmbedding(NUM_OUTER_VERTS);
+  textFont(createFont("Arial",20));
 }
 
 void draw() {
-  translate(width/2, height/2, 0);  
   background(255);
+  
+  translate(width/2, height/2, 0);  
+  
+  fill(100);
+  noStroke();
+  rect(-500,-height/2, 1000, 50);
+
   if (!rotating) {
     test.drawPSLG();
     test.drawRadii();
@@ -42,18 +49,15 @@ void draw() {
   if (drawing) {
     float dx = mouseX - sx, dy = mouseY - sy, r = sqrt(dx*dx + dy*dy);
 
-    pushStyle();
-
     noStroke();
     fill(185, 205, 240);
     ellipse(sx-width/2, sy-height/2, 2*r, 2*r);
-    popStyle();
   }
 
   if (!rotating && drawOrtho) {
     test.drawOrthocircles();
   }
-  if (rotating)
+  if (rotating && test.isPacking())
   {
     float dyt = sx - mouseX, dxt = sy - mouseY;
 
@@ -80,6 +84,23 @@ void draw() {
     sx = mouseX; 
     sy = mouseY;
   }
+      fill(100);
+
+    rect(-500,-height/2, 1000, 50);
+  fill(230);
+
+  if(test.G.verts.size()==0)
+  {
+    text("Drag left mouse to add weighted points to the triangulation.", -490, -height/2+30);
+  }
+  else if(!test.isPacking())
+  {
+    text("When finished, press LEFT to run the radii update algorithm or RIGHT to run the force directed algorithm.", -490, -height/2+30);
+  }
+  else
+  {
+    text("Drag right mouse to view mobius transformations. Press K to toggle Koebe polyhedron view, and C to restart.", -490, -height/2+30);
+  }
 }
 
 void mousePressed() {
@@ -87,7 +108,7 @@ void mousePressed() {
     sx = mouseX; 
     sy = mouseY;
     drawing = true;
-  } else if (mouseButton == RIGHT) {
+  } else if (mouseButton == RIGHT && test.isPacking()) {
     test.G.computeIxn();
     sx = mouseX; 
     sy = mouseY;
