@@ -407,8 +407,11 @@ This algorithm computes the Triangulation by recursively drawing a line to split
 
 \section{Computing Circle Packings}
 Given a planar, triangulated graph, begin with a set of tentative radii that do not correspond to a valid packing. Next, choose a internal vertex $v$ and calculate the total angle $\theta$ that its $k$ neighboring circles would cover around the circle for $v$, if the neighbors were placed tangent to each other and to the central circle using their tentative radii. Next, determine a representative radius $r$ for the neighboring circles, such that $k$ circles of radius $r$ would give the same covering angle $\theta$ as the neighbors of $v$ give. Lastly, set the new radius for $v$ to be the value for which $k$ circles of radius $r$ would give a covering angle of exactly $2\pi$.
-
-
+\section{MISC.}
+\subsection{Polytopes}
+  A \textbf{polytope} is a geometric object with flat sides that can exist in any number of dimensions. The $edge$ $graph$ $G(P)$ of a polytope $P$ is the graph whose vertex set is the vertex set of the polytope $P$. 
+  
+ A \textbf{polyhedron} is a three dimensional polytope or a solid object in three dimensions with flat polygonal faces, straight edges and sharp corners or vertices.
 \bibliographystyle{plain}
 \bibliography{references}
 \end{document}

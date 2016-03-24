@@ -1,0 +1,113 @@
+\documentclass[11pt]{article}
+\usepackage{geometry}                % See geometry.pdf to learn the layout options. There are lots.
+\geometry{a4paper}                   % ... or a4paper or a5paper or ... 
+%\usepackage[parfill]{parskip}    % Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{epstopdf}
+\usepackage{tikz} % allows for figures
+\usepackage{float} % allows [H] on figure definition
+\usepackage{wrapfig}
+\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
+
+
+
+\graphicspath{ {images/} }
+
+% user macros
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+% end user macros
+
+\title{A Space of Circle Packing Algorithms}
+\author{
+  Kevin Pratt\\
+  \texttt{kevin.pratt@uconn.edu}
+  \and
+  Connor Riley\\
+  \texttt{connor.riley@uconn.edu}
+    \and
+  Donald R. Sheehy\\
+  \texttt{don.r.sheehy@uconn.edu}
+}\date{March 2016}
+\begin{document}
+\maketitle
+
+\section{Introduction}
+The Circle Packing Theorem provides a wonderful link between questions of geometry, topology, combinatorics and complex analysis. Discovered by Paul Koebe and later reintroduced by William Thurston, Circle Packings have become a principle area of study for many mathematicians and geometers. While the formal definition will be introduced later, the intuition for Circle Packings must be developed. A Circle Packing is a configuration of circles with a specified pattern of tangencies \cite{stephenson05introduction}. The Circle Packings most often studied are those that require the interior of the circles to be disjoint, called unilevant packings, this means the circles are non-overlapping \cite{stephenson05introduction}. In this case, a Circle Packing can be thought of as a graph formed by a set of circles which have no overlapping interiors, where each circle kisses its surrounding circles. Two circles kiss or osculate when they intersect at exactly one point. 
+
+\begin{wrapfigure}{r}{0.4\textwidth}
+  \begin{center}
+    \includegraphics[scale=.18,width=0.45\textwidth]{circlepacking_1}
+  \end{center}
+  \caption{A unilevant circle packing in a triangle.}
+\end{wrapfigure}
+
+Common geometric settings for circle packing are the $euclidean$ $plane$, $the$ $sphere$ and the $hyperbolic$ $plane$. Each pair of circles in a packing forms a tangent pair, and the empty space between each $triple$ forms a $interstice$ \cite{stephenson05introduction}. A $flower$ is the next level of structure, which consists of a central circle and some number of $petal$ circles. The number of petals defines the $degree$ of the central circle. Every circle in a packing has to have a flower, this is called the $local$ $planarity$ condition \cite{stephenson05introduction}. Note that while not all circle packings are unilevant, the ones discussed in this paper and created by the corresponding application will all be unilevant. This means that the interior of all the circles will be mutually disjoint and that the angle sum at each label will be $2\pi$.
+
+The objective of this paper is to explore the space of Circle Packing Algorithms. To accomplish this goal the theory of Circle Packings will be explored. The other goal is to introduce the reader to the world of Circle Packings, and to do this, basic Geometric principles must be introduced. If you, the reader, are familiar with geometry, then we encourage you to skip the following section.
+
+\section{Introduction to Geometric Figures}
+\subsection{Graphs}
+A \textbf{graph} is an ordered pair $G=(V,E)$ which represents a set of objects where some of these objects are linked. In the denotation $G=(V,E)$, $V$ stands for the vertices or objects, and $E$ stands for the edges or links. Edges in a graph can be directed or undirected, however, we will focus on undirected edges in our application.
+
+  A component or \textbf{connected component} of a graph is a subgraph in which any two vertices are connected to each other by a path which is connected to no additional vertices in the supergraph.
+
+  A \textbf{loop} is when a vertex has an edge connecting it to itself.
+  
+  A graph with multiple edges is one which has two or more edges connect the same two vertices.
+
+  A graph is \textbf{connected} when there is a path between every pair of vertices \cite{mathworld:ConnectedGraphs}. 
+  In a connected graph every vertex is reachable. A graph with just one vertex is connected. A graph is said to be \textbf{k-connected} if there does not exist a set of k-1 vertices whose removal disconnects the graph. Typically we will work with 3-connected graphs - this means that three vertices would have to be removed to disconnect the graph.
+  
+  A \textbf{simple graph} is an unweighted, undirected graph, containing no loops or multiple edges \cite{mathworld:SimpleGraphs}. 
+  A simple graph may either be connected or disconnected.
+  
+  A \textbf{planar graph} is one that can be embedded in the plane. 
+  In other words, the graph can be drawn on the plane in such a way that its edges intersect only at their endpoints (no edges cross each other) \cite{mathworld:PlanarGraph}.
+  
+  A graph $G' = (V',E')$ is a \textbf{subgraph} of $G$ ($G' \subseteq G$), if $V' \subseteq V$ and $E' \subseteq E$. Two important types of subgraphs are:
+  \begin{itemize}
+  \item A $path$ between two vertices $v_1$ and $v_k$ in $G$ is a subgraph $G' \subseteq G$ with $V' = \{v_1,...v_k\}$ and 
+  $E' 	= \{\{v_1,v_2\},...\{v_{k-1}, v_k\}\}$. We write $G' = G_{v_1}^{v_k}$.
+  \item A $k-cycle$ in $G$ is a subgraph $G'\subseteq G$ with $V' = \{v_1,...,v_k\}$ and 
+  $E' = \\ \{\{v_1,v_2\},...\{v_{k-1}, v_k\}, \{v_k,_1\}\}$
+  \item A $Y-Graph$ in $G$ that connects $v_1,v_2, v_3 \in V$ is a subgraph $G' \subseteq G$ such that there exists a vertex $w \in V \backslash \{v_1,v_2, v_3\}$ and paths $G_{v_1}^w, G_{v_2}^w, G_{v_3}^w$ that are disjoint except for the common endpoint $w$.
+  \end{itemize}
+  
+Now that we have established the some basic geometric concepts, we can introduce the formal definition of a circle packing.
+
+\section{Circle Packings}
+If $\xi$ is an oriented surface with a distance metric then a collection $P = \{c_v\}$ of circles in $\xi$ is said to be a circle packing for a complex $K$ if (1) $P$ has a circle $c_v$ associated with each vertex $v$ of $K$, (2) two circles $c_u$, $c_v$ are tangent whenever $<u,v>$ is an edge of $K$, and (3) three circles $c_u$, $c_v$, $c_w$ form a positively oriented triple in $\xi$ whenever $<u,v,w>$ forms a positively oriented face of $K$ \cite{stephenson05introduction}. 
+
+Technically, circle packings exists for any planar graph, however it is often simpler algorithmically to work with 3-connected, triangulated planar graphs. If we limit our study to these types of graphs, then every circle packing on these graphs is a Weighted Delaunay Triangulation. 
+
+\subsection{Delaunay Triangulations}
+	A \textbf{triangulation}, also referred to as a \textbf{maximal planar graph}, is a planar graph in which there is no way to add another edge and have the graph continue to be planar \cite{meshGeneration}. In practice, this means that each faces is bounded by three edges. This is a result of $Whitney's$ $Theorem$ which results in the conclusion that if a graph is planar and 3-connected, all the faces of the graph will be the same shape. A triangulation is an example of this property. 
+
+Formally, a triangulation of $S$, a finite set of points in the plane, is a simplicial complex $\tau$ such that $S$ is the set of vertices in $\tau$, and the union of all the simplices in $\tau$ is the convex hull of $S$ \cite{meshGeneration}. Where a simplex is the generalization of the notion of a triangle to arbitrary dimensions.
+
+There are many specific types of triangulations in mathematics, however, we will focus on Delaunay and Weighted Delaunay triangulations.
+
+To explain Delaunay triangulations, some properties of triangles must first be defined. The \textbf{circumcircle} of a triangle is the circle which passes through all three of its vertices \cite{mathworld:Circumcenter}. The center of the circumcircle is called the \textbf{circumcenter} and the radius is the \textbf{circumradius}. The circumcenter can be found by finding the intersection of the \textbf{altitudes}, which are formed by drawing a perpendicular line from each vertex to the opposite side of the triangle.
+  
+A \textbf{Delaunay Triangulation} for a set of points $P$ is the triangulation of those points such that no point in $P$ is inside the circumcircle of any other triangle \cite{meshGeneration}. Delaunay triangulations are important largely because in two dimensions they maximize the minimum angle in the triangulation. Additionally, Delaunay triangulations are the geometric dual of Voronoi diagrams. A \textbf{Voronoi diagram} is the partitioning of a plane into regions based on distance to points in a specific subset of the plane. Formally, the Voronoi diagram of metric space $X$ with a distance function $d$, where $K$ is the set of indices and $P_k, k \in K$ is a tuple of nonempty subsets in the space $X$, is composed of Voronoi cells $C_k$ associated with the site $P_k$. $C_k$ is the set of all points in $X$ whose distance to $P_k$ is not greater than their distance to the other sites $P_j$ \cite{voronoiDiagrams}. 
+
+\subsubsection{The Edge Flip Algorithm}
+An alternate way of describing a Delaunay triangulation is one in which every edge in the triangulation is $locally$ $Delaunay$ \cite{meshGeneration}. For an edge $e$ in the triangulation $\tau$, if $e$ is an edge of fewer than two triangles, then it is automatically locally Delaunay. If $e$ is an edge of exactly two triangles, then $e$ is locally Delaunay if it has an open circumcirlce containing no vertex of either triangle. 
+
+As a result of this property, a trivial algorithm can be formulated that creates a Delaunay triangulation. If $S$ is the point set, this algorithm begins with any triangulation $\tau$ of $S$. Begin with a list of all the edges in the triangulation. Remove an edge from the list, check if the edge is still in the triangulation and if so, if it is locally Delaunay. If the edge is present but not locally Delaunay, flip the edge and add the four surrounding edges to the list of edges to check. This yields an $O(n + k)$ runtime, where in the worst case $k = O(n^2)$ \cite{meshGeneration}.
+
+\subsubsection{Weighted Delaunay Triangulations}
+
+In the triangulation the weighted disks assigned to the vertices to find the orthocenter end up being the circles in the packing and the orthocircle becomes the inscribed circle of the triangle. 
+
+The \textbf{orthocircle} is the circle that is orthogonal to the disks around the vertices of a triangle. The radii of these disks represent the weight of each vertex of the triangle. If these disks have radii equal to zero, then the orthocircle is equal to the circumcircle.
+
+\section{Misc.}
+By $Whitney's$ $Theorem$ if a graph is planar and 3-connected, all the faces of the graph will be the same shape. A Triangulated graph, or triangulation is an example of this property.
+
+\bibliographystyle{plain}
+\bibliography{references}
+\end{document}  
