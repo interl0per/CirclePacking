@@ -26,7 +26,62 @@ class Complex
       outerVerts.get(i%n).attach(outerVerts.get(i-1));
     }
   }
+  void drawDual()
+  {
+    HashMap<HalfEdge, Boolean> visited = new HashMap<HalfEdge, Boolean>();
+    JQueue<HalfEdge> q = new JQueue<HalfEdge>();
+    q.add(outerVerts.get(0).h);
 
+    while (!q.isEmpty()) {
+      HalfEdge he = q.remove();
+
+      if (he == null || visited.containsKey(he)) {
+        continue;
+      }
+      visited.put(he, true);
+      //////////////////////////////
+      //draw orthocircle of internal triangles
+      //calculate the incenter and incircle radius.
+      //assuming we're given a packing, it's a dual packing.
+
+      Vertex p1 = new Vertex(he.v.x, he.v.y, 0, 0);
+      Vertex p2 = new Vertex(he.next.v.x, he.next.v.y, 0, 0);
+      Vertex p3 = new Vertex(he.prev.v.x, he.prev.v.y, 0, 0);
+      float p1p2 = p1.add(p2.negate()).magnitude();
+      float p1p3 = p1.add(p3.negate()).magnitude();
+      float p2p3 = p2.add(p3.negate()).magnitude();
+      float perimeter = p1p2 + p1p3 + p2p3;
+      
+      he.ocx = (p1.x*p2p3 + p2.x*p1p3 + p3.x*p1p2)/perimeter;
+      he.ocy = (p1.y*p2p3 + p2.y*p1p3 + p3.y*p1p2)/perimeter;
+      
+      float s = perimeter/2;
+      //he.ocr = sqrt(s*(s-p1p2)*(s-p1p3)*(s-p2p3))/s;
+
+      //update radii
+      float x1 = he.ocx, y1 = he.ocy;
+      float x2 = he.twin.ocx, y2 = he.twin.ocy;
+
+      float x3 = he.v.x, y3 = he.v.y;
+      float x4 = he.next.v.x, y4 = he.next.v.y;
+
+      float m1 = (y1-y2)/(x1-x2);
+      float m2 = (y3-y4)/(x3-x4);
+      float b1 = y1-m1*x1;
+      float b2 = y3-m2*x3;
+
+      float ix = (b2 - b1)/(m1 - m2);
+      float iy = (b2*m1 - b1*m2)/(m1 - m2);
+      
+     // fill(100, 0,0);
+     noFill();
+     stroke(0);
+      ellipse(he.ocx, he.ocy, 2*he.ocr, 2*he.ocr);
+
+      q.add(he.next);
+      q.add(he.twin);
+    }
+  }
   void placeVertex(Vertex targ, float theta, Vertex ref) {
     targ.x = (ref.r + targ.r)*cos(theta) + ref.x;
     targ.y = (ref.r + targ.r)*sin(theta) + ref.y;
@@ -185,6 +240,7 @@ class Complex
       q.add(he.twin);
     }
   }
+  
   void down() {
     HashMap<HalfEdge, Boolean> visited = new HashMap<HalfEdge, Boolean>();
     JQueue<HalfEdge> q = new JQueue<HalfEdge>();
@@ -211,7 +267,8 @@ class Complex
     JQueue<HalfEdge> q = new JQueue<HalfEdge>();
     q.add(outerVerts.get(0).h);
 
-    while (!q.isEmpty()) {
+    while (!q.isEmpty()) 
+    {
       HalfEdge he = q.remove();
 
       if (he == null || visited.containsKey(he)) 
@@ -220,24 +277,23 @@ class Complex
       }
 
       visited.put(he, true);
-      //if( !(visited.containsKey(he.next) || visited.containsKey(he.next.twin.next)))
+      
+      if (d3) 
       {
-        if (d3) 
+        Vertex a2 = new Vertex(he.ixnp.x, he.ixnp.y, he.ixnp.z, 0), 
+        b2 = new Vertex(he.next.ixnp.x, he.next.ixnp.y, he.next.ixnp.z, 0), 
+        c2 = new Vertex(he.next.next.ixnp.x, he.next.next.ixnp.y, he.next.next.ixnp.z, 0);
+        drawCircumcircle3D(a2, b2, c2);
+      } 
+      else 
+      {
+        if(!vVis.containsKey(he.next.v))
         {
-          Vertex a2 = new Vertex(he.ixnp.x, he.ixnp.y, he.ixnp.z, 0), 
-          b2 = new Vertex(he.next.ixnp.x, he.next.ixnp.y, he.next.ixnp.z, 0), 
-          c2 = new Vertex(he.next.next.ixnp.x, he.next.next.ixnp.y, he.next.next.ixnp.z, 0);
-          drawCircumcircle3D(a2, b2, c2);
-        } 
-        else 
-        {
-          if(!vVis.containsKey(he.next.v))
-          {
-            drawCircumcircle2D(he.ixn, he.next.ixn, he.next.twin.next.ixn);
-            vVis.put(he.next.v, true);
-          }
+          drawCircumcircle2D(he.ixn, he.next.ixn, he.next.twin.next.ixn);
+          vVis.put(he.next.v, true);
         }
       }
+      
       q.add(he.next);
       q.add(he.twin);
     }

@@ -8,14 +8,13 @@ boolean drawing = false;
 boolean drawOrtho = false;
 boolean rotating = false;
 boolean drawKoebe = false;
-boolean mode2 = false;
 
 EnrichedEmbedding curr, temp; 
 
 int mode = 0;
 
 void setup() {
-  size(1024, 768, P3D);
+  size(1433, 900, P3D);
   background(255);
   fill(0, 0);
   curr = new EnrichedEmbedding(NUM_OUTER_VERTS);
@@ -23,6 +22,8 @@ void setup() {
   
   textFont(createFont("Arial",20));
 }
+
+float dyc = 0, dxc = 0;
 
 void draw() 
 {
@@ -39,7 +40,7 @@ void draw()
     curr.drawRadii();
     if(mode==1)
     {
-      curr.drawDualRadii();
+      curr.G.drawDual();
     }
   }
 
@@ -53,14 +54,29 @@ void draw()
     {
       stress_update(curr);
     }
-    
+      curr.G.computeIxn();
+      HashMap<HalfEdge, Boolean> done = new HashMap<HalfEdge, Boolean>();
+
+      for (int i= 0; i < curr.G.edges.size(); i++) {
+      if (done.containsKey(curr.G.edges.get(i).h1)) {
+        continue;
+      }
+      done.put(curr.G.edges.get(i).h1, true);
+
+      Vertex v = curr.G.edges.get(i).h1.ixnp;
+
+      v.rotate('x', -dxc);
+      v.rotate('y', dyc);
+
+      curr.G.edges.get(i).h1.ixnp = v;
+    }
   }
   
-  if (keyPressed && key=='r') 
-  {
-    Random rand = new Random();
-    curr.addVertex(rand.nextInt(width)-width/2, rand.nextInt(height)-height/2, rand.nextInt(70));
-  }
+//  if (keyPressed && key=='r') 
+//  {
+//    Random rand = new Random();
+//    curr.addVertex(rand.nextInt(width)-width/2, rand.nextInt(height)-height/2, rand.nextInt(70));
+//  }
   if (drawing) 
   {
     float dx = mouseX - sx, dy = mouseY - sy, r = sqrt(dx*dx + dy*dy);
@@ -74,10 +90,13 @@ void draw()
   {
     curr.drawOrthocircles();
   }
-  if (rotating)// && curr.isPacking())
+  if (rotating)
   {
     float dyt = sx - mouseX, dxt = sy - mouseY;
-
+    
+    dyc += dyt;
+    dxc += dxt;
+    
     HashMap<HalfEdge, Boolean> done = new HashMap<HalfEdge, Boolean>();
 
     for (int i= 0; i < curr.G.edges.size(); i++) {
@@ -125,30 +144,30 @@ void mousePressed() {
     sx = mouseX; 
     sy = mouseY;
     drawing = true;
-  } else if (mouseButton == RIGHT/* && curr.isPacking()*/) {
-    curr.G.computeIxn();
-    sx = mouseX; 
-    sy = mouseY;
-    rotating = true;
-    mode2 = true;
-  }
+  } 
+//  else if (mouseButton == RIGHT/* && curr.isPacking()*/) 
+//  {
+//    curr.G.computeIxn();
+//    sx = mouseX; 
+//    sy = mouseY;
+//    rotating = true;
+//  }
 }
 
 void mouseReleased() {
-  if (mouseButton == LEFT) {
+  if (mouseButton == LEFT && !rotating) {
     float dx = mouseX - sx, dy = mouseY - sy;
     curr.addVertex(sx-width/2, sy-height/2, sqrt(dx*dx + dy*dy));
     drawing = false;
-  } else if (mouseButton == RIGHT) {
-    rotating = false;
-  }
+  } 
+  //else if (mouseButton == RIGHT) {
+//    rotating = false;
+  //}
 }
 
-void keyPressed() {
-
-  
+void keyPressed() 
+{
   if (key == 'c') {
-    mode2 = false;
     setup();
   }
   else if (key=='d') {
@@ -169,10 +188,25 @@ void keyPressed() {
   else if(key == ' ')
   {
     mode = (mode+1)%4;
+    if(mode == 2)
+    {
+      sx = mouseX; 
+     sy = mouseY;
+      curr.G.computeIxn();
+      rotating = true;
+    }
+    else if(mode==3)
+    {
+     sx = mouseX; 
+    sy = mouseY;
+      curr.G.computeIxn();
+      rotating = true;
+      drawKoebe = true;
+    }
+    else
+    {
+      rotating = false;
+      drawKoebe = false;
+    }
   }
-}
-
-void keyReleased()
-{
-
 }
