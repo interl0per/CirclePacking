@@ -109,3 +109,8 @@ float distv(Vertex p, Vertex q) {
 
   return sqrt(dx*dx + dy*dy + dz*dz);
 }
+
+public enum Mode 
+{
+  DEFAULT, DUAL, MOBIUS, KOEBE
+}

@@ -4,7 +4,23 @@ class EnrichedEmbedding {
   public EnrichedEmbedding(int n) {
     G = new Complex(n);
   }
+  public EnrichedEmbedding(EnrichedEmbedding s)
+  {
+    G = new Complex(3);
+    for(Vertex v : s.G.verts)
+    {
+      addVertex(v.x, v.y, v.r);
+    }
+    
+    for(int i= 0; i < 3; i++)
+    {
+      G.outerVerts.get(i).x = s.G.outerVerts.get(i).x;
+      G.outerVerts.get(i).y = s.G.outerVerts.get(i).y;
+      G.outerVerts.get(i).r = s.G.outerVerts.get(i).r;
 
+    }
+  }
+  
   void drawCircumcircles() {
     HashMap<HalfEdge, Boolean> ae = new HashMap<HalfEdge, Boolean>();
 
@@ -202,9 +218,7 @@ class EnrichedEmbedding {
     if (G.verts.size()==0) {
       return;
     }
-    //layout algorithm, gives correct embedding given good radii
-    G.verts.get(0).x = 0;
-    G.verts.get(0).y = 0;
+    //gives packing given good radii
     HashMap placed = new HashMap();
     HashMap processed = new HashMap();
 

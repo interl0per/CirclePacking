@@ -10,43 +10,59 @@ boolean rotating = false;
 boolean drawKoebe = false;
 boolean mode2 = false;
 
-EnrichedEmbedding test; 
+EnrichedEmbedding curr, temp; 
+
+int mode = 0;
 
 void setup() {
   size(1024, 768, P3D);
   background(255);
   fill(0, 0);
-  test = new EnrichedEmbedding(NUM_OUTER_VERTS);
+  curr = new EnrichedEmbedding(NUM_OUTER_VERTS);
+  temp = new EnrichedEmbedding(NUM_OUTER_VERTS);
+  
   textFont(createFont("Arial",20));
 }
 
-void draw() {
+void draw() 
+{
   background(255);
-  
   translate(width/2, height/2, 0);  
   
   fill(100);
   noStroke();
   rect(-500,-height/2, 1000, 50);
 
-  if (!rotating) {
-    test.drawPSLG();
-    test.drawRadii();
-  }
-
-  if (keyPressed) {
-    if (keyCode==LEFT) {
-      radii_update(test);
-    } else if (keyCode==RIGHT) {
-      stress_update(test);
+  if (!rotating) 
+  {
+    curr.drawPSLG();
+    curr.drawRadii();
+    if(mode==1)
+    {
+      curr.drawDualRadii();
     }
   }
 
-  if (keyPressed && key=='r') {
-    Random rand = new Random();
-    test.addVertex(rand.nextInt(width)-width/2, rand.nextInt(height)-height/2, rand.nextInt(70));
+  if (keyPressed) 
+  {
+    if (keyCode==LEFT) 
+    {
+      radii_update(curr);
+    } 
+    else if (keyCode==RIGHT) 
+    {
+      stress_update(curr);
+    }
+    
   }
-  if (drawing) {
+  
+  if (keyPressed && key=='r') 
+  {
+    Random rand = new Random();
+    curr.addVertex(rand.nextInt(width)-width/2, rand.nextInt(height)-height/2, rand.nextInt(70));
+  }
+  if (drawing) 
+  {
     float dx = mouseX - sx, dy = mouseY - sy, r = sqrt(dx*dx + dy*dy);
 
     noStroke();
@@ -54,46 +70,47 @@ void draw() {
     ellipse(sx-width/2, sy-height/2, 2*r, 2*r);
   }
 
-  if (!rotating && drawOrtho) {
-    test.drawOrthocircles();
+  if (!rotating && drawOrtho) 
+  {
+    curr.drawOrthocircles();
   }
-  if (rotating && test.isPacking())
+  if (rotating)// && curr.isPacking())
   {
     float dyt = sx - mouseX, dxt = sy - mouseY;
 
     HashMap<HalfEdge, Boolean> done = new HashMap<HalfEdge, Boolean>();
 
-    for (int i= 0; i < test.G.edges.size(); i++) {
-      if (done.containsKey(test.G.edges.get(i).h1)) {
+    for (int i= 0; i < curr.G.edges.size(); i++) {
+      if (done.containsKey(curr.G.edges.get(i).h1)) {
         continue;
       }
-      done.put(test.G.edges.get(i).h1, true);
+      done.put(curr.G.edges.get(i).h1, true);
 
-      Vertex v = test.G.edges.get(i).h1.ixnp;
+      Vertex v = curr.G.edges.get(i).h1.ixnp;
 
       v.rotate('x', -dxt/70);
       v.rotate('x', -dxt/70);
       v.rotate('y', dyt/70);
       v.rotate('y', dyt/70);
 
-      test.G.edges.get(i).h1.ixnp = v;
+      curr.G.edges.get(i).h1.ixnp = v;
     }
-    test.G.down();
-    test.G.fancyDraw(drawKoebe);
+    curr.G.down();
+    curr.G.fancyDraw(drawKoebe);
 
     sx = mouseX; 
     sy = mouseY;
   }
-      fill(100);
+  fill(100);
 
-    rect(-500,-height/2, 1000, 50);
+  rect(-500,-height/2, 1000, 50);
   fill(230);
 
-  if(test.G.verts.size()==0)
+  if(curr.G.verts.size()==0)
   {
     text("Drag left mouse to add weighted points to the triangulation.", -490, -height/2+30);
   }
-  else if(!test.isPacking())
+  else if(!curr.isPacking())
   {
     text("When finished, press LEFT to run the radii update algorithm or RIGHT to run the force directed algorithm.", -490, -height/2+30);
   }
@@ -108,8 +125,8 @@ void mousePressed() {
     sx = mouseX; 
     sy = mouseY;
     drawing = true;
-  } else if (mouseButton == RIGHT && test.isPacking()) {
-    test.G.computeIxn();
+  } else if (mouseButton == RIGHT/* && curr.isPacking()*/) {
+    curr.G.computeIxn();
     sx = mouseX; 
     sy = mouseY;
     rotating = true;
@@ -120,7 +137,7 @@ void mousePressed() {
 void mouseReleased() {
   if (mouseButton == LEFT) {
     float dx = mouseX - sx, dy = mouseY - sy;
-    test.addVertex(sx-width/2, sy-height/2, sqrt(dx*dx + dy*dy));
+    curr.addVertex(sx-width/2, sy-height/2, sqrt(dx*dx + dy*dy));
     drawing = false;
   } else if (mouseButton == RIGHT) {
     rotating = false;
@@ -128,13 +145,34 @@ void mouseReleased() {
 }
 
 void keyPressed() {
+
+  
   if (key == 'c') {
     mode2 = false;
     setup();
-  } else if (key=='d') {
+  }
+  else if (key=='d') {
     drawOrtho = !drawOrtho;
   }
   else if (key == 'k') {
     drawKoebe = !drawKoebe;
   }
+  
+  if(key ==  ',')
+  {
+    temp = new EnrichedEmbedding(curr);
+  }
+  else if(key == '.')
+  {
+    curr = new EnrichedEmbedding(temp);
+  }
+  else if(key == ' ')
+  {
+    mode = (mode+1)%4;
+  }
+}
+
+void keyReleased()
+{
+
 }

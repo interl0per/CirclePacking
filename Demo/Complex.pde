@@ -200,38 +200,44 @@ class Complex
       q.add(he.twin);
     }
   }
-  void fancyDraw(boolean d3) {//this should not be here...
+  void fancyDraw(boolean d3) {
      //d3: draw polyhedra
+    strokeWeight(2);
+    stroke(0);
+    
     HashMap<HalfEdge, Boolean> visited = new HashMap<HalfEdge, Boolean>();
+    HashMap<Vertex, Boolean> vVis = new HashMap<Vertex, Boolean>();
+    
     JQueue<HalfEdge> q = new JQueue<HalfEdge>();
     q.add(outerVerts.get(0).h);
 
     while (!q.isEmpty()) {
       HalfEdge he = q.remove();
 
-      if (he == null || visited.containsKey(he)) {
+      if (he == null || visited.containsKey(he)) 
+      {
         continue;
       }
-      visited.put(he, true);
 
-      if (d3) {
-        Vertex a2 = new Vertex(he.ixnp.x, he.ixnp.y, he.ixnp.z, 0), 
+      visited.put(he, true);
+      //if( !(visited.containsKey(he.next) || visited.containsKey(he.next.twin.next)))
+      {
+        if (d3) 
+        {
+          Vertex a2 = new Vertex(he.ixnp.x, he.ixnp.y, he.ixnp.z, 0), 
           b2 = new Vertex(he.next.ixnp.x, he.next.ixnp.y, he.next.ixnp.z, 0), 
           c2 = new Vertex(he.next.next.ixnp.x, he.next.next.ixnp.y, he.next.next.ixnp.z, 0);
-
-     //   pushStyle();
-        strokeWeight(2);
-        stroke(0);
-        drawCircumcircle3D(a2, b2, c2);
-      //  popStyle();
-      } else {
-    //    pushStyle();
-        strokeWeight(2);
-        stroke(0);
-        drawCircumcircle2D(he.ixn, he.next.ixn, he.next.twin.next.ixn);
-     //   popStyle();
+          drawCircumcircle3D(a2, b2, c2);
+        } 
+        else 
+        {
+          if(!vVis.containsKey(he.next.v))
+          {
+            drawCircumcircle2D(he.ixn, he.next.ixn, he.next.twin.next.ixn);
+            vVis.put(he.next.v, true);
+          }
+        }
       }
-
       q.add(he.next);
       q.add(he.twin);
     }
