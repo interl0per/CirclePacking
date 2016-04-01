@@ -12,10 +12,9 @@ Click to add new points and drag to set the radii.
 
 Use the right and left arrow keys to employ different heuristics to move towards a circle packing.
 
-Use the 'm' key to turn on Mobius transformations.  Then, drag with a right click to apply the transformations.
+Use the 'spacebar' to cycle through representations of the circle packing. Including the dual packing, the space of mobius transformations and the sterographic projection onto the sphere. In the latter two views, drag the mouse to apply the mobius transformations/rotate the sphere.
 
-Use the 'k' key to visualize the Koebe polyhedron and the packing on the sphere.
-
+Use the 'c' key to clear the visualization space.
 
 Authors
 -------
