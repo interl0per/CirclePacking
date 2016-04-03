@@ -1,7 +1,6 @@
 \documentclass[11pt]{article}
 \usepackage{geometry}                % See geometry.pdf to learn the layout options. There are lots.
 \geometry{a4paper}                   % ... or a4paper or a5paper or ... 
-%\usepackage[parfill]{parskip}    % Activate to begin paragraphs with an empty line rather than an indent
 \usepackage{graphicx}
 \usepackage{amssymb}
 \usepackage{epstopdf}
@@ -12,14 +11,12 @@
 
 \DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
 
-
-
 \graphicspath{ {images/} }
 
 % user macros
-\newcommand{\Z}{\mathbb{Z}}
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\C}{\mathbb{C}}
+\newcommand{\CP}{\hat{\mathbb{C}}}
 % end user macros
 
 \title{A Space of Circle Packing Algorithms}
@@ -69,21 +66,31 @@ A \textbf{graph} is an ordered pair $G=(V,E)$ which represents a set of objects 
   A \textbf{planar graph} is one that can be embedded in the plane. 
   In other words, the graph can be drawn on the plane in such a way that its edges intersect only at their endpoints (no edges cross each other) \cite{mathworld:PlanarGraph}.
   
-  A graph $G' = (V',E')$ is a \textbf{subgraph} of $G$ ($G' \subseteq G$), if $V' \subseteq V$ and $E' \subseteq E$. Two important types of subgraphs are:
-  \begin{itemize}
-  \item A $path$ between two vertices $v_1$ and $v_k$ in $G$ is a subgraph $G' \subseteq G$ with $V' = \{v_1,...v_k\}$ and 
-  $E' 	= \{\{v_1,v_2\},...\{v_{k-1}, v_k\}\}$. We write $G' = G_{v_1}^{v_k}$.
-  \item A $k-cycle$ in $G$ is a subgraph $G'\subseteq G$ with $V' = \{v_1,...,v_k\}$ and 
-  $E' = \\ \{\{v_1,v_2\},...\{v_{k-1}, v_k\}, \{v_k,_1\}\}$
-  \item A $Y-Graph$ in $G$ that connects $v_1,v_2, v_3 \in V$ is a subgraph $G' \subseteq G$ such that there exists a vertex $w \in V \backslash \{v_1,v_2, v_3\}$ and paths $G_{v_1}^w, G_{v_2}^w, G_{v_3}^w$ that are disjoint except for the common endpoint $w$.
-  \end{itemize}
+  A graph $G' = (V',E')$ is a \textbf{subgraph} of $G$ ($G' \subseteq G$), if $V' \subseteq V$ and $E' \subseteq E$.
   
+  Lastly, an \textbf{embedding} of a graph $G$ on a surface $\Sigma$ is a representation of $G$ on $\Sigma$ in which points of $\Sigma$ are associated to vertices and simple arcs are associated to edges in such a way that:
+  \begin{itemize}
+	\item The endpoints of the arc associated to the edge $e$ are the points associated to the end vertices of $e$.
+	\item No arcs include points associated with other vertices.
+	\item Two arcs never intersect at a point which is interior to either of the arcs.
+  \end{itemize}
+  This can be stated mathematically as the following: Given edges $e=(u,v)$, the function mapping the vertices to the plane $ \phi :V \rightarrow \R^2$, and the function mapping the edges to the plane $ \rho_e :[0,1] \rightarrow \R^2$, the embedding $= <\phi, \{\rho_e\} \in E >$
+
+  A \textbf{straight-line embedding} is a embedding of a planar graph in which all arcs are straight.
+
+
+  If $c$ is the number of components in a graph, then a more general form of Euler's formula is:
+  \begin{equation} 
+	v-e+f= 1 + c
+  \end{equation}
+
 Now that we have established the some basic geometric concepts, we can introduce the formal definition of a circle packing.
 
 \section{Circle Packings}
 If $\xi$ is an oriented surface with a distance metric then a collection $P = \{c_v\}$ of circles in $\xi$ is said to be a circle packing for a complex $K$ if (1) $P$ has a circle $c_v$ associated with each vertex $v$ of $K$, (2) two circles $c_u$, $c_v$ are tangent whenever $<u,v>$ is an edge of $K$, and (3) three circles $c_u$, $c_v$, $c_w$ form a positively oriented triple in $\xi$ whenever $<u,v,w>$ forms a positively oriented face of $K$ \cite{stephenson05introduction}. 
 
-Technically, circle packings exists for any planar graph, however it is often simpler algorithmically to work with 3-connected, triangulated planar graphs. If we limit our study to these types of graphs, then every circle packing on these graphs is a Weighted Delaunay Triangulation. 
+The \textbf{Discrete Uniformization Theorem}, states, in more general terms, that given any planar graph $G$ with vertex set $V(G) = \{v_1, ... v_n \}$ and edge set $E(G)$, we can find a packing of n (not necessarily congruent) circular discs $C= \{C_1,... C_n\}$ in the plane with the property that $C_i$ and $C_j$ touch each other if and only if $v_i v_j \in E(G)$ for $1 \le i \le n$ \cite{stephenson05introduction}.
+By this theorem, circle packings exists for any planar graph, however it is often simpler algorithmically to work with 3-connected, triangulated planar graphs.
 
 \subsection{Delaunay Triangulations}
 	A \textbf{triangulation}, also referred to as a \textbf{maximal planar graph}, is a planar graph in which there is no way to add another edge and have the graph continue to be planar \cite{meshGeneration}. In practice, this means that each face is bounded by three edges - each face is a triangle. This is explained by $Whitney's$ $Theorem$ which concludes that if a graph is planar and 3-connected, all the faces of the graph will be the same shape.
@@ -101,7 +108,7 @@ An alternate way of describing a Delaunay triangulation is one in which every ed
 
 As a result of this property, a trivial algorithm can be formulated that creates a Delaunay triangulation. If $S$ is the point set, this algorithm begins with any triangulation $\tau$ of $S$. Begin with a list of all the edges in the triangulation. Remove an edge from the list, check if the edge is still in the triangulation and if so, if it is locally Delaunay. If the edge is present but not locally Delaunay, flip the edge and add the four surrounding edges to the list of edges to check. This yields an $O(n + k)$ runtime, where in the worst case $k = O(n^2)$ \cite{meshGeneration}.
 
-This leaves one issue, how do we determine whether an edge is locally Delaunay or not. This can be done using the $InCircle$ $test$. Given triangle $abc$ and point $p \in P$ $InCircle(a,b,c,d) \neq 1$ if $abc$ if Delaunay. 
+This leaves one issue, how do we determine whether an edge is locally Delaunay or not. This can be done using the $InCircle$ $test$. Given triangle $abc$ and point $p \in P$ $InCircle(a,b,c,d) \neq 1$ if $abc$ if Delaunay \cite{princeton:CCW}. 
 	\begin{equation}
 		InCircle(a,b,c,d) = \frac{sign(det
 		\begin{bmatrix}
@@ -117,8 +124,8 @@ This leaves one issue, how do we determine whether an edge is locally Delaunay o
     			a & b & c \\
     			1 & 1 & 1\\
 		\end{bmatrix} 
-	\end{equation}
-This equation is simply asking if point $d$ is above of below the plane defined by points $a,b,c$. This is because for any point $a = (x,y)$ the parabolic lifting is defined as $h(x,y) = x^2 + y^2 = \| 
+	\end{equation} 
+	This equation is simply asking if point $d$ is above of below the plane defined by points $a,b,c$. This is because for any point $a = (x,y)$ the parabolic lifting is defined as $h(x,y) = x^2 + y^2 = \| 
 	\begin{bmatrix} 
 		x \\
 		y \\ 
@@ -136,10 +143,9 @@ This equation is simply asking if point $d$ is above of below the plane defined 
 	\end{bmatrix}$ 
 	is the parabolic lifting of the points $a,b,c$.
 
-An incremental Delaunay algorithm can now be constructed. Given a Delaunay triangulation and a point $p$ to add to the set of points $P$, a new Delaunay triangulation can be created containing point $p$ by first finding the triangle containing point $p$ and then splitting the triangle three ways. This is done by creating edges from point $p$ to each vertex of the triangle. Now that a we have a triangulation the edge flip algorithm is run to make it a Delaunay triangulation. The base case of this algorithm is when you only have three points, in which case, you simply connect the points to create a triangle. 
+An incremental Delaunay algorithm can now be constructed. Given a Delaunay triangulation and a point $p$ to add to the set of points $P$, a new Delaunay triangulation can be created containing point $p$ by first finding the triangle containing point $p$ and then splitting the triangle three ways. This is done by creating edges from point $p$ to each vertex of the triangle. Now that a we have a triangulation the edge flip algorithm is run to make it a Delaunay triangulation. The base case of this algorithm is when you only have three points, in which case, you simply connect the points to create a triangle \cite{meshGeneration}. 
 
-Given a finite point set $S$ the parabolic lifting transforms the Delaunay triangulation of $S$ into faces of a convex polyhedron in three dimensions. This property makes it easy to accept that every finite point set has a Delaunay triangulation because every finite point set has a polyhedral convex hull. In turn, this means that every finite point set has a Circle Packing.
-
+% below this line needs citations
 \subsubsection{Voronoi Diagrams}
 Delaunay triangulations are the geometric $dual$ of Voronoi diagrams. A \textbf{Voronoi diagram} is the partitioning of a plane into regions based on distance to points in a specific subset of the plane. Formally, the Voronoi diagram of metric space $X$ with a distance function $d$, where $K$ is the set of indices and $P_k, k \in K$ is a tuple of nonempty subsets in the space $X$, is composed of Voronoi cells $C_k$ associated with the site $P_k$. $C_k$ is the set of all points in $X$ whose distance to $P_k$ is not greater than their distance to the other sites $P_j$ \cite{voronoiDiagrams}. 
 
@@ -165,14 +171,61 @@ In two dimensions, those relationships are as follows: point $p =
 	
 Lastly, just as the Delaunay triangulation is the lower hull of the parabolic lifting, the Voronoi diagram is the upper hull.
 
+% below this comment, the sections are incomplete information wise
 \subsubsection{Weighted Delaunay Triangulations}
+The weighted Delaunay triangulation is the dual to the so-called power diagram, a Voronoi diagram on the points where the (squared) distance to a circle $c$ with center $p$ and radius $r$ is defined to be $\pi_c(x)^2 := \|x-p\|^2 - r^2$.
+  A circle packing representation of a graph realizes the graph as the weighted Delaunay triangulation where the vertices are the centers of the disks and the weights are the radii. 
 
-In the triangulation the weighted disks assigned to the vertices to find the orthocenter end up being the circles in the packing and the orthocircle becomes the inscribed circle of the triangle. 
+\section{Force Directed Algorithm}
+A \emph{stress} is an assignment of real numbers to edges that may be interpreted as spring constants. By Hook's Law, the magnitude of the force exerted by a spring is the spring constant times its length. A stress is an \emph{equilibrium stress} if for each vertex, the sum of the forces exerted on it by all its incident edges is exactly zero.
+    
+    Weighted Delaunay triangulations have another interpretation as projections of convex polyhedra in $\R^3$. The Maxwell-Cremona Correspondence implies that projections of convex polyhedra always admit an equilibrium stress that is nonnegative on all edges except those of the convex hull. Thus, an alternative (dual) perspective on circle packings is that rather than looking for the correct radii, one could look for the correct equilibrium stress. Given a stress, one finds the embedding by Tutte's algorithm. This involves solving one system of linear equations derived from the graph. This "force-directed" algorithm is not known to terminate, however it seems to be quite effective on small examples. 
 
-The \textbf{orthocircle} is the circle that is orthogonal to the disks around the vertices of a triangle. The radii of these disks represent the weight of each vertex of the triangle. If these disks have radii equal to zero, then the orthocircle is equal to the circumcircle.
+\subsection{Tutte Embeddings}
+ Given a graph $G=(V,E)$ to each edge $\{i,j\}\in\sigma$ we assign as weight $w_ij\in\R$ also known as a \textbf{stress} that represents the elasticity constant of the corresponding rubber band. $w_ij$ must be equivalent to $w_ji$. A negative weight means that the edge is pushing on its two endpoints, whereas a positive weight means that the edge is pulling on the endpoints. 
+ A \textbf{lifting} (of a planar straight line graph) is an assignment of heights to vertices such that the vertices of each face are coplanar in $\R^3$ (the faces are flat).
+  
+  A \textbf{Tutte embedding} or barycentric embedding of a simple 3-connected planar graph is a crossing-free straight-line embedding with the properties that the outer face is a convex polygon and that each interior vertex is at the average (or barycenter) of its neighbor's positions. If the outer polygon is fixed, this condition on the interior vertices determines their position uniquely as the solution to a system of linear equations. Solving the equations geometrically produces a planar embedding. 
+  
+  Tutte's spring theorem states that this unique solution is always crossing-free, and more strongly that every face of the resulting planar embedding is convex. It is called the spring theorem because such an embedding can be found as the equilibrium position for a system of springs representing the edges of the graph.
+  
+  Algorithm: First, fix one face of a simple, planar, 3-connected graph in convex position. Next, place each other vertex at the barycenter(centroid) of its neighbors. The result is a non-crossing, convex drawing.
+ 
+ Tutte's Theorem: Let $G = (\{1,...,n\},E)$ be a 3-connected planar graph that has a face $(1,...,k)$ for some $k<n$. Let $p_1,...,p_k$ be the vertices of a convex k-gon. Let $E'$ be the set of interior edges and let $w : E \rightarrow \R^+$ be an assignment of positive weights to the interior edges. Then,
+ 	\begin{itemize}
+		\item There are unique equilibrium positions $p_{k+1}, ...p_n \in \R^2$ for the interior vertices. 
+		\item All faces of $G$ are realized as non-overlapping convex polygons.
+	\end{itemize}
+	
+	
+\subsubsection{Proof of Tutte's Theorem}
+Let $\omega : E \rightarrow \R$ be an assignment of weights to the edges of a graph and let $p:V \rightarrow \R^2$ be an assignment of positions in $\R^2$ for the vertices of $G$. A vertex $v \in V$ is in equilibrium if  $\sum\limits_{\{v,w\} \in E} \omega_{v,w}(p_v - p_w) = 0$
+
+\textsc {Proof of Existence and Uniqueness}  Assume that the positions of the peripheral points $p_v = (x_v,y_v); v \in \{k+1,...,n\}$ are given. We have to prove that suitable positions $p_v = (x_v,y_v); v \in \{1,...,k\}$ for the interior vertices exist and that these positions are unique. Without loss of generality we may assume that $p_n = (0,0)$. Consider the function
+\begin{center}
+$E(x_1,...,x_k,y_1,...,y_k) = \frac{1}{2} \sum\limits_{\{v,w\} \in E'} \omega_{v,w}((x_v - x_w)^2 + (y_v - y_w)^2) 
+= \frac{1}{2} \sum\limits_{\{v,w\} \in E'} \omega_{v,w} \|p_v - p_w\|^2$. \\
+\end{center}
+$E$ is a quadratic function that is non-negative everywhere. Assume that $z=(x_1,...x_k,y_1,...y_k)$ has at least one entry (say $x_i$) with large absolute value. This implies that $p_i$ is far away from the point $p_n = (0,0)$. Since $G$ is connected, there is a path that connects $p_i$ with $p_n$ and for at least one edge $(v,w)$ in this path the distance $\|p_v - p_w\|$ is large. Since the squared distances are weighted with positive coefficients $E(z)$ is also large. Thus for sufficiently large $\alpha > 0, \|z\| > \alpha$ implies $E(z) > E(0)$. This means that $E$ must be strictly convex and thus takes its unique minimum on $\{z | |z| < \alpha \}$. The assertion follows from the observation that the condition for a critical point $(\triangledown E = 0)$ of $E$ is
+\begin{center}
+$\frac{\delta E}{\delta x_i} = \sum\limits_{\{v,w\} \in E'} \omega_{v,w}(x_v - x_w) = 0$ and $\frac{\delta E}{\delta x_i} = \sum\limits_{\{v,w\} \in E'} \omega_{v,w}(y_v - y_w) = 0$
+\end{center}
+for all $i \in \{1,..,k\}$. This is exactly the equilibrium condition for the interior vertices.
+
+\section{Sterographic Mappings}
+There are many equivalent representations of Circle Packings in two dimensions, namely, Weighted Delaunay Triangulations, power diagrams, and dual circle packings. However, there are more equivalent representations that can be created using Sterographic mappings. Weighted Delaunay triangulations can also be realized as stereographic projections of convex polyhedra. In the case of circle packings this polyhedron is sometime called the Koebe polyhedron. It has the interesting property that the edges are all tangent to a sphere.
+
+\subsection{M\"{o}bius Transformations}
+ A \textbf{M\"{o}bius Transformation} of a plane can be obtained by performing the stereographic projection of the plane onto a sphere, then rotating or moving the sphere and then performing the stereographic projection back onto the plane. 
+  Formally, a M\"{o}bius Transformation is a rational function defined on the extended complex plane $\CP = \C\cup\{\infty\}$ of the form:
+  \begin{equation} 
+  	f(z) = \frac{az+b}{cz+d}
+  \end{equation}
+  where $z\in\CP$ is a complex variable and $a,b,c,d\in\CP$ are complex numbers such that $ad - bc$ $\neq$ $0$.
+  Circle packings in the plane are unique up to M\"{o}bius Transformation.
 
 \section{Misc.}
-
+Given a finite point set $S$ the parabolic lifting transforms the Delaunay triangulation of $S$ into faces of a convex polyhedron in three dimensions. This property makes it easy to accept that every finite point set has a Delaunay triangulation because every finite point set has a polyhedral convex hull. In turn, this means that every finite point set has a Circle Packing.
 
 \bibliographystyle{plain}
 \bibliography{references}
