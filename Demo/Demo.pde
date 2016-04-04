@@ -3,27 +3,31 @@ import java.util.Random;
 final int NUM_OUTER_VERTS = 3;
 final int INF = 1<<30;
 final float orthoSphereR = 200.0;
-float sx, sy;
-boolean drawing = false;
-boolean drawOrtho = false;
-boolean rotating = false;
-boolean drawKoebe = false;
 
+float sx, sy, dyc, dxc;
+boolean drawing, drawOrtho, rotating, drawKoebe, showHelp = true;
+int mode;
 EnrichedEmbedding curr, temp; 
 
-int mode = 0;
 
 void setup() {
   size(1433, 900, P3D);
   background(255);
   fill(0, 0);
+  
   curr = new EnrichedEmbedding(NUM_OUTER_VERTS);
   temp = new EnrichedEmbedding(NUM_OUTER_VERTS);
+  
+  drawing = false;
+  drawOrtho = false;
+  rotating = false;
+  drawKoebe = false;
+  mode = 0;
+  dyc = dxc = 0;
   
   textFont(createFont("Arial",20));
 }
 
-float dyc = 0, dxc = 0;
 
 void draw() 
 {
@@ -32,7 +36,7 @@ void draw()
   
   fill(100);
   noStroke();
-  rect(-500,-height/2, 1000, 50);
+  
 
   if (!rotating) 
   {
@@ -46,6 +50,7 @@ void draw()
 
   if (keyPressed) 
   {
+    
     if (keyCode==LEFT) 
     {
       radii_update(curr);
@@ -54,35 +59,33 @@ void draw()
     {
       stress_update(curr);
     }
-      curr.G.computeIxn();
-      HashMap<HalfEdge, Boolean> done = new HashMap<HalfEdge, Boolean>();
-
-      for (int i= 0; i < curr.G.edges.size(); i++) {
-      if (done.containsKey(curr.G.edges.get(i).h1)) {
-        continue;
-      }
-      done.put(curr.G.edges.get(i).h1, true);
-
-      Vertex v = curr.G.edges.get(i).h1.ixnp;
-
-      v.rotate('x', -dxc);
-      v.rotate('y', dyc);
-
-      curr.G.edges.get(i).h1.ixnp = v;
+    if(keyCode == RIGHT || keyCode == LEFT)
+    {
+       curr.G.computeIxn();
+       HashMap<HalfEdge, Boolean> done = new HashMap<HalfEdge, Boolean>();
+  
+       for (int i= 0; i < curr.G.edges.size(); i++) {
+       if (done.containsKey(curr.G.edges.get(i).h1)) {
+         continue;
+       }
+       done.put(curr.G.edges.get(i).h1, true);
+  
+       Vertex v = curr.G.edges.get(i).h1.ixnp;
+  
+       v.rotate('x', dxc);
+       v.rotate('y', dyc);
+  
+       curr.G.edges.get(i).h1.ixnp = v;
+     }
     }
   }
-  
-//  if (keyPressed && key=='r') 
-//  {
-//    Random rand = new Random();
-//    curr.addVertex(rand.nextInt(width)-width/2, rand.nextInt(height)-height/2, rand.nextInt(70));
-//  }
+
   if (drawing) 
   {
     float dx = mouseX - sx, dy = mouseY - sy, r = sqrt(dx*dx + dy*dy);
 
     noStroke();
-    fill(185, 205, 240);
+  //  fill(185, 205, 240);
     ellipse(sx-width/2, sy-height/2, 2*r, 2*r);
   }
 
@@ -94,8 +97,8 @@ void draw()
   {
     float dyt = sx - mouseX, dxt = sy - mouseY;
     
-    dyc += dyt;
-    dxc += dxt;
+    dyc += dyt/70;
+    dxc += -dxt/70;
     
     HashMap<HalfEdge, Boolean> done = new HashMap<HalfEdge, Boolean>();
 
@@ -108,8 +111,6 @@ void draw()
       Vertex v = curr.G.edges.get(i).h1.ixnp;
 
       v.rotate('x', -dxt/70);
-      v.rotate('x', -dxt/70);
-      v.rotate('y', dyt/70);
       v.rotate('y', dyt/70);
 
       curr.G.edges.get(i).h1.ixnp = v;
@@ -120,27 +121,24 @@ void draw()
     sx = mouseX; 
     sy = mouseY;
   }
-  fill(100);
-
-  rect(-500,-height/2, 1000, 50);
   fill(230);
+  if(showHelp)
+  {
+    stroke(100);
+   rect(-200,-200, 500, 300);
+   fill(0);
+   text("Help", -200, -200);
+      fill(0);
 
-  if(curr.G.verts.size()==0)
-  {
-    text("Drag left mouse to add weighted points to the triangulation.", -490, -height/2+30);
+   text("-Press 'h' to toggle off center help menu", -150, -170);
+
   }
-  else if(!curr.isPacking())
-  {
-    text("When finished, press LEFT to run the radii update algorithm or RIGHT to run the force directed algorithm.", -490, -height/2+30);
-  }
-  else
-  {
-    text("Drag right mouse to view mobius transformations. Press K to toggle Koebe polyhedron view, and C to restart.", -490, -height/2+30);
-  }
+  
+  fill(230);
 }
 
 void mousePressed() {
-  if (mouseButton == LEFT) {
+  if (mouseButton == LEFT && !rotating) {
     sx = mouseX; 
     sy = mouseY;
     drawing = true;
@@ -167,7 +165,12 @@ void mouseReleased() {
 
 void keyPressed() 
 {
-  if (key == 'c') {
+  if(key == 'h')
+  {
+    showHelp = !showHelp;
+  }
+  if (key == 'c') 
+  {
     setup();
   }
   else if (key=='d') {
@@ -191,14 +194,14 @@ void keyPressed()
     if(mode == 2)
     {
       sx = mouseX; 
-     sy = mouseY;
+      sy = mouseY;
       curr.G.computeIxn();
       rotating = true;
     }
     else if(mode==3)
     {
-     sx = mouseX; 
-    sy = mouseY;
+      sx = mouseX; 
+      sy = mouseY;
       curr.G.computeIxn();
       rotating = true;
       drawKoebe = true;

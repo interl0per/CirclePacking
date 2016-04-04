@@ -56,7 +56,7 @@ class Complex
       he.ocy = (p1.y*p2p3 + p2.y*p1p3 + p3.y*p1p2)/perimeter;
       
       float s = perimeter/2;
-      //he.ocr = sqrt(s*(s-p1p2)*(s-p1p3)*(s-p2p3))/s;
+      he.ocr = sqrt(s*(s-p1p2)*(s-p1p3)*(s-p2p3))/s;
 
       //update radii
       float x1 = he.ocx, y1 = he.ocy;
