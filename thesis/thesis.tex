@@ -19,7 +19,7 @@
 \newcommand{\CP}{\hat{\mathbb{C}}}
 % end user macros
 
-\title{A Space of Circle Packing Algorithms}
+\title{Equivalent Representations of Circle Packings}
 \author{
   Kevin Pratt\\
   \texttt{kevin.pratt@uconn.edu}
@@ -171,34 +171,45 @@ In two dimensions, those relationships are as follows: point $p =
 	
 Lastly, just as the Delaunay triangulation is the lower hull of the parabolic lifting, the Voronoi diagram is the upper hull.
 
-% below this comment, the sections are incomplete information wise
+
+% TODO: Add to this subsubsection
 \subsubsection{Weighted Delaunay Triangulations}
 The weighted Delaunay triangulation is the dual to the so-called power diagram, a Voronoi diagram on the points where the (squared) distance to a circle $c$ with center $p$ and radius $r$ is defined to be $\pi_c(x)^2 := \|x-p\|^2 - r^2$.
-  A circle packing representation of a graph realizes the graph as the weighted Delaunay triangulation where the vertices are the centers of the disks and the weights are the radii. 
+  A circle packing representation of a graph realizes the graph as the weighted Delaunay triangulation where the vertices are the centers of the disks and the weights are the radii.
 
-\section{Force Directed Algorithm}
-A \emph{stress} is an assignment of real numbers to edges that may be interpreted as spring constants. By Hook's Law, the magnitude of the force exerted by a spring is the spring constant times its length. A stress is an \emph{equilibrium stress} if for each vertex, the sum of the forces exerted on it by all its incident edges is exactly zero.
-    
-    Weighted Delaunay triangulations have another interpretation as projections of convex polyhedra in $\R^3$. The Maxwell-Cremona Correspondence implies that projections of convex polyhedra always admit an equilibrium stress that is nonnegative on all edges except those of the convex hull. Thus, an alternative (dual) perspective on circle packings is that rather than looking for the correct radii, one could look for the correct equilibrium stress. Given a stress, one finds the embedding by Tutte's algorithm. This involves solving one system of linear equations derived from the graph. This "force-directed" algorithm is not known to terminate, however it seems to be quite effective on small examples. 
+% Need citations end
 
-\subsection{Tutte Embeddings}
- Given a graph $G=(V,E)$ to each edge $\{i,j\}\in\sigma$ we assign as weight $w_ij\in\R$ also known as a \textbf{stress} that represents the elasticity constant of the corresponding rubber band. $w_ij$ must be equivalent to $w_ji$. A negative weight means that the edge is pushing on its two endpoints, whereas a positive weight means that the edge is pulling on the endpoints. 
- A \textbf{lifting} (of a planar straight line graph) is an assignment of heights to vertices such that the vertices of each face are coplanar in $\R^3$ (the faces are flat).
+\section{Embeddings, Liftings and Stress}
+From the Discrete Uniformization Theorem we have seen that every planar graph has a Circle Packing. While this is the most general result of this theorem, it can also be said that every 3-connected, triangulated planar graph also has a Circle Packing. Through Tutte's Theorem and the Maxwell Cremona Theorem, we will explore the relationship between embeddings, liftings and stresses and their connection to circle packings.
+
+First, these three terms must be well defined. A \emph{stress} is an assignment of real numbers to edges that may be interpreted as spring constants. By Hook's Law, the magnitude of the force exerted by a spring is the spring constant times its length. A stress is an \emph{equilibrium stress} if for each vertex, the sum of the forces exerted on it by all its incident edges is exactly zero \cite{AresRiboMor}.
+Second, a \emph{lifting} (of a planar straight line graph) is an assignment of heights to vertices such that the vertices of each face are coplanar in $\R^3$ (the faces are flat) \cite{WhiteleyHandbook}.
+Lastly, an \emph{embedding} of a graph $G$ on a surface $\Sigma$ is a representation of $G$ on $\Sigma$ in which points of $\Sigma$ are associated to vertices and simple arcs, which are images of continuous injective maps [0,1] $\rightarrow \Sigma$, are associated to edges in such a way that:
+  \begin{itemize}
+	\item The endpoints of the arc associated to the edge $e$ are the points associated to the end vertices of $e$.
+	\item No arcs include points associated with other vertices.
+	\item Two arcs never intersect at a point which is interior to either of the arcs.
+  \end{itemize}
+  This can be stated mathematically as the following: Given edges $e=(u,v)$, the function mapping the vertices to the plane $ \phi :V \rightarrow \R^2$, and the function mapping the edges to the plane $ \rho_e :[0,1] \rightarrow \R^2$, the embedding $= <\phi, \{\rho_e\} \in E >$ \cite{mathworld:Embedding}.
+ A \emph{straight-line embedding} is a embedding of a planar graph in which all arcs are straight.
+
+This leads us to Tutte's Theroem, which allows us to convert from a simple 3-connected planar graph to an embedding where all the faces are convex. The algorithm to get to this result involves fixing the outer face and assigning arbitrary stresses, in our case of value 1, to each interior edge. Then the equilibrium stress is computed on the interior edges. While the outer face does not have a stress after performing this algorithm, because we have a special case, we can assign the outer face negative stresses to balance out those on the interior and obtain the equilibrium stress. This notion will now be formalized.
+
+\subsection{Tutte's Theroem}
+ Given a graph $G=(V,E)$ to each edge $\{i,j\}\in\sigma$ we assign as weight $w_ij\in\R$ also known as a \emph{stress} that represents the elasticity constant of the corresponding rubber band. $w_ij$ must be equivalent to $w_ji$. A negative weight means that the edge is pushing on its two endpoints, whereas a positive weight means that the edge is pulling on the endpoints. 
   
-  A \textbf{Tutte embedding} or barycentric embedding of a simple 3-connected planar graph is a crossing-free straight-line embedding with the properties that the outer face is a convex polygon and that each interior vertex is at the average (or barycenter) of its neighbor's positions. If the outer polygon is fixed, this condition on the interior vertices determines their position uniquely as the solution to a system of linear equations. Solving the equations geometrically produces a planar embedding. 
+  A \emph{Tutte embedding} or barycentric embedding of a simple 3-connected planar graph is a crossing-free straight-line embedding with the properties that the outer face is a convex polygon and that each interior vertex is at the average (or barycenter) of its neighbor's positions. If the outer polygon is fixed, this condition on the interior vertices determines their position uniquely as the solution to a system of linear equations. Solving the equations geometrically produces a planar embedding. 
   
-  Tutte's spring theorem states that this unique solution is always crossing-free, and more strongly that every face of the resulting planar embedding is convex. It is called the spring theorem because such an embedding can be found as the equilibrium position for a system of springs representing the edges of the graph.
-  
-  Algorithm: First, fix one face of a simple, planar, 3-connected graph in convex position. Next, place each other vertex at the barycenter(centroid) of its neighbors. The result is a non-crossing, convex drawing.
+  Tutte's spring theorem states that this unique solution is always crossing-free, and more strongly that every face of the resulting planar embedding is convex. It is called the spring theorem because such an embedding can be found as the equilibrium position for a system of springs representing the edges of the graph provided the outer face is fixed.
  
- Tutte's Theorem: Let $G = (\{1,...,n\},E)$ be a 3-connected planar graph that has a face $(1,...,k)$ for some $k<n$. Let $p_1,...,p_k$ be the vertices of a convex k-gon. Let $E'$ be the set of interior edges and let $w : E \rightarrow \R^+$ be an assignment of positive weights to the interior edges. Then,
+ Tutte's Theorem \cite{realizationSpaces}: Let $G = (\{1,...,n\},E)$ be a 3-connected planar graph that has a face $(1,...,k)$ for some $k<n$. Let $p_1,...,p_k$ be the vertices of a convex k-gon. Let $E'$ be the set of interior edges and let $w : E \rightarrow \R^+$ be an assignment of positive weights to the interior edges. Then,
  	\begin{itemize}
 		\item There are unique equilibrium positions $p_{k+1}, ...p_n \in \R^2$ for the interior vertices. 
 		\item All faces of $G$ are realized as non-overlapping convex polygons.
 	\end{itemize}
 	
-	
 \subsubsection{Proof of Tutte's Theorem}
+% this is not complete. Unsure if I want to complete it.
 Let $\omega : E \rightarrow \R$ be an assignment of weights to the edges of a graph and let $p:V \rightarrow \R^2$ be an assignment of positions in $\R^2$ for the vertices of $G$. A vertex $v \in V$ is in equilibrium if  $\sum\limits_{\{v,w\} \in E} \omega_{v,w}(p_v - p_w) = 0$
 
 \textsc {Proof of Existence and Uniqueness}  Assume that the positions of the peripheral points $p_v = (x_v,y_v); v \in \{k+1,...,n\}$ are given. We have to prove that suitable positions $p_v = (x_v,y_v); v \in \{1,...,k\}$ for the interior vertices exist and that these positions are unique. Without loss of generality we may assume that $p_n = (0,0)$. Consider the function
@@ -212,8 +223,166 @@ $\frac{\delta E}{\delta x_i} = \sum\limits_{\{v,w\} \in E'} \omega_{v,w}(x_v - x
 \end{center}
 for all $i \in \{1,..,k\}$. This is exactly the equilibrium condition for the interior vertices.
 
+\subsection{Maxwell Cremona Theorem}
+In our application, the user inputs a planar straight line graph through drawing circles. As a result of Tutte's algorithm this graph can be assigned arbitrary stresses and converted into a convex planar embedding with an equilibrium stress on the interior. Next negative weights can be assigned to the outer face to obtain an equilibrium self stress for the entire embedding. \textbf{WHY??!!}. This yields one of the first equal representations discussed in the Maxwell Cremona Theorem.
+
+Theorem: Given a planar framework (an embedding) with an associated combinatorial spherical polyhedron $(V,F;E)$ the following are equivalent:
+\begin{enumerate}
+	\item There is a self stress on the framework with all $\omega_e \neq 0$.
+	\item There is a reciprocal framework on the dual graph $(F;E)$.
+	\item There is a spatial polyhedron $((V,F;E);Q)$ with the framework as its vertical projection (and the reciprocal as its face diagram).
+ \end{enumerate}
+ 
+ The \textbf{Maxwell-Cremona Theorem}: There is a natural correspondence between equilibrium stresses of planar embedding and the liftings of that embedding.
+ 
+ $Equalibruim$  $Stress \leftrightarrow Reciprocal$ $Diagrams \leftrightarrow Liftings$
+ 
+\subsubsection{Preliminaries}
+To prove the Maxwell Cremona Theorem, some definitions must be established. First, an \emph{edge patch}, which is simply an different notation for describing an edge. It is written $<h,i;j,k>$ where it connects vertices $h,i$ and separates the faces $j,k$ \cite{mccProof}.
+\begin{figure}[h]
+      \centering
+      \includegraphics[scale=.3]{edge_patch2}       
+      \caption{The edge patch $<h,i;j,k>$.}
+      \label{fig: Figure 4}
+  \end{figure}
+  
+A \emph{framework} in the plane is a finite graph $G=(V,E)$ and a mapping $p: V \rightarrow \R^2$ such that there are no self-loops, ie. $p(a) \neq p(b)$ if $(a,b) \in E$ \cite{mccProof}. Essentially, a framework is a graph and its embedding.The notation for frameworks is as follows: 
+
+\begin{itemize}
+	\item The framework is written as $G(p)$
+	\item $p(a)$ is a point treated as a position vector. 
+	\item Joints are written as $p(i)$ or more commonly $p_i$.
+	\item Bars are written as $p_ip_j$ or $\{i,j\}$
+	\item Edges are written $ij$.
+\end{itemize}
+
+The forces exerted by a bar, an edge placed in the embedding, are a pair of equal but opposite forces along the bar: $\omega_{ij}(p_j - p_i)$ at $p_i$ and $\omega_{ij}(p_i - p_j)$ at $p_j$. If $\omega_{ij} \geq 0$ the force is a tension force, otherwise it is a compression force. The forces at a joint $p_i$ are at equilibrium if $\sum_j \omega_{ij}(p_j-p_i) = 0$\cite{mccProof}.
+
+A \emph{self stress} on a framework $G(p)$ is an assignment of scalars $\omega_{ij}$ to the edges such that for each vertex $i : \sum_j \omega_{ij}(p_i - p_j) = 0$ \cite{mccProof}. This means the total force on each vertex is zero. 
+\begin{itemize}
+	\item A self stress is non-trivial if some $\omega_{ij} \neq 0$.
+	\item A self stress is full if all $\omega_{ij} \neq 0$.
+	\item A framework is independent if it supports only the trivial self stress with all scalars zero.
+	\item The support is the set of edges on which $\omega_{ij} \neq 0$.
+	\item The self stress is full if the support is the entire graph.
+\end{itemize}
+
+A \emph{combinatorial oriented polyhedron} is a finite set of vertices, faces and edge patches such that \cite{mccProof}:
+\begin{enumerate}
+	\item If $<h,i;j,k> \in E$ then $<i,h;k,j> \in E$ but $<h,i;k,j> \not\in E$ and $<h,i;j,k> \not\in E$. Essentially, there are two edge patches for each edge in the graph, notated as indicated.
+	\item For each vertex $a_0$ all edge patches with first entry $a_0$ form a cycle $<a_0,i_s;j_s,k_s>$ for $1\leq s \leq t$, $t\geq3$ with $k_s = j_s + 1$ and $j_t = k_1$ where all $k_s$ and $i_s$ are distinct. 
+	\item For each face $F^0$ all edge patches with last entry $F^0$ form a cycle $<h_s, i_s;j_s,F^0>$ for $1\leq s \leq t$ $t\geq3$ with $i_s = h_s + 1$ and $i_t = h_1$ where all $h_s$ and $j_s$ are distinct.
+	\item Each pair $a_0$, $a_1$ is joined by a vertex edge path. Each pair of faces is connected by a face-edge path. 
+\end{enumerate}
+
+Lastly, two other definitions that will be references are as follows:
+A \emph{cut} is a partition of the vertices of a graph into two disjoints subsets and an \emph{annulus} is a ring-shaped object bounded by two concentric circles. 
+
+\subsubsection{Spherical Combinatorial Polyhedron}
+A combinatorial polyhedron is spherical if every closed path of faces and distinct edges $<h_r,i_r;j_r,k_r>$ for $1 \leq r \leq t$ such that $j_{r+1} = k_r$ and $j_1 = k_t$ disconnects the vertices \cite{mccProof}. If so, then the dual is also spherical. 
+
+A graph $G$ is a graph of a spherical combinatorial polyhedron if and only if its is vertex 2-connected and edge 3-connected \cite{mccProof}. Ie. the graph of a spherical polyhedron is planar.
+
+\textsc{Proof}
+
+Part A: First it must been shown that the graph is vertex 2-connected and edge 3-connected. From property two above, the graph is already known to be connected. We prove this by contradiction. First we assume the graph an be separated by removing an arbitrary vertex $v_0$. Next we select subgraph $C$ surrounded by an annulus in the sphere, reinserting $v_0$. We must insert wedges from $C$ to $v_0$, around $C$ this breaks the annulus into a single face contacting $v_0$ twice. This contradicts property 3 from above \cite{mccProof}.
+To show the graph is edge 3-connected assume that removing 2 edges disconnects the graph. These two edges go from $\{a,a^{'}\}$ and $\{b, b^{'}\}$ joining 2 components. The two edges cut out two faces $F^1$ and $F^2$. In the cycle around $F^1$, the face $F^2$ now occurs across two edges. This contradicts property 3 of the combinatorial oriented polyhedron \cite{mccProof}.
+
+Part B:
+Given any vertex 2-connected, edge 3-connected graph, form a corresponding combinatorial spherical polyhedron: arcs and vertices surround simple disks which become faces along with the outer face. After placing point $f^j$ in each face we add $<h,i;j,k>$ if and only if the circuit $p_h, f^i,p_i,f^k$ around an arc $d_{ij}$ is clockwise. This means that the patches around each vertex form a cycle, and since the graph is not a multi-graph the vertices are distinct. If a cycle around a vertex contained a face twice, then the graph could be disconnected by removing this vertex. This contradicts the vertex 2-connectivity. Additionally, the patches around a face form a cycle. Assume a vertex occurs twice in a cycle. Since there are no loops removing it violates 2-connectivity. Assume an adjacent face in a cycle occurs twice, removing edges violates 3-connectivity \cite{mccProof}.
+
+\subsection{Proof of Maxwell Cremona Theorem}
+The following is a reproduction of the proof by Carpo and Whiteley \cite{mccProof}.
+\subsubsection{Part 1: Stress and Reciprocal Diagram}
+A reciprocal framework, or dual embedding, $H* = ((F,E);P)$ on the dual combinatorial polyhedron is a framework such that for each edge patch $<h,i;j,k>$  the vector $v_e = p_i - p_h$ is perpendicular to the vector $v^e = p^k - p^j$ from the reciprocal. \\
+\\
+\textsc{Theorem} A plane framework on a planar vertex 2-connected, edge 3-connected graph, supports a self stress if and only if it has a reciprocal framework. \\
+\\
+\textsc{Proof} Starting with a planar drawing of a graph, form the associated spherical polyhedron. 
+
+A note on notation: $90^o$ clockwise rotation will be written $u^\bot$ and $90^o$ counter-clockwise rotation will be written $-u^\bot$
+
+Part A: Assume the spherical polyhedron has a reciprocal framework.
+For each edge patch $<h,i;j,k>$ we will use the equation $\omega_{hi}(p_i - p_h) = -(P^k - P^j)^\bot$ or $\omega_ev_e = (V^e)^\bot$ to define scalars $\omega_{hi} = \omega_e$. All scalars will not equal zero because $P^j \neq P^k$ in a framework. From the facial polyhedrons of the reciprocal framework we get $\sum\omega_ev_e = 0 = \sum\omega_{hi}(p_i - p_h)$.
+
+Part B: Assume we have a full self stress on the framework.
+Pick a face $F^0$ and a point $P^0$ for the this face. Any other face is connected by a simple face-edge path of edge patches $\{...e...\}$. We define $P^1 = P^0 + \sum\omega_ev_e^\bot$. This is a consistent definition provided that two different paths from $F^0$ to $F^1$ give the same point $P^1$. Two such paths form a closed path on the spherical polyhedron and therefore the edges of the path form a cut set for the graph of the polyhedron. If we travel on one path and back on the other we see the sums on the two paths are equal, as required $\sum\omega_ev_e = \sum\omega_e^{'}v_e^{'} = 0$ For each edge $e = <i,h;j,k>$ the path from $P^j$ to $P^k$ is this single edge and the difference in position is $P^j - P^k = -\omega_ev_e^\bot$. Thus, we have a true reciprocal.
+
+Part B of this proof in layman's terms is that from the definition of a self stress, a simple cycle that sums around a vertex will equal zero. As a result of this fact, you can divide the graph into cut sets that each have a self stress of zero. Adding these self stresses up, you obtain the final result of zero.
+
+These results generalize to any combinatorial oriented polyhedron. \\
+\\
+\textsc{Corollary} Given a combinatorial oriented polyhedron $(V,F,E)$ and any framework $H = ((V,E);P)$ there is a full self stress on the framework satisfying $\sum \omega_ev_e = 0$ if and only if there is a reciprocal framework $H* = ((F,E);P)$. 
+
+\textsc{Proof} Part A: Given a reciprocal there is a full self stress.
+For any face-edge cycle $\omega_e v_e = (V^e)^{\bot}$ since the vectors $V^e$ form a closed polygon in the reciprocal $\sum_e(V^e)^\bot = 0$.
+
+Part B: Given a full self-stress $P^1 = P^0 + \sum_e \omega_ev_e^\bot = reciprocal$.
+Given any two paths between $F^0$ and $F^1$ we get the same value for $P^1$ since the sum up one path and back the other is a cycle and yields zero.
+
+
+\subsubsection{Part 2: Lifting and Reciprocal Diagrams}
+\textsc{Definition} The \textbf{vertex diagram} of an oriented polyhedral surface $((V,F;E);Q)$ is the plane framework on the projection with the graph $(V,E)$ and points $p_i = (x_i,y_i,0)$ if $q_i = (x_i,y_i,z_i)$.
+
+
+\textsc{Definition} The \textbf{face diagram} of an oriented polyhedral surface $((V,F;E);Q)$ is the framework with the graph $(F,E)$ and points $P^i = (A^i,B^i,0)$ for $F^i$ if $Q^i = (A^i,B^i,1,C^i)$. The points in the face diagram are the intersections of the plane $z=0$ with the normals to the faces through the point $(0,0,-1)$. Equivalently, they are the negatives of the gradients of the face planes threaded as functions of $x$ and $y$.
+ 
+ \textsc{Definition} The \textbf{Maxwell polarity} in the space is the pair of transformations $L$ and $L^{-1}$ between points in $R^3$, triples $(x,y,z)$, and non-vertical planes in $R^3$, quadruples $(A,B,1,C)$, defined by $L(x,y,z)=(x,y,1,z)$ and $L^{-1}(A,B,1,C) = (A,B,C)$.
+ 
+ The Maxwell polarity preserves incidences: it takes a point $q$ on plane $Q$ to the plane $L(q)$ through the point if and only if the point lies on the Maxwell paraboloid $x^2 + y^2 + 2z = 0$.
+ 
+ \textsc{Proof} Assume we have a point $q$ on a plane $Q$: $Ax + By + z + C = 0$. After transformation to $L(q)$ and $L^{-1}(Q)$ we have: $xA + yB + C + z = 0$, so the new plane contains the new point. If $q$ lies on $L(q)$ we have $x^2 + y^2 + z + z = 0$, and the point lies on the paraboloid. 
+ 
+ Recalling that for an edge patch $e = <h,i;j,k>$, the turning moment is $m_e = p_j \times p_i$. In a similar manner, for the dual edge in the reciprocal we have $V^e = (P^k - P^j)$ and $M^e = P^k \times P^j = (P^k - P^j)\times P^j)$.
+ 
+ \textsc{Theorem} Part A: For any polyhedral surface $((V,F;E);p)$ the vertex diagram and the face diagram are reciprocal frameworks.
+ Part B: The dependencies induced by this reciprocal pair satisfy first, the vector condition $\sum \omega_e v_e = 0$ and the moment condition $\sum \omega_e m_e = 0$ and second, the dual conditions $\sum \omega^e V^e = 0$ and $\sum \omega^e M^e = 0$.
+ 
+ \textsc{Proof} Part A: For each face $F^i$ the vector $N^j = (A^j, B^j,1)$ is normal to the plane $Q^j$. For each edge $e = <h,i;j,k>:  (x_h-x_i,,y_h-y_i, z_h-z_i)=(q_h-q_i) = \omega^e N^j \times N^k = \omega^e(B^j-B^k,A^k-A^j,A^jB^k-A^kB^j)$. This shows that $-\omega^e(A^j-A^k,B^j-B^k)^\bot = (x_h - x_i, y_h-y_i)$ or $-\omega^e(V^e)^\bot = v_e$. The frameworks are reciprocal, with scalars $\omega^e$ for the self stress in the face diagram.
+ PartB: Around any vertex-edge cycle of the polyhedron, $\sum(x_h - x_i, y_h-y_i, z_h-z_i) = 0$ as a vector sum on the polyhedral surface. For any edge $(x_h-x_i,y_h-y_i) = -\omega^e(A^j-A^k,B^j-B^k)^\bot = -\omega^e(V^e)^\bot$. Therefore, for any vertex-edge cycle in the original polyhedron, $\sum_e \omega^eV^e = \sum_e \omega^e(x_h-x_i,y_h-y_i)^\bot = 0$. In addition $(z_h-z_i) = \omega^e(A^jB^k-A^kB^j) = -\omega^e(P^j-P^k) \times P^j = \omega^eM^e$. Therefore, for any vertex-edge cycle in the original polyhedron $\sum \omega^eM^e = \sum(z_h-z_i) = 0$. 
+ 
+ We still must show that $\sum \omega_e v_e = 0$ and that $\sum \omega_em_e = 0$ for any face-edge cycle in the vertex diagram. We apply the Maxwell polarity. This makes the vertex diagram of the original polyhedral surface into the face diagram of the polar polyhedral surface. As a face diagram it must satisfy $\sum \omega_e v_e = 0$ and $\sum \omega_em_e = 0$.
+ 
+ \textsc{Theorem} Given a reciprocal pair of plane frameworks $H=((V;E);p)$ and $H^* = ((F;E);P)$ on the oriented combinatorial polyhedron $(V,F;E)$ the following are equivalent: 
+ \begin{enumerate} 
+ 	\item The reciprocal dependence in the original framework satisfies $\sum \omega_em_e = 0$ and second, there is a polyhedral surface 
+ 	\item There is a polyhedral surface $((V,F;E);Q)$ with $H$ as its vertical projection and $H^*$ as its face diagram.
+	\item There is a polar polyhedral surface $((F,V;E);Q^*)$ with $H^*$ as its vertical projection and $H$ as its face diagram.
+	\item The dependence in the reciprocal framework satisfies the equation: $\sum \omega^eM^e = 0$
+\end{enumerate}
+\textsc{Proof} We know that (ii) $\Rightarrow$ (iv) by the previous theorem. 
+
+(iv) $\Rightarrow$ (ii): Choose a vertex $p_0$ adn set $q_0 = (x_0, y_0,0)$. For each face $P^j$ we define $N^j = (A^j,B^j,1)$, which will become its normal. We recall that $\omega^eN^j \times N^k = \omega^e(B^j-B^k,A^k-A^j, A^jB^k-A^kB^j) = (V^e) + (0,0,M^e)$. For every other point $p_1$ there is a vertex-edge path from $v_0$ to $v_1$, We use this path to set: $q_1 = q_0 + (\sum \omega^eN^j \times N^k) = (x_0,y_0,0) + (\sum \omega^eV^e + (0,0,\omega^eM^e)) = (x_0,y_0,0) + \sum \omega^eV^e + \sum \omega^eM^e = (x_1,y_1,0) + (0,0,\sum \omega_eM^e)$. Since $\sum{e}\omega^eM^e = 0$ on any vertex-edge cycle, $z_1$ is well defined.
+
+(ii) $\Leftrightarrow$ (iii). This equivalence follows from an application of the Maxwell polarity to the given polyhedral surfaces.
+
+(ii) $\Leftrightarrow$ (i). This is the dual of (ii) $\Leftrightarrow$ (iii), and follows by the same argument. 
+
+ 
+ 
+\subsubsection{Result}
+
+Given a planar framework with an associated combinatorial spherical polyhedron $(V,F;E)$ the following are equivalent:
+\begin{enumerate}
+	\item There is a self stress on the framework with all $\omega_e \neq 0$.
+	\item There is a reciprocal framework on the dual graph $(F;E)$.
+	\item There is a spatial polyhedron $((V,F;E);Q)$ with the framework as its vertical projection (and the reciprocal as its face diagram).
+ \end{enumerate}
+ 
+ Combining this result with Tutte's algorithm and the knowledge that if the fixed outer face in Tutte's algorithm is a triangle, negative weights can be assigned to get a global equilibrium stress almost yields a proof of another theorem known as Stinez's Theorem. However, if the outer face of the embedding is not a triangle, the dual embedding will have a triangular outer face. This is a path that has been used to prove Stinez's theorem in the past. Though we will not reproduce this proof, we state the result.
+ 
+ \textbf{Stinez's Theorem}: Every planar straight line graph can be represented by a convex 3-dimensional polytope.
+ 
+ In total this means that every Circle packing can be represented by a Delaunay Triangulation (embedding with an equilibrium stress), which has multiple equivalent representations including, a convex 3-dimensional polytope (lifting) and a reciprocal diagram (dual embedding or Voronoi Diagram). 
+
+This also yields intuition for a Circle packing algorithm which, though has not been proven to always work, seems to work very well on small problem instances. This algorithm is a force-directed algorithm which computes the embedding of the graph by using Tutte's algorithm to iteratively modify the force of each edge by changing the distance between the two points and updates the radii of each circle iteratively. \textbf{explain?}
+ 
+%TODO Finish this section
 \section{Sterographic Mappings}
-There are many equivalent representations of Circle Packings in two dimensions, namely, Weighted Delaunay Triangulations, power diagrams, and dual circle packings. However, there are more equivalent representations that can be created using Sterographic mappings. Weighted Delaunay triangulations can also be realized as stereographic projections of convex polyhedra. In the case of circle packings this polyhedron is sometime called the Koebe polyhedron. It has the interesting property that the edges are all tangent to a sphere.
+There are many equivalent representations of Circle Packings in two dimensions, namely, Weighted Delaunay Triangulations, dual circle packings, and voronoi diagrams. Additionally, from the Maxwell Cremona therorem Circle packings can be represented as convex 3-dimensional polytopes, essentially they can be lifted into three dimensional space. However, this is not the only way to represent a Circle packing in three dimensions. Using Sterographic Mappings, an additional representation can be discovered. 
+
+
+Weighted Delaunay triangulations can also be realized as stereographic projections of convex polyhedra. In the case of circle packings this polyhedron is sometime called the Koebe polyhedron. It has the interesting property that the edges are all tangent to a sphere.
 
 \subsection{M\"{o}bius Transformations}
  A \textbf{M\"{o}bius Transformation} of a plane can be obtained by performing the stereographic projection of the plane onto a sphere, then rotating or moving the sphere and then performing the stereographic projection back onto the plane. 
@@ -227,6 +396,8 @@ There are many equivalent representations of Circle Packings in two dimensions, 
 \section{Misc.}
 Given a finite point set $S$ the parabolic lifting transforms the Delaunay triangulation of $S$ into faces of a convex polyhedron in three dimensions. This property makes it easy to accept that every finite point set has a Delaunay triangulation because every finite point set has a polyhedral convex hull. In turn, this means that every finite point set has a Circle Packing.
 
+
+    Weighted Delaunay triangulations have another interpretation as projections of convex polyhedra in $\R^3$. The Maxwell-Cremona Correspondence implies that projections of convex polyhedra always admit an equilibrium stress that is nonnegative on all edges except those of the convex hull. Thus, an alternative (dual) perspective on circle packings is that rather than looking for the correct radii, one could look for the correct equilibrium stress. Given a stress, one finds the embedding by Tutte's algorithm. This involves solving one system of linear equations derived from the graph. This "force-directed" algorithm is not known to terminate, however it seems to be quite effective on small examples. 
 \bibliographystyle{plain}
 \bibliography{references}
 \end{document}  
