@@ -25,7 +25,7 @@
   \texttt{kevin.pratt@uconn.edu}
   \and
   Connor Riley\\
-  \texttt{connor.riley@uconn.edu}
+  \texttt{connor.t.riley@gmail.com}
     \and
   Donald R. Sheehy\\
   \texttt{don.r.sheehy@uconn.edu}
@@ -34,7 +34,6 @@
 \maketitle
 
 \section{Introduction}
-The Circle Packing Theorem provides a wonderful link between questions of geometry, topology, combinatorics and complex analysis. Discovered by Paul Koebe and later reintroduced by William Thurston, Circle Packings have become a principle area of study for many mathematicians and geometers. While the formal definition will be introduced later, the intuition for Circle Packings must be developed. A Circle Packing is a configuration of circles with a specified pattern of tangencies \cite{stephenson05introduction}. The Circle Packings most often studied are those that require the interior of the circles to be disjoint, called unilevant packings, this means the circles are non-overlapping \cite{stephenson05introduction}. In this case, a Circle Packing can be thought of as a graph formed by a set of circles which have no overlapping interiors, where each circle kisses its surrounding circles. Two circles kiss or osculate when they intersect at exactly one point. 
 
 \begin{wrapfigure}{r}{0.4\textwidth}
   \begin{center}
@@ -42,6 +41,8 @@ The Circle Packing Theorem provides a wonderful link between questions of geomet
   \end{center}
   \caption{A unilevant circle packing in a triangle.}
 \end{wrapfigure}
+
+The Circle Packing Theorem provides a wonderful link between questions of geometry, topology, combinatorics and complex analysis. Discovered by Paul Koebe and later reintroduced by William Thurston, Circle Packings have become a principle area of study for many mathematicians and geometers. While the formal definition will be introduced later, the intuition for Circle Packings must be developed. A Circle Packing is a configuration of circles with a specified pattern of tangencies \cite{stephenson05introduction}. The Circle Packings most often studied are those that require the interior of the circles to be disjoint, called unilevant packings, this means the circles are non-overlapping \cite{stephenson05introduction}. In this case, a Circle Packing can be thought of as a graph formed by a set of circles which have no overlapping interiors, where each circle kisses its surrounding circles. Two circles kiss or osculate when they intersect at exactly one point. 
 
 Common geometric settings for circle packing are the $euclidean$ $plane$, $the$ $sphere$ and the $hyperbolic$ $plane$. Each pair of circles in a packing forms a tangent pair, and the empty space between each $triple$ forms a $interstice$ \cite{stephenson05introduction}. A $flower$ is the next level of structure, which consists of a central circle and some number of $petal$ circles. The number of petals defines the $degree$ of the central circle. Every circle in a packing has to have a flower, this is called the $local$ $planarity$ condition \cite{stephenson05introduction}. Note that while not all circle packings are unilevant, the ones discussed in this paper and created by the corresponding application will all be unilevant. This means that the interior of all the circles will be mutually disjoint and that the angle sum at each label will be $2\pi$.
 
@@ -208,20 +209,46 @@ This leads us to Tutte's Theroem, which allows us to convert from a simple 3-con
 		\item All faces of $G$ are realized as non-overlapping convex polygons.
 	\end{itemize}
 	
-\subsubsection{Proof of Tutte's Theorem}
-% this is not complete. Unsure if I want to complete it.
 Let $\omega : E \rightarrow \R$ be an assignment of weights to the edges of a graph and let $p:V \rightarrow \R^2$ be an assignment of positions in $\R^2$ for the vertices of $G$. A vertex $v \in V$ is in equilibrium if  $\sum\limits_{\{v,w\} \in E} \omega_{v,w}(p_v - p_w) = 0$
 
-\textsc {Proof of Existence and Uniqueness}  Assume that the positions of the peripheral points $p_v = (x_v,y_v); v \in \{k+1,...,n\}$ are given. We have to prove that suitable positions $p_v = (x_v,y_v); v \in \{1,...,k\}$ for the interior vertices exist and that these positions are unique. Without loss of generality we may assume that $p_n = (0,0)$. Consider the function
+\subsubsection{Proof of Tutte's Theorem}
+The following is a reproduction of a proof by Jurgen Richter-Gebert \cite{realizationSpaces}.
+
+Assume that the positions of the points making up the outer face, points $p_v = (x_v,y_v); v \in \{k+1,...,n\}$, are given. We have to prove that suitable positions $p_v = (x_v,y_v); v \in \{1,...,k\}$ for the interior vertices exist and that these positions are unique. Without loss of generality we may assume that $p_n = (0,0)$. Consider the function
 \begin{center}
-$E(x_1,...,x_k,y_1,...,y_k) = \frac{1}{2} \sum\limits_{\{v,w\} \in E'} \omega_{v,w}((x_v - x_w)^2 + (y_v - y_w)^2) 
-= \frac{1}{2} \sum\limits_{\{v,w\} \in E'} \omega_{v,w} \|p_v - p_w\|^2$. \\
+$E(z) = \frac{1}{2} \sum\limits_{\{v,w\} \in E'} \omega_{v,w}((x_v - x_w)^2 + (y_v - y_w)^2)$ \\
+$= \frac{1}{2} \sum\limits_{\{v,w\} \in E'} \omega_{v,w} \|p_v - p_w\|^2$. \\
 \end{center}
-$E$ is a quadratic function that is non-negative everywhere. Assume that $z=(x_1,...x_k,y_1,...y_k)$ has at least one entry (say $x_i$) with large absolute value. This implies that $p_i$ is far away from the point $p_n = (0,0)$. Since $G$ is connected, there is a path that connects $p_i$ with $p_n$ and for at least one edge $(v,w)$ in this path the distance $\|p_v - p_w\|$ is large. Since the squared distances are weighted with positive coefficients $E(z)$ is also large. Thus for sufficiently large $\alpha > 0, \|z\| > \alpha$ implies $E(z) > E(0)$. This means that $E$ must be strictly convex and thus takes its unique minimum on $\{z | |z| < \alpha \}$. The assertion follows from the observation that the condition for a critical point $(\triangledown E = 0)$ of $E$ is
+where $z = (x_1,..x_k, y_1,...y_k)$.
+$E$ is a quadratic function that is non-negative everywhere. Assume that one of the points has a coordinate, either $x$ or $y$ with large absolute value. Without loss of generality lets say this coordinate is $x_i$. This implies that $p_i$ is far away from the point $p_n = (0,0)$. Since the graph $G$ is connected, there is a path that connects $p_i$ with $p_n$ and for at least one edge $(v,w)$. In this path the distance $\|p_v - p_w\|$ is large. Since the squared distances are weighted with positive coefficients $E(z)$ is also large. Thus for sufficiently large $\alpha > 0, \|z\| > \alpha$ implies $E(z) > E(0)$. This means that $E$ must be strictly convex and thus takes its unique minimum on $\{z | |z| < \alpha \}$. The assertion follows from the observation that the condition for a critical point $(\triangledown E = 0)$ of $E$ is
 \begin{center}
 $\frac{\delta E}{\delta x_i} = \sum\limits_{\{v,w\} \in E'} \omega_{v,w}(x_v - x_w) = 0$ and $\frac{\delta E}{\delta x_i} = \sum\limits_{\{v,w\} \in E'} \omega_{v,w}(y_v - y_w) = 0$
 \end{center}
 for all $i \in \{1,..,k\}$. This is exactly the equilibrium condition for the interior vertices.
+
+Next the fact that in the equilibrium situations the faces are represented by non-overlapping convex polygons must be proven. Again assume that the outer face is fixed. The inner points are uniquely determined according to the equilibrium conditions. This proof will be completed in steps by introducing lemmas and proving them one at a time.
+
+The \emph{relative interior} of a collection of points $P$ is defined by: 
+\begin{center}
+$relint(P) = \{\sum_{v=1}^{n} \lambda_vp_v | \sum_{v=1}^{n}\lambda_v =1 \mbox{ and } \lambda_v > 0 \mbox{ for all } v = 1,...,n\}$
+\end{center}
+The main properties of this equation are described in the next two lemmas. \\
+
+\textsc{Lemma} Let $p \in relint(p_1,...,p_m)$ with $p, p_1,...,p_m \in \R^2$, and let $\phi$ be a linear functional on $\R^2$
+	\begin{enumerate}
+		\item If there exists a $v \in \{1,...,m\}$ with $\phi(p) < \phi(p_v)$ then there also exists a $w \in \{1,...,m\}$ with $\phi(p) > \phi(p_w)$.
+		\item If $(p_1,...,p_m)$ affinely spans $R^2$ then $relint(p_1,...,p_m) = int(conv(p_1,...,p_m))$.
+	\end{enumerate} 
+\textsc{Proof} We have $p = \sum_{i = 1}{m} \lambda_ip_i$, with all $\lambda_i > 0$. Consider the expression $\phi(p - \sum_{i=1}^{m}\lambda_ip_i) = 0$. Linearity of $\phi$ yields $\sum_{i=1}^{m}\lambda_i\phi(p-p_i) = 0$. If the term $\phi(p-p_v)$ is negative, then there must be at least one $w \in \{\1,..,m\}$ for which $\phi(p-p_w)$ is positive.
+
+A proof of part (ii) is left to the reader.
+
+\textsc{Lemma} The set of all configurations $(p_0, p_1,...,p_m) \in \R^{2(m+1)}$ for which 
+	\begin{enumerate}
+		\item $p_1,...,p_m$ affinely span $\R^2$ and
+		\item $p_0 \in relint(p_1,...,p_m)$
+	\end{enumerate}
+	is an open subset of $\R^{2(m+1)}$.
 
 \subsection{Maxwell Cremona Theorem}
 In our application, the user inputs a planar straight line graph through drawing circles. As a result of Tutte's algorithm this graph can be assigned arbitrary stresses and converted into a convex planar embedding with an equilibrium stress on the interior. Next negative weights can be assigned to the outer face to obtain an equilibrium self stress for the entire embedding. \textbf{WHY??!!}. This yields one of the first equal representations discussed in the Maxwell Cremona Theorem.
@@ -371,7 +398,7 @@ Given a planar framework with an associated combinatorial spherical polyhedron $
  
  Combining this result with Tutte's algorithm and the knowledge that if the fixed outer face in Tutte's algorithm is a triangle, negative weights can be assigned to get a global equilibrium stress almost yields a proof of another theorem known as Stinez's Theorem. However, if the outer face of the embedding is not a triangle, the dual embedding will have a triangular outer face. This is a path that has been used to prove Stinez's theorem in the past. Though we will not reproduce this proof, we state the result.
  
- \textbf{Stinez's Theorem}: Every planar straight line graph can be represented by a convex 3-dimensional polytope.
+ \textbf{Stinez's Theorem}: Every planar 3-connected graph can be represented by a convex 3-dimensional polytope \cite{realizationSpaces}.
  
  In total this means that every Circle packing can be represented by a Delaunay Triangulation (embedding with an equilibrium stress), which has multiple equivalent representations including, a convex 3-dimensional polytope (lifting) and a reciprocal diagram (dual embedding or Voronoi Diagram). 
 
