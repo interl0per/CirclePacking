@@ -212,7 +212,7 @@ This leads us to Tutte's Theroem, which allows us to convert from a simple 3-con
 Let $\omega : E \rightarrow \R$ be an assignment of weights to the edges of a graph and let $p:V \rightarrow \R^2$ be an assignment of positions in $\R^2$ for the vertices of $G$. A vertex $v \in V$ is in equilibrium if  $\sum\limits_{\{v,w\} \in E} \omega_{v,w}(p_v - p_w) = 0$
 
 \subsubsection{Proof of Tutte's Theorem}
-The following is a reproduction of a proof by Jurgen Richter-Gebert \cite{realizationSpaces}.
+The following is a summary of a proof by Jurgen Richter-Gebert \cite{realizationSpaces}.
 
 Assume that the positions of the points making up the outer face, points $p_v = (x_v,y_v); v \in \{k+1,...,n\}$, are given. We have to prove that suitable positions $p_v = (x_v,y_v); v \in \{1,...,k\}$ for the interior vertices exist and that these positions are unique. Without loss of generality we may assume that $p_n = (0,0)$. Consider the function
 \begin{center}
@@ -259,33 +259,7 @@ A point configuration $P:=(p_1,...,p_n) \in \R^{2n}$ is called a \emph{good repr
 	
 \textsc{Theorem} Let $P \in \R^{2n}$ be a good representation of a 3-connected, planar graph $G = (V,E)$, then $P$ is a planar embedding of $G$ in which all interior faces are realized as non-overlapping convex polygons.
 
-We assume that a 3-connected, planar graph $G$ together with a good representation $P:=(p_1,...,p_n) \in \R^{2n}$ are given. For a line $\ell = \{x | \phi(x) = d\} \subset \R^2$ a vertex $a$ which is on $\ell$ is $\ell-active$ if not all its neighbors are on $\ell$ too. Here $\phi$ is a suitable linear functional. We call a vertex $p_v$ \emph{degenerate} if the set of its neighbors $N(p_v)$ does not affinely span $\R^2$. These degenerate cases cannot occur, as will be proven next.
-
-\textsc{CLAIM 1.} Let $P$ be a good representation of a 3-connected planar graph $G$. Then $P$ has no degenerate vertices.
-
-\textsc{Proof.} The peripheral vertices are non-degenerate by definition. Assume $p$ is a degenerate, interior vertex in $P$. If $p$ is degenerate, then there is a line $\ell = \{x | \phi(x) = d\}$ such that $p$ and all its neighbors $N(p)$ are contained in $\ell$.
-
-Let $q$ be a point of $P$ that is not on $\ell$. Since $G$ is 3-connected by Menger's Theorem, which says If $G$ is 3-connected, then between any pair of vertices there are three paths $G_1$, $G_2$, and $G_3$ in $G$ that are disjoint except for the endpoints, there are three paths $A$, $B$, and $C$ from $p$ to $q$ which have disjoint edges and vertices. Each of these paths must contain at least one $\ell-active$ vertex. Let $a$ be the first $\ell-active$ point in the path $A$ that comes after $p$. Thus the initial segment of the path $A$ is of the form $A^0 = (p,a_1,...a_{\ell}, a)$. All the points in $A^0$ are on $\ell$. We define $b$ and $c$ respectively as the first $\ell-active$ points on $B$ and $C$ that come up after $p$.  Likewise $B^0$ and $C^0$ are the initial segments of the paths. All the edges of $A^0$, $B^0$ and $C^0$ taken together form a  $Y$-graph $Y^0$ with endpoints $a$, $b$, and $c$. All the edges of $Y^0$ are on $\ell$.
-% Y graph explanation goes here.
-There are also $Y$-graphs $Y^+$ and $Y^-$ with the same endpoints $a$, $b$, and $c$ for which all the edges are above and below the line $\ell$ respectively. Among the 
-points $a$, $b$ and $c$ there are at most two points on the outer face since at most two of the vertices of the bounding polygon can lie on $\ell$. Assume that $a$ is an 
-interior point. For any interior point $q$ of $P$ $q \in relint(N(q))$. This implies that the following property for the interior points holds: If there is a $q_- \in N(q)$ with $\phi(q) 
-> \phi(q_-)$, then there also exists a $q_+ \in N(q)$ with $\phi(q) < \phi(q_+)$. This property also holds for outer face points that are not maximal with respect to $\phi$. Since $a$ is $\ell-active$ there is either a point $a_+ \in N(a)$ with $\phi(a) < \phi(a_+)$ or an $a_- \in N(a)$ with $\phi(a) > \phi(a_-)$. In the second case the above property 
-implies the existence of an $a_+$ with $\phi(a) < \phi(a_+)$. Applying this property iteratively, a path $A^+ = (a_0^+,...,a_{\ell}^+)$ can be generated that connects $a = a_0^+$ with a outer face point $a_{\ell}^+ = a^+$ that is maximal with respect to $\phi$. This reasoning can be applied to define paths $B^+$ and $C^+$. There are at most two $
-\phi$-maximal outer face points. The case of two $\phi$-maximal outer face points occurs when the outer polygon has an edge on which $\phi$ is maximal and constant. Therefore, either $a^+$, $b^+$, and $c^+$ are all identical or they correspond to two points that are connected by an edge. If we consider the subgraph $G^+$ of $G$ that contains the paths $A^+$, $B^+$, $C^+$ with all three corresponding vertices and edges this part of $G$ is connected. The three $\ell-active$ vertices $a$, $b$, and $c$ have degree one in $G^+$. Thus the component $G^+$ contains a $Y$-graph $Y^+$ with endpoint $a$, $b$, $c$. By a similar reasoning we see that there is a $Y$ graph $Y^-$ with endpoints $a$, $b$, and $c$ all edges below $\ell$.
-
-We have proved the existence of three edge-disjoint a $Y$ graphs $Y^0$, $Y^+$, and $Y^-$ with endpoint $a$, $b$ and $c$. This together with the following theorem contradicts the planarity of the graph G.
-
-\textsc{Theorem}
- If there are three vertices $u$, $v$, $w$ that are connected by three different $Y$-graphs $Y_1$, $Y_2$, and $Y_3$ that are disjoint except for $u$,$v$,$w$, then $G$ is not planar.
-
-\textsc{CLAIM 2.} For a given 3-connected planar graph $G$ the set of all good representations $P:=(p_1,...,p_n) \in \R^{2n}$ is an open subset of $\R^{2n}$.
-
-\textsc{Proof.} The set of all configurations $P \in \R^{2n}$ that satisfy the condition that the outer vertices form a convex polygon is stable under small perturbations of the points. Claim 1 states that none of the interior points are degenerate. Thus condition 
-
-
-
-
+In Jurgen Richter-Gebert's Realization Spaces \cite{realizationSpaces} the proof fro the above Lemmas and this theorem can be found. Tutte's algorithm follows from these statements.
 
 \subsection{Maxwell Cremona Theorem}
 In our application, the user inputs a planar straight line graph through drawing circles. As a result of Tutte's algorithm this graph can be assigned arbitrary stresses and converted into a convex planar embedding with an equilibrium stress on the interior. Next negative weights can be assigned to the outer face to obtain an equilibrium self stress for the entire embedding. \textbf{WHY??!!}. This yields one of the first equal representations discussed in the Maxwell Cremona Theorem.
