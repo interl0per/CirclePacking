@@ -238,10 +238,7 @@ The main properties of this equation are described in the next two lemmas. \\
 	\begin{enumerate}
 		\item If there exists a $v \in \{1,...,m\}$ with $\phi(p) < \phi(p_v)$ then there also exists a $w \in \{1,...,m\}$ with $\phi(p) > \phi(p_w)$.
 		\item If $(p_1,...,p_m)$ affinely spans $R^2$ then $relint(p_1,...,p_m) = int(conv(p_1,...,p_m))$.
-	\end{enumerate} 
-\textsc{Proof} We have $p = \sum_{i = 1}{m} \lambda_ip_i$, with all $\lambda_i > 0$. Consider the expression $\phi(p - \sum_{i=1}^{m}\lambda_ip_i) = 0$. Linearity of $\phi$ yields $\sum_{i=1}^{m}\lambda_i\phi(p-p_i) = 0$. If the term $\phi(p-p_v)$ is negative, then there must be at least one $w \in \{\1,..,m\}$ for which $\phi(p-p_w)$ is positive.
-
-A proof of part (ii) is left to the reader.
+	\end{enumerate} .
 
 \textsc{Lemma} The set of all configurations $(p_0, p_1,...,p_m) \in \R^{2(m+1)}$ for which 
 	\begin{enumerate}
@@ -249,6 +246,46 @@ A proof of part (ii) is left to the reader.
 		\item $p_0 \in relint(p_1,...,p_m)$
 	\end{enumerate}
 	is an open subset of $\R^{2(m+1)}$.
+
+\textsc{Lemma} let $P:=(p_1,...,p_n) \in \R^{2n}$ be an equilibrium representation of the vertices of $G$. Then for every interior vertex $p$ we have $p \in relint(N(p))$ where $N(v) = \{w | (v,w) \in E\}$, the set of neighbors of a vertex $v$ of $G$ and $N(p_v) = \{p_w | w \in N(V)\}$.
+
+\textsc{Proof} Let $p_v$ be an interior vertex. The equilibrium condition states $\sum_{(v,w) \in E} w_{v,w}(p_v - p_w) = 0$ for every interior point $v$. Rewriting this equation, an equation for $p_v$ is obtained. $p_v = \frac{1}{\sum_{(v,w)\in E}}w_{v,w} \dot (\sum_{(v,w) \in E} w_{v,w}p_w)$. Hence $p_v$ is a convex combination of its neighbors with strictly positive coefficients. 
+
+A point configuration $P:=(p_1,...,p_n) \in \R^{2n}$ is called a \emph{good representation} for $G$ if the following properties are satisfied:
+	\begin{enumerate}
+		\item $p_{k+1},...,p_n$ realize a convex (n-k)-gon in that order.
+		\item For $v=1,...,k$ we have $p_v \in relint(N(p_v))$.
+	\end{enumerate}
+	
+\textsc{Theorem} Let $P \in \R^{2n}$ be a good representation of a 3-connected, planar graph $G = (V,E)$, then $P$ is a planar embedding of $G$ in which all interior faces are realized as non-overlapping convex polygons.
+
+We assume that a 3-connected, planar graph $G$ together with a good representation $P:=(p_1,...,p_n) \in \R^{2n}$ are given. For a line $\ell = \{x | \phi(x) = d\} \subset \R^2$ a vertex $a$ which is on $\ell$ is $\ell-active$ if not all its neighbors are on $\ell$ too. Here $\phi$ is a suitable linear functional. We call a vertex $p_v$ \emph{degenerate} if the set of its neighbors $N(p_v)$ does not affinely span $\R^2$. These degenerate cases cannot occur, as will be proven next.
+
+\textsc{CLAIM 1.} Let $P$ be a good representation of a 3-connected planar graph $G$. Then $P$ has no degenerate vertices.
+
+\textsc{Proof.} The peripheral vertices are non-degenerate by definition. Assume $p$ is a degenerate, interior vertex in $P$. If $p$ is degenerate, then there is a line $\ell = \{x | \phi(x) = d\}$ such that $p$ and all its neighbors $N(p)$ are contained in $\ell$.
+
+Let $q$ be a point of $P$ that is not on $\ell$. Since $G$ is 3-connected by Menger's Theorem, which says If $G$ is 3-connected, then between any pair of vertices there are three paths $G_1$, $G_2$, and $G_3$ in $G$ that are disjoint except for the endpoints, there are three paths $A$, $B$, and $C$ from $p$ to $q$ which have disjoint edges and vertices. Each of these paths must contain at least one $\ell-active$ vertex. Let $a$ be the first $\ell-active$ point in the path $A$ that comes after $p$. Thus the initial segment of the path $A$ is of the form $A^0 = (p,a_1,...a_{\ell}, a)$. All the points in $A^0$ are on $\ell$. We define $b$ and $c$ respectively as the first $\ell-active$ points on $B$ and $C$ that come up after $p$.  Likewise $B^0$ and $C^0$ are the initial segments of the paths. All the edges of $A^0$, $B^0$ and $C^0$ taken together form a  $Y$-graph $Y^0$ with endpoints $a$, $b$, and $c$. All the edges of $Y^0$ are on $\ell$.
+% Y graph explanation goes here.
+There are also $Y$-graphs $Y^+$ and $Y^-$ with the same endpoints $a$, $b$, and $c$ for which all the edges are above and below the line $\ell$ respectively. Among the 
+points $a$, $b$ and $c$ there are at most two points on the outer face since at most two of the vertices of the bounding polygon can lie on $\ell$. Assume that $a$ is an 
+interior point. For any interior point $q$ of $P$ $q \in relint(N(q))$. This implies that the following property for the interior points holds: If there is a $q_- \in N(q)$ with $\phi(q) 
+> \phi(q_-)$, then there also exists a $q_+ \in N(q)$ with $\phi(q) < \phi(q_+)$. This property also holds for outer face points that are not maximal with respect to $\phi$. Since $a$ is $\ell-active$ there is either a point $a_+ \in N(a)$ with $\phi(a) < \phi(a_+)$ or an $a_- \in N(a)$ with $\phi(a) > \phi(a_-)$. In the second case the above property 
+implies the existence of an $a_+$ with $\phi(a) < \phi(a_+)$. Applying this property iteratively, a path $A^+ = (a_0^+,...,a_{\ell}^+)$ can be generated that connects $a = a_0^+$ with a outer face point $a_{\ell}^+ = a^+$ that is maximal with respect to $\phi$. This reasoning can be applied to define paths $B^+$ and $C^+$. There are at most two $
+\phi$-maximal outer face points. The case of two $\phi$-maximal outer face points occurs when the outer polygon has an edge on which $\phi$ is maximal and constant. Therefore, either $a^+$, $b^+$, and $c^+$ are all identical or they correspond to two points that are connected by an edge. If we consider the subgraph $G^+$ of $G$ that contains the paths $A^+$, $B^+$, $C^+$ with all three corresponding vertices and edges this part of $G$ is connected. The three $\ell-active$ vertices $a$, $b$, and $c$ have degree one in $G^+$. Thus the component $G^+$ contains a $Y$-graph $Y^+$ with endpoint $a$, $b$, $c$. By a similar reasoning we see that there is a $Y$ graph $Y^-$ with endpoints $a$, $b$, and $c$ all edges below $\ell$.
+
+We have proved the existence of three edge-disjoint a $Y$ graphs $Y^0$, $Y^+$, and $Y^-$ with endpoint $a$, $b$ and $c$. This together with the following theorem contradicts the planarity of the graph G.
+
+\textsc{Theorem}
+ If there are three vertices $u$, $v$, $w$ that are connected by three different $Y$-graphs $Y_1$, $Y_2$, and $Y_3$ that are disjoint except for $u$,$v$,$w$, then $G$ is not planar.
+
+\textsc{CLAIM 2.} For a given 3-connected planar graph $G$ the set of all good representations $P:=(p_1,...,p_n) \in \R^{2n}$ is an open subset of $\R^{2n}$.
+
+\textsc{Proof.} The set of all configurations $P \in \R^{2n}$ that satisfy the condition that the outer vertices form a convex polygon is stable under small perturbations of the points. Claim 1 states that none of the interior points are degenerate. Thus condition 
+
+
+
+
 
 \subsection{Maxwell Cremona Theorem}
 In our application, the user inputs a planar straight line graph through drawing circles. As a result of Tutte's algorithm this graph can be assigned arbitrary stresses and converted into a convex planar embedding with an equilibrium stress on the interior. Next negative weights can be assigned to the outer face to obtain an equilibrium self stress for the entire embedding. \textbf{WHY??!!}. This yields one of the first equal representations discussed in the Maxwell Cremona Theorem.
@@ -262,7 +299,7 @@ Theorem: Given a planar framework (an embedding) with an associated combinatoria
  
  The \textbf{Maxwell-Cremona Theorem}: There is a natural correspondence between equilibrium stresses of planar embedding and the liftings of that embedding.
  
- $Equalibruim$  $Stress \leftrightarrow Reciprocal$ $Diagrams \leftrightarrow Liftings$
+ $Equilibrium$  $Stress \leftrightarrow Reciprocal$ $Diagrams \leftrightarrow Liftings$
  
 \subsubsection{Preliminaries}
 To prove the Maxwell Cremona Theorem, some definitions must be established. First, an \emph{edge patch}, which is simply an different notation for describing an edge. It is written $<h,i;j,k>$ where it connects vertices $h,i$ and separates the faces $j,k$ \cite{mccProof}.
