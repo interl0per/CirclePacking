@@ -33,6 +33,11 @@
 \begin{document}
 \maketitle
 
+\begin{abstract}
+  We explore equivalent representations of Circle Packings and the connections between them while presenting an interactive tool for visualizing and experimenting with different circle packing algorithms. 
+  The source code can be found at: https://github.com/interl0per/CirclePacking
+\end{abstract}
+
 \section{Introduction}
 
 \begin{wrapfigure}{r}{0.4\textwidth}
@@ -50,26 +55,26 @@ The objective of this paper is to explore the space of Circle Packing Algorithms
 
 \section{Introduction to Geometric Figures}
 \subsection{Graphs}
-A \textbf{graph} is an ordered pair $G=(V,E)$ which represents a set of objects where some of these objects are linked. In the denotation $G=(V,E)$, $V$ stands for the vertices or objects, and $E$ stands for the edges or links. Edges in a graph can be directed or undirected, however, we will focus on undirected edges in our application.
+A \emph{graph} is an ordered pair $G=(V,E)$ which represents a set of objects where some of these objects are linked. In the denotation $G=(V,E)$, $V$ stands for the vertices or objects, and $E$ stands for the edges or links. Edges in a graph can be directed or undirected, however, we will focus on undirected edges in our application.
 
-  A component or \textbf{connected component} of a graph is a subgraph in which any two vertices are connected to each other by a path which is connected to no additional vertices in the supergraph.
+  A component or \emph{connected component} of a graph is a subgraph in which any two vertices are connected to each other by a path which is connected to no additional vertices in the supergraph.
 
-  A \textbf{loop} is when a vertex has an edge connecting it to itself.
+  A \emph{self-loop} is when a vertex has an edge connecting it to itself.
   
   A graph with multiple edges is one which has two or more edges connect the same two vertices.
 
-  A graph is \textbf{connected} when there is a path between every pair of vertices \cite{mathworld:ConnectedGraphs}. 
-  In a connected graph every vertex is reachable. A graph with just one vertex is connected. A graph is said to be \textbf{k-connected} if there does not exist a set of k-1 vertices whose removal disconnects the graph. Typically we will work with 3-connected graphs - this means that three vertices would have to be removed to disconnect the graph.
+  A graph is \emph{connected} when there is a path between every pair of vertices \cite{mathworld:ConnectedGraphs}. 
+  In a connected graph every vertex is reachable. A graph with just one vertex is connected. A graph is said to be \emph{k-connected} if there does not exist a set of k-1 vertices whose removal disconnects the graph. Typically we will work with 3-connected graphs - this means that three vertices would have to be removed to disconnect the graph.
   
-  A \textbf{simple graph} is an unweighted, undirected graph, containing no loops or multiple edges \cite{mathworld:SimpleGraphs}. 
+  A \emph{simple graph} is an unweighted, undirected graph, containing no loops or multiple edges \cite{mathworld:SimpleGraphs}. 
   A simple graph may either be connected or disconnected.
   
-  A \textbf{planar graph} is one that can be embedded in the plane. 
+  A \emph{planar graph} is one that can be embedded in the plane. 
   In other words, the graph can be drawn on the plane in such a way that its edges intersect only at their endpoints (no edges cross each other) \cite{mathworld:PlanarGraph}.
   
-  A graph $G' = (V',E')$ is a \textbf{subgraph} of $G$ ($G' \subseteq G$), if $V' \subseteq V$ and $E' \subseteq E$.
+  A graph $G' = (V',E')$ is a \emph{subgraph} of $G$ ($G' \subseteq G$), if $V' \subseteq V$ and $E' \subseteq E$.
   
-  Lastly, an \textbf{embedding} of a graph $G$ on a surface $\Sigma$ is a representation of $G$ on $\Sigma$ in which points of $\Sigma$ are associated to vertices and simple arcs are associated to edges in such a way that:
+  Lastly, an \emph{embedding} of a graph $G$ on a surface $\Sigma$ is a representation of $G$ on $\Sigma$ in which points of $\Sigma$ are associated to vertices and simple arcs are associated to edges in such a way that:
   \begin{itemize}
 	\item The endpoints of the arc associated to the edge $e$ are the points associated to the end vertices of $e$.
 	\item No arcs include points associated with other vertices.
@@ -77,7 +82,7 @@ A \textbf{graph} is an ordered pair $G=(V,E)$ which represents a set of objects 
   \end{itemize}
   This can be stated mathematically as the following: Given edges $e=(u,v)$, the function mapping the vertices to the plane $ \phi :V \rightarrow \R^2$, and the function mapping the edges to the plane $ \rho_e :[0,1] \rightarrow \R^2$, the embedding $= <\phi, \{\rho_e\} \in E >$
 
-  A \textbf{straight-line embedding} is a embedding of a planar graph in which all arcs are straight.
+  A \emph{straight-line embedding} is a embedding of a planar graph in which all arcs are straight.
 
 
   If $c$ is the number of components in a graph, then a more general form of Euler's formula is:
@@ -93,16 +98,25 @@ If $\xi$ is an oriented surface with a distance metric then a collection $P = \{
 The \textbf{Discrete Uniformization Theorem}, states, in more general terms, that given any planar graph $G$ with vertex set $V(G) = \{v_1, ... v_n \}$ and edge set $E(G)$, we can find a packing of n (not necessarily congruent) circular discs $C= \{C_1,... C_n\}$ in the plane with the property that $C_i$ and $C_j$ touch each other if and only if $v_i v_j \in E(G)$ for $1 \le i \le n$ \cite{stephenson05introduction}.
 By this theorem, circle packings exists for any planar graph, however it is often simpler algorithmically to work with 3-connected, triangulated planar graphs.
 
+The first algorithm in the application is an incremental relaxation algorithm proposed by Stephenson in his book Introduction to Circle Packing. The algorithm begins with a set of tentative radii not necessarily corresponding to a valid packing. In our application, these radii are those input by the user. The algorithm then performs the following steps:
+	\begin{enumerate}
+		\item Choose an internal vertex $v$ of the input graph.
+		\item Calculate the total angle $\theta$ that its $k$ neighboring circles would cover around the circle for $v$, if the neighbors were placed tangent to each other and to the central circle using their tentative radii.
+		\item Determine a representative radius $r$ for the neighboring circles, such that $k$ circles of radius $r$ would give the same covering angle $\theta$ as the neighbors of $v$ give.
+		\item Set the new radius for $v$ to be the value for which $k$ circle of radius $r$ would give a covering angle of exactly $2\pi$.
+	\end{enumerate}
+These steps cause the system to converge to a fixed point for which all covering angles are exactly $2\pi$. Once the system has converged, the circles may be placed one at a time, at each step using the positions and radii of two neighboring circles to determine the center of each successive circle.
+
 \subsection{Delaunay Triangulations}
-	A \textbf{triangulation}, also referred to as a \textbf{maximal planar graph}, is a planar graph in which there is no way to add another edge and have the graph continue to be planar \cite{meshGeneration}. In practice, this means that each face is bounded by three edges - each face is a triangle. This is explained by $Whitney's$ $Theorem$ which concludes that if a graph is planar and 3-connected, all the faces of the graph will be the same shape.
+	A \emph{triangulation}, also referred to as a \emph{maximal planar graph}, is a planar graph in which there is no way to add another edge and have the graph continue to be planar \cite{meshGeneration}. In practice, this means that each face is bounded by three edges - each face is a triangle. This is explained by $Whitney's$ $Theorem$ which concludes that if a graph is planar and 3-connected, all the faces of the graph will be the same shape.
 
 Formally, a triangulation of $S$, a finite set of points in the plane, is a simplicial complex $\tau$ such that $S$ is the set of vertices in $\tau$, and the union of all the simplices in $\tau$ is the convex hull of $S$ \cite{meshGeneration}. Where a simplex is the generalization of the notion of a triangle to arbitrary dimensions.
 
 There are many specific types of triangulations in mathematics, however, we will focus on Delaunay and Weighted Delaunay triangulations.
 
-To explain Delaunay triangulations, some properties of triangles must first be defined. The \textbf{circumcircle} of a triangle is the circle which passes through all three of its vertices \cite{mathworld:Circumcenter}. The center of the circumcircle is called the \textbf{circumcenter} and the radius is the \textbf{circumradius}. The circumcenter can be found by finding the intersection of the \textbf{altitudes}, which are formed by drawing a perpendicular line from each vertex to the opposite side of the triangle.
+To explain Delaunay triangulations, some properties of triangles must first be defined. The \emph{circumcircle} of a triangle is the circle which passes through all three of its vertices \cite{mathworld:Circumcenter}. The center of the circumcircle is called the \emph{circumcenter} and the radius is the \emph{circumradius}. The circumcenter can be found by finding the intersection of the \emph{altitudes}, which are formed by drawing a perpendicular line from each vertex to the opposite side of the triangle.
   
-A \textbf{Delaunay Triangulation} for a set of points $P$ is the triangulation of those points such that no point in $P$ is inside the circumcircle of any other triangle \cite{meshGeneration}. Delaunay triangulations are important largely because in two dimensions they maximize the minimum angle in the triangulation.
+A \emph{Delaunay Triangulation} for a set of points $P$ is the triangulation of those points such that no point in $P$ is inside the circumcircle of any other triangle \cite{meshGeneration}. Delaunay triangulations are important largely because in two dimensions they maximize the minimum angle in the triangulation.
 
 \subsubsection{The Edge Flip Algorithm}
 An alternate way of describing a Delaunay triangulation is one in which every edge in the triangulation is $locally$ $Delaunay$ \cite{meshGeneration}. For an edge $e$ in the triangulation $\tau$, if $e$ is an edge of fewer than two triangles, then it is automatically locally Delaunay. If $e$ is an edge of exactly two triangles, then $e$ is locally Delaunay if it has an open circumcirlce containing no vertex of either triangle. 
@@ -148,7 +162,15 @@ An incremental Delaunay algorithm can now be constructed. Given a Delaunay trian
 
 % below this line needs citations
 \subsubsection{Voronoi Diagrams}
-Delaunay triangulations are the geometric $dual$ of Voronoi diagrams. A \textbf{Voronoi diagram} is the partitioning of a plane into regions based on distance to points in a specific subset of the plane. Formally, the Voronoi diagram of metric space $X$ with a distance function $d$, where $K$ is the set of indices and $P_k, k \in K$ is a tuple of nonempty subsets in the space $X$, is composed of Voronoi cells $C_k$ associated with the site $P_k$. $C_k$ is the set of all points in $X$ whose distance to $P_k$ is not greater than their distance to the other sites $P_j$ \cite{voronoiDiagrams}. 
+
+\begin{wrapfigure}{r}{0.4\textwidth}
+  \begin{center}
+    \includegraphics[scale=.18,width=0.45\textwidth]{voronoi}
+  \end{center}
+  \caption{A circle packing with its dual in red and the Voronoi diagram in black.}
+\end{wrapfigure}
+
+Delaunay triangulations are the geometric $dual$ of Voronoi diagrams. A \emph{Voronoi diagram} is the partitioning of a plane into regions based on distance to points in a specific subset of the plane. Formally, the Voronoi diagram of metric space $X$ with a distance function $d$, where $K$ is the set of indices and $P_k, k \in K$ is a tuple of nonempty subsets in the space $X$, is composed of Voronoi cells $C_k$ associated with the site $P_k$. $C_k$ is the set of all points in $X$ whose distance to $P_k$ is not greater than their distance to the other sites $P_j$ \cite{voronoiDiagrams}. 
 
 While Voronoi diagrams can be understood without understanding geometric duals, expanding our understanding of duals will help build the intuition for the connection between the Voronoi diagram and the Delaunay triangulation. This means that the faces, also called 2-cells, of the Voronoi diagram correspond to the points of the Delaunay triangulation. The edges of the Voronoi diagram, also called 1-cells, correspond to the edges, 0-cells, of the Delaunay triangulation and the vertices of the Voronoi diagram correspond to faces of the Delaunay triangulation. The edges of the Voronoi Diagram are orthogonal to the edges of the Delaunay triangulation. These relationships are a result of the fundamental relationships between a dual and primal graph.
 
@@ -203,7 +225,7 @@ This leads us to Tutte's Theroem, which allows us to convert from a simple 3-con
   
   Tutte's spring theorem states that this unique solution is always crossing-free, and more strongly that every face of the resulting planar embedding is convex. It is called the spring theorem because such an embedding can be found as the equilibrium position for a system of springs representing the edges of the graph provided the outer face is fixed.
  
- Tutte's Theorem \cite{realizationSpaces}: Let $G = (\{1,...,n\},E)$ be a 3-connected planar graph that has a face $(1,...,k)$ for some $k<n$. Let $p_1,...,p_k$ be the vertices of a convex k-gon. Let $E'$ be the set of interior edges and let $w : E \rightarrow \R^+$ be an assignment of positive weights to the interior edges. Then,
+ \textbf{Tutte's Theorem} \cite{realizationSpaces}: Let $G = (\{1,...,n\},E)$ be a 3-connected planar graph that has a face $(1,...,k)$ for some $k<n$. Let $p_1,...,p_k$ be the vertices of a convex k-gon. Let $E'$ be the set of interior edges and let $w : E \rightarrow \R^+$ be an assignment of positive weights to the interior edges. Then,
  	\begin{itemize}
 		\item There are unique equilibrium positions $p_{k+1}, ...p_n \in \R^2$ for the interior vertices. 
 		\item All faces of $G$ are realized as non-overlapping convex polygons.
@@ -262,27 +284,28 @@ A point configuration $P:=(p_1,...,p_n) \in \R^{2n}$ is called a \emph{good repr
 In Jurgen Richter-Gebert's Realization Spaces \cite{realizationSpaces} the proof fro the above Lemmas and this theorem can be found. Tutte's algorithm follows from these statements.
 
 \subsection{Maxwell Cremona Theorem}
-In our application, the user inputs a planar straight line graph through drawing circles. As a result of Tutte's algorithm this graph can be assigned arbitrary stresses and converted into a convex planar embedding with an equilibrium stress on the interior. Next negative weights can be assigned to the outer face to obtain an equilibrium self stress for the entire embedding. \textbf{WHY??!!}. This yields one of the first equal representations discussed in the Maxwell Cremona Theorem.
+In our application, the user inputs a planar straight line graph through drawing circles. As a result of Tutte's algorithm this graph can be assigned arbitrary stresses and converted into a convex planar embedding with an equilibrium stress on the interior. Next, because in our application the outer face is a triangle, it is possible to assign negative weights to the three outer edges to obtain an equilibrium self stress for the entire embedding. This yields one of the first equal representations discussed in the Maxwell Cremona Theorem.
 
-Theorem: Given a planar framework (an embedding) with an associated combinatorial spherical polyhedron $(V,F;E)$ the following are equivalent:
+\textbf{Maxwell Cremona Theorem}: Given a planar framework (an embedding) with an associated combinatorial spherical polyhedron $(V,F;E)$ the following are equivalent:
 \begin{enumerate}
 	\item There is a self stress on the framework with all $\omega_e \neq 0$.
 	\item There is a reciprocal framework on the dual graph $(F;E)$.
 	\item There is a spatial polyhedron $((V,F;E);Q)$ with the framework as its vertical projection (and the reciprocal as its face diagram).
  \end{enumerate}
  
- The \textbf{Maxwell-Cremona Theorem}: There is a natural correspondence between equilibrium stresses of planar embedding and the liftings of that embedding.
+ The Maxwell-Cremona Theorem, in plain english, states that there is a natural correspondence between equilibrium stresses of planar embedding and the liftings of that embedding.
  
  $Equilibrium$  $Stress \leftrightarrow Reciprocal$ $Diagrams \leftrightarrow Liftings$
  
 \subsubsection{Preliminaries}
 To prove the Maxwell Cremona Theorem, some definitions must be established. First, an \emph{edge patch}, which is simply an different notation for describing an edge. It is written $<h,i;j,k>$ where it connects vertices $h,i$ and separates the faces $j,k$ \cite{mccProof}.
-\begin{figure}[h]
-      \centering
-      \includegraphics[scale=.3]{edge_patch2}       
-      \caption{The edge patch $<h,i;j,k>$.}
-      \label{fig: Figure 4}
-  \end{figure}
+
+\begin{wrapfigure}{r}{0.25\textwidth}
+  \begin{center}
+  		\includegraphics[width=.23\textwidth]{edge_patch2}
+  \end{center}
+  \caption{The edge patch $<h,i;j,k>$.}
+\end{wrapfigure}
   
 A \emph{framework} in the plane is a finite graph $G=(V,E)$ and a mapping $p: V \rightarrow \R^2$ such that there are no self-loops, ie. $p(a) \neq p(b)$ if $(a,b) \in E$ \cite{mccProof}. Essentially, a framework is a graph and its embedding.The notation for frameworks is as follows: 
 
@@ -360,12 +383,12 @@ Given any two paths between $F^0$ and $F^1$ we get the same value for $P^1$ sinc
 
 
 \subsubsection{Part 2: Lifting and Reciprocal Diagrams}
-\textsc{Definition} The \textbf{vertex diagram} of an oriented polyhedral surface $((V,F;E);Q)$ is the plane framework on the projection with the graph $(V,E)$ and points $p_i = (x_i,y_i,0)$ if $q_i = (x_i,y_i,z_i)$.
+\textsc{Definition} The \emph{vertex diagram} of an oriented polyhedral surface $((V,F;E);Q)$ is the plane framework on the projection with the graph $(V,E)$ and points $p_i = (x_i,y_i,0)$ if $q_i = (x_i,y_i,z_i)$.
 
 
-\textsc{Definition} The \textbf{face diagram} of an oriented polyhedral surface $((V,F;E);Q)$ is the framework with the graph $(F,E)$ and points $P^i = (A^i,B^i,0)$ for $F^i$ if $Q^i = (A^i,B^i,1,C^i)$. The points in the face diagram are the intersections of the plane $z=0$ with the normals to the faces through the point $(0,0,-1)$. Equivalently, they are the negatives of the gradients of the face planes threaded as functions of $x$ and $y$.
+\textsc{Definition} The \emph{face diagram} of an oriented polyhedral surface $((V,F;E);Q)$ is the framework with the graph $(F,E)$ and points $P^i = (A^i,B^i,0)$ for $F^i$ if $Q^i = (A^i,B^i,1,C^i)$. The points in the face diagram are the intersections of the plane $z=0$ with the normals to the faces through the point $(0,0,-1)$. Equivalently, they are the negatives of the gradients of the face planes threaded as functions of $x$ and $y$.
  
- \textsc{Definition} The \textbf{Maxwell polarity} in the space is the pair of transformations $L$ and $L^{-1}$ between points in $R^3$, triples $(x,y,z)$, and non-vertical planes in $R^3$, quadruples $(A,B,1,C)$, defined by $L(x,y,z)=(x,y,1,z)$ and $L^{-1}(A,B,1,C) = (A,B,C)$.
+ \textsc{Definition} The \emph{Maxwell polarity} in the space is the pair of transformations $L$ and $L^{-1}$ between points in $R^3$, triples $(x,y,z)$, and non-vertical planes in $R^3$, quadruples $(A,B,1,C)$, defined by $L(x,y,z)=(x,y,1,z)$ and $L^{-1}(A,B,1,C) = (A,B,C)$.
  
  The Maxwell polarity preserves incidences: it takes a point $q$ on plane $Q$ to the plane $L(q)$ through the point if and only if the point lies on the Maxwell paraboloid $x^2 + y^2 + 2z = 0$.
  
@@ -407,20 +430,27 @@ Given a planar framework with an associated combinatorial spherical polyhedron $
 	\item There is a spatial polyhedron $((V,F;E);Q)$ with the framework as its vertical projection (and the reciprocal as its face diagram).
  \end{enumerate}
  
- Combining this result with Tutte's algorithm and the knowledge that if the fixed outer face in Tutte's algorithm is a triangle, negative weights can be assigned to get a global equilibrium stress almost yields a proof of another theorem known as Stinez's Theorem. However, if the outer face of the embedding is not a triangle, the dual embedding will have a triangular outer face. This is a path that has been used to prove Stinez's theorem in the past. Though we will not reproduce this proof, we state the result.
+ Combining this result with Tutte's algorithm and the knowledge that if the fixed outer face in Tutte's algorithm is a triangle, negative weights can be assigned to get a global equilibrium stress almost yields a proof of another theorem known as Steinitz's Theorem. However, if the outer face of the embedding is not a triangle, the dual embedding will have a triangular outer face. This can be remedied with the knowledge that, for every 3-connected planar graph, $G$, either $G$ or its dual has a triangle. Therefore, using the dual graph an equilibrium stress can be obtained. After this, using the Maxwel Cremona Theorem a polytope can be obtained. This is a path that has been used to prove Steinitz's theorem in the past. Though we will not reproduce this proof, we state the result. 
  
- \textbf{Stinez's Theorem}: Every planar 3-connected graph can be represented by a convex 3-dimensional polytope \cite{realizationSpaces}.
+ \textbf{Steinitz's Theorem}: Every planar 3-connected graph can be represented by a convex 3-dimensional polytope \cite{realizationSpaces}.
  
  In total this means that every Circle packing can be represented by a Delaunay Triangulation (embedding with an equilibrium stress), which has multiple equivalent representations including, a convex 3-dimensional polytope (lifting) and a reciprocal diagram (dual embedding or Voronoi Diagram). 
 
-This also yields intuition for a Circle packing algorithm which, though has not been proven to always work, seems to work very well on small problem instances. This algorithm is a force-directed algorithm which computes the embedding of the graph by using Tutte's algorithm to iteratively modify the force of each edge by changing the distance between the two points and updates the radii of each circle iteratively. \textbf{explain?}
+This also yields intuition for a Circle packing algorithm which, though has not been proven to always work, seems to work very well on small problem instances. This algorithm is a force-directed algorithm which computes the embedding of the graph by using Tutte's algorithm to iteratively modify the force of each edge by changing the distance between the two points and updates the radii of each circle iteratively. The algorithm is as follows: While the embedding is not a valid Circle Packing, for every edge, reposition the two vertices it connects, provided they are interior vertices, based on the stress of the edge. Then, for every edge, calculate the length of the edge and determine if the radii of the two circles add up to that distance. If not, increase the stress and the radii, otherwise, decrease the stress and the radii. This algorithm can be observed working in our application.
  
-%TODO Finish this section
-\section{Sterographic Mappings}
-There are many equivalent representations of Circle Packings in two dimensions, namely, Weighted Delaunay Triangulations, dual circle packings, and voronoi diagrams. Additionally, from the Maxwell Cremona therorem Circle packings can be represented as convex 3-dimensional polytopes, essentially they can be lifted into three dimensional space. However, this is not the only way to represent a Circle packing in three dimensions. Using Sterographic Mappings, an additional representation can be discovered. 
+\section{Stereographic Mappings}
+There are many equivalent representations of Circle Packings in two dimensions, namely, Weighted Delaunay Triangulations, dual circle packings, and Voronoi diagrams. Additionally, from the Maxwell Cremona theorem Circle packings can be represented as convex 3-dimensional polytopes, essentially they can be lifted into three dimensional space. However, this is not the only way to represent a Circle packing in three dimensions. Using Stereographic Mappings, an additional representation can be discovered. 
 
+Circle packings can also be represented on the Riemann sphere. In this section, we will cover circle packings on the sphere and the insights this representation yields.
 
-Weighted Delaunay triangulations can also be realized as stereographic projections of convex polyhedra. In the case of circle packings this polyhedron is sometime called the Koebe polyhedron. It has the interesting property that the edges are all tangent to a sphere.
+\subsection{Riemann Sphere}
+The euclidean plane that we have discussed thus far can be represented mathematically by: $\R^2 = \C = \{z = x + iy : x, y \in \R \}$. In contrast, the Riemann sphere, also known as the unit sphere or the complex projective line is modeled as such: $\mathbb{P} = \{(x,y,z):x^2 + y^2 + z^2 = 1\} \subset \R^3$. This sphere can be thought of as the wrapping of the complex plane around a ball, with the addition of one point at infinity. The plane is found to be a subset of the sphere via stereographic projection, which is a mapping that projects a sphere onto the plane. This mapping is bijective and is often used to describe the mapping of the plane to the sphere as well. Formally, starting at the infinity point, which for simplification we will place at the north pole, drawing a line towards a point on the plane, let the point where the line punctures the sphere be $p = (x,y,z)$ and the point where it touches the plane point $w = u + iv$. Then using similarity of triangles and recalling that $x^2 + y^2 + z^2 = 1$ the following relationships can be obtained: $u = \frac{x}{1 + z}$, $v = \frac{y}{1+ z}$. $z = \frac{1 = (u^2 + v^2}{1 + (u^2 + v^2)}$, $x = u(1+z)$, and $y =v(1+z)$.
+
+Circle packings can be mapped onto this sphere via stereographic projection to obtain an essentially unique circle packing. This is a result of the \textbf{Koebe-Andreev-Thurston Theorem} which says the following \cite{stephenson05introduction}:
+
+\textsc{Theorem}: Let $K$ be a combinatorial sphere. Then there exists an essentially unique univalent circle packing $P_K$ for $K$ on the Riemann sphere $\mathbb{P}$.
+
+These packings are unique up to M\"{o}bius Transformations.
 
 \subsection{M\"{o}bius Transformations}
  A \textbf{M\"{o}bius Transformation} of a plane can be obtained by performing the stereographic projection of the plane onto a sphere, then rotating or moving the sphere and then performing the stereographic projection back onto the plane. 
@@ -428,12 +458,13 @@ Weighted Delaunay triangulations can also be realized as stereographic projectio
   \begin{equation} 
   	f(z) = \frac{az+b}{cz+d}
   \end{equation}
-  where $z\in\CP$ is a complex variable and $a,b,c,d\in\CP$ are complex numbers such that $ad - bc$ $\neq$ $0$.
-  Circle packings in the plane are unique up to M\"{o}bius Transformation.
-
+  where $z\in\CP$ is a complex variable and $a,b,c,d\in\CP$ are complex numbers such that $ad - bc$ $\neq$ $0$ \cite{stephenson05introduction}. These transformations are invertible and if performed on circle packings, transform circle packings to equivalent circle packings without losing any information. Therefore, circle packings in the plane are unique up to M\"{o}bius Transformations. In our application, M\"{o}bius Transformations can be performed from both the spherical and planar view by moving the mouse to rotate the sphere or transform the plane.
+  
 \section{Misc.}
 Given a finite point set $S$ the parabolic lifting transforms the Delaunay triangulation of $S$ into faces of a convex polyhedron in three dimensions. This property makes it easy to accept that every finite point set has a Delaunay triangulation because every finite point set has a polyhedral convex hull. In turn, this means that every finite point set has a Circle Packing.
 
+
+Weighted Delaunay triangulations can also be realized as stereographic projections of convex polyhedra. In the case of circle packings this polyhedron is sometime called the Koebe polyhedron. It has the interesting property that the edges are all tangent to a sphere.
 
     Weighted Delaunay triangulations have another interpretation as projections of convex polyhedra in $\R^3$. The Maxwell-Cremona Correspondence implies that projections of convex polyhedra always admit an equilibrium stress that is nonnegative on all edges except those of the convex hull. Thus, an alternative (dual) perspective on circle packings is that rather than looking for the correct radii, one could look for the correct equilibrium stress. Given a stress, one finds the embedding by Tutte's algorithm. This involves solving one system of linear equations derived from the graph. This "force-directed" algorithm is not known to terminate, however it seems to be quite effective on small examples. 
 \bibliographystyle{plain}
