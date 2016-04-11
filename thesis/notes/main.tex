@@ -412,6 +412,16 @@ Given a planar, triangulated graph, begin with a set of tentative radii that do 
   A \textbf{polytope} is a geometric object with flat sides that can exist in any number of dimensions. The $edge$ $graph$ $G(P)$ of a polytope $P$ is the graph whose vertex set is the vertex set of the polytope $P$. 
   
  A \textbf{polyhedron} is a three dimensional polytope or a solid object in three dimensions with flat polygonal faces, straight edges and sharp corners or vertices.
+ 
+ 
+ 
+ \section{Misc.}
+Given a finite point set $S$ the parabolic lifting transforms the Delaunay triangulation of $S$ into faces of a convex polyhedron in three dimensions. This property makes it easy to accept that every finite point set has a Delaunay triangulation because every finite point set has a polyhedral convex hull. In turn, this means that every finite point set has a Circle Packing.
+
+
+Weighted Delaunay triangulations can also be realized as stereographic projections of convex polyhedra. In the case of circle packings this polyhedron is sometime called the Koebe polyhedron. It has the interesting property that the edges are all tangent to a sphere.
+
+    Weighted Delaunay triangulations have another interpretation as projections of convex polyhedra in $\R^3$. The Maxwell-Cremona Correspondence implies that projections of convex polyhedra always admit an equilibrium stress that is nonnegative on all edges except those of the convex hull. Thus, an alternative (dual) perspective on circle packings is that rather than looking for the correct radii, one could look for the correct equilibrium stress. Given a stress, one finds the embedding by Tutte's algorithm. This involves solving one system of linear equations derived from the graph. This "force-directed" algorithm is not known to terminate, however it seems to be quite effective on small examples. 
 \bibliographystyle{plain}
 \bibliography{references}
 \end{document}

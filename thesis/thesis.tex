@@ -8,6 +8,7 @@
 \usepackage{float} % allows [H] on figure definition
 \usepackage{wrapfig}
 \usepackage{amsmath} % allows for matrix
+\usepackage{subfig}
 
 \DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
 
@@ -30,7 +31,9 @@
   Donald R. Sheehy\\
   \texttt{don.r.sheehy@uconn.edu}
 }\date{March 2016}
+
 \begin{document}
+
 \maketitle
 
 \begin{abstract}
@@ -51,7 +54,7 @@ The Circle Packing Theorem provides a wonderful link between questions of geomet
 
 Common geometric settings for circle packing are the $euclidean$ $plane$, $the$ $sphere$ and the $hyperbolic$ $plane$. Each pair of circles in a packing forms a tangent pair, and the empty space between each $triple$ forms a $interstice$ \cite{stephenson05introduction}. A $flower$ is the next level of structure, which consists of a central circle and some number of $petal$ circles. The number of petals defines the $degree$ of the central circle. Every circle in a packing has to have a flower, this is called the $local$ $planarity$ condition \cite{stephenson05introduction}. Note that while not all circle packings are unilevant, the ones discussed in this paper and created by the corresponding application will all be unilevant. This means that the interior of all the circles will be mutually disjoint and that the angle sum at each label will be $2\pi$.
 
-The objective of this paper is to explore the space of Circle Packing Algorithms. To accomplish this goal the theory of Circle Packings will be explored. The other goal is to introduce the reader to the world of Circle Packings, and to do this, basic Geometric principles must be introduced. If you, the reader, are familiar with geometry, then we encourage you to skip the following section.
+The objective of this paper is to explore equivalent representations of Circle Packings and the algorithms they might lead to. To accomplish this goal the theory of Circle Packings will be explored. The other goal is to introduce the reader to the world of Circle Packings, and to do this, basic Geometric principles must be introduced. If you, the reader, are familiar with geometry, then we encourage you to skip the following section.
 
 \section{Introduction to Geometric Figures}
 \subsection{Graphs}
@@ -106,6 +109,16 @@ The first algorithm in the application is an incremental relaxation algorithm pr
 		\item Set the new radius for $v$ to be the value for which $k$ circle of radius $r$ would give a covering angle of exactly $2\pi$.
 	\end{enumerate}
 These steps cause the system to converge to a fixed point for which all covering angles are exactly $2\pi$. Once the system has converged, the circles may be placed one at a time, at each step using the positions and radii of two neighboring circles to determine the center of each successive circle.
+
+
+\begin{figure}%
+    \centering
+    \subfloat[User input]{{\includegraphics[width=.4\textwidth]{figures/input} }}%
+    \qquad
+    \subfloat[User input packed]{{\includegraphics[width=.4\textwidth]{figures/output} }}%
+    \caption{Computing a circle packing}%
+    \label{fig:inout}%
+\end{figure}
 
 \subsection{Delaunay Triangulations}
 	A \emph{triangulation}, also referred to as a \emph{maximal planar graph}, is a planar graph in which there is no way to add another edge and have the graph continue to be planar \cite{meshGeneration}. In practice, this means that each face is bounded by three edges - each face is a triangle. This is explained by $Whitney's$ $Theorem$ which concludes that if a graph is planar and 3-connected, all the faces of the graph will be the same shape.
@@ -452,6 +465,15 @@ Circle packings can be mapped onto this sphere via stereographic projection to o
 
 These packings are unique up to M\"{o}bius Transformations.
 
+\begin{figure}[h]%
+    \centering
+    \subfloat[User input]{{\includegraphics[width=.4\textwidth]{riemannsphere} }}%
+    \qquad
+    \subfloat[User input packed]{{\includegraphics[width=.4\textwidth]{riemannsphere_packed} }}%
+    \caption{Stereographic projection onto the Riemann Sphere}%
+    \label{fig:riemann}%
+\end{figure}
+
 \subsection{M\"{o}bius Transformations}
  A \textbf{M\"{o}bius Transformation} of a plane can be obtained by performing the stereographic projection of the plane onto a sphere, then rotating or moving the sphere and then performing the stereographic projection back onto the plane. 
   Formally, a M\"{o}bius Transformation is a rational function defined on the extended complex plane $\CP = \C\cup\{\infty\}$ of the form:
@@ -459,14 +481,27 @@ These packings are unique up to M\"{o}bius Transformations.
   	f(z) = \frac{az+b}{cz+d}
   \end{equation}
   where $z\in\CP$ is a complex variable and $a,b,c,d\in\CP$ are complex numbers such that $ad - bc$ $\neq$ $0$ \cite{stephenson05introduction}. These transformations are invertible and if performed on circle packings, transform circle packings to equivalent circle packings without losing any information. Therefore, circle packings in the plane are unique up to M\"{o}bius Transformations. In our application, M\"{o}bius Transformations can be performed from both the spherical and planar view by moving the mouse to rotate the sphere or transform the plane.
-  
-\section{Misc.}
-Given a finite point set $S$ the parabolic lifting transforms the Delaunay triangulation of $S$ into faces of a convex polyhedron in three dimensions. This property makes it easy to accept that every finite point set has a Delaunay triangulation because every finite point set has a polyhedral convex hull. In turn, this means that every finite point set has a Circle Packing.
+    \begin{figure}[h]%
+	\centering
+	\subfloat[A circle packing.]{\includegraphics[width=.35\textwidth]{input_packedcropped}}%
+	\qquad
+	\subfloat[A M\"{o}bius Transformation of the packing in (a).]{\includegraphics[width=.35\textwidth]{packing_transformed}}%
+	\caption{M\"{o}bius Transformations in the plane.}%
+	\label{fig:mobiusplane}%
+\end{figure}
 
+\begin{figure}[H]%
+	\centering
+	\subfloat[A Circle Packing on the sphere.]{\includegraphics[width=.35\textwidth]{sphere1}}%
+	\qquad
+	\subfloat[A M\"{o}bius Transformation of the packing in (a).]{\includegraphics[width=.35\textwidth]{sphere2}}%
+	\caption[]{M\"{o}bius Transformations on the Riemann Sphere.}%
+	\label{fig:mobiussphere}%
+\end{figure}
 
-Weighted Delaunay triangulations can also be realized as stereographic projections of convex polyhedra. In the case of circle packings this polyhedron is sometime called the Koebe polyhedron. It has the interesting property that the edges are all tangent to a sphere.
+\section{Conclusion}
+Circle Packings have many equivalent representations that can be exploited to develop new algorithms to both make better packings and obtain them more quickly. These representations include Delaunay Triangulations, Voronoi Diagrams, Parabolic Liftings, Koebe Polyhedrons, and Packings on the Riemann Sphere. Through examining one of these representations, the Delaunay Triangulation, and its properties as observed by Tutte and Maxwell, a new algorithm for computing Circle Packings based on equilibrium forces was developed. In the future, a combination of these representations could be used to develop a new non-linear optimization algorithm based on optimizing different aspects of each equivalent representation.
 
-    Weighted Delaunay triangulations have another interpretation as projections of convex polyhedra in $\R^3$. The Maxwell-Cremona Correspondence implies that projections of convex polyhedra always admit an equilibrium stress that is nonnegative on all edges except those of the convex hull. Thus, an alternative (dual) perspective on circle packings is that rather than looking for the correct radii, one could look for the correct equilibrium stress. Given a stress, one finds the embedding by Tutte's algorithm. This involves solving one system of linear equations derived from the graph. This "force-directed" algorithm is not known to terminate, however it seems to be quite effective on small examples. 
 \bibliographystyle{plain}
 \bibliography{references}
 \end{document}  
