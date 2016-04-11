@@ -4,7 +4,9 @@ class Vertex {
   boolean internal = true, f = false;
   HalfEdge h;
   Complex parent;//Complex this vertex belongs to 
-
+  Vertex a,b,c;//points on boundary
+  Vertex ap, bp, cp;
+  
   public Vertex(float _x, float _y, float _z, float _w, Complex _p) {
     x = _x; 
     y = _y; 

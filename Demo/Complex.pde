@@ -73,7 +73,6 @@ class Complex
       float ix = (b2 - b1)/(m1 - m2);
       float iy = (b2*m1 - b1*m2)/(m1 - m2);
       
-     // fill(100, 0,0);
      noFill();
      stroke(0);
       ellipse(he.ocx, he.ocy, 2*he.ocr, 2*he.ocr);
@@ -85,16 +84,13 @@ class Complex
   void placeVertex(Vertex targ, float theta, Vertex ref) {
     targ.x = (ref.r + targ.r)*cos(theta) + ref.x;
     targ.y = (ref.r + targ.r)*sin(theta) + ref.y;
-    //targ.placed = true;
   }
 
   void drawComplex() {
-   // pushStyle();
     stroke(100, 100, 100, 50);
     for (Edge e : edges) {
       line(e.v1.x, e.v1.y, e.v2.x, e.v2.y);
     }
-  //  popStyle();
   }  
 
   void triangulate(HalfEdge h, Vertex v) {
@@ -187,115 +183,49 @@ class Complex
       }
     }
   }
-
-  void computeIxn() {
-    HashMap<HalfEdge, Boolean> visited = new HashMap<HalfEdge, Boolean>();
-    JQueue<HalfEdge> q = new JQueue<HalfEdge>();
-    q.add(outerVerts.get(0).h);
-
-    while (!q.isEmpty()) {
-      HalfEdge he = q.remove();
-
-      if (he == null || visited.containsKey(he)) {
-        continue;
-      }
-      visited.put(he, true);
-      //////////////////////////////
-      //draw orthocircle of internal triangles
-      //calculate the incenter and incircle radius.
-      //assuming we're given a packing, it's a dual packing.
-
-      Vertex p1 = new Vertex(he.v.x, he.v.y, 0, 0);
-      Vertex p2 = new Vertex(he.next.v.x, he.next.v.y, 0, 0);
-      Vertex p3 = new Vertex(he.prev.v.x, he.prev.v.y, 0, 0);
-      float p1p2 = p1.add(p2.negate()).magnitude();
-      float p1p3 = p1.add(p3.negate()).magnitude();
-      float p2p3 = p2.add(p3.negate()).magnitude();
-      float perimeter = p1p2 + p1p3 + p2p3;
-      he.ocx = (p1.x*p2p3 + p2.x*p1p3 + p3.x*p1p2)/perimeter;
-      he.ocy = (p1.y*p2p3 + p2.y*p1p3 + p3.y*p1p2)/perimeter;
-      float s = perimeter/2;
-      he.ocr = sqrt(s*(s-p1p2)*(s-p1p3)*(s-p2p3))/s;
-
-      //update radii
-      float x1 = he.ocx, y1 = he.ocy;
-      float x2 = he.twin.ocx, y2 = he.twin.ocy;
-
-      float x3 = he.v.x, y3 = he.v.y;
-      float x4 = he.next.v.x, y4 = he.next.v.y;
-
-      float m1 = (y1-y2)/(x1-x2);
-      float m2 = (y3-y4)/(x3-x4);
-      float b1 = y1-m1*x1;
-      float b2 = y3-m2*x3;
-
-      float ix = (b2 - b1)/(m1 - m2);
-      float iy = (b2*m1 - b1*m2)/(m1 - m2);
-
-      he.ixn = new Vertex(ix, iy, 0, 0);
-      he.ixnp = stereoProj(he.ixn);
-      he.twin.ixnp = he.ixnp;
-
-      q.add(he.next);
-      q.add(he.twin);
+  
+  void comp2()
+  {
+    for(Vertex v : verts)
+    {
+     v.a = new Vertex(v.x + v.r, v.y, 0); 
+     v.b = new Vertex(v.x - v.r, v.y, 0); 
+     v.c = new Vertex(v.x, v.y + v.r, 0);
+     v.ap = stereoProj(v.a);
+     v.bp = stereoProj(v.b);
+     v.cp = stereoProj(v.c);
     }
   }
   
-  void down() {
-    HashMap<HalfEdge, Boolean> visited = new HashMap<HalfEdge, Boolean>();
-    JQueue<HalfEdge> q = new JQueue<HalfEdge>();
-    q.add(outerVerts.get(0).h);
-
-    while (!q.isEmpty()) {
-      HalfEdge he = q.remove();
-      if (visited.containsKey(he))  continue;
-      visited.put(he, true);
-
-      he.ixn = stereoProjI(he.ixnp);
-      q.add(he.next);
-      q.add(he.twin);
+  void down2()
+  {
+    for(Vertex v : verts)
+    {
+      v.a = stereoProjI(v.ap);
+      v.b = stereoProjI(v.bp);
+      v.c = stereoProjI(v.cp);
     }
   }
+
   void fancyDraw(boolean d3) {
-     //d3: draw polyhedra
     strokeWeight(2);
     stroke(0);
-    
-    HashMap<HalfEdge, Boolean> visited = new HashMap<HalfEdge, Boolean>();
-    HashMap<Vertex, Boolean> vVis = new HashMap<Vertex, Boolean>();
-    
-    JQueue<HalfEdge> q = new JQueue<HalfEdge>();
-    q.add(outerVerts.get(0).h);
 
-    while (!q.isEmpty()) 
+    for(Vertex v : verts)
     {
-      HalfEdge he = q.remove();
-
-      if (he == null || visited.containsKey(he)) 
+      fill(176, 196, 222);
+      if(d3)
       {
-        continue;
+        drawCircumcircle3D(v.ap, v.bp, v.cp);
       }
-
-      visited.put(he, true);
-      
-      if (d3) 
+      else
       {
-        Vertex a2 = new Vertex(he.ixnp.x, he.ixnp.y, he.ixnp.z, 0), 
-        b2 = new Vertex(he.next.ixnp.x, he.next.ixnp.y, he.next.ixnp.z, 0), 
-        c2 = new Vertex(he.next.next.ixnp.x, he.next.next.ixnp.y, he.next.next.ixnp.z, 0);
-        drawCircumcircle3D(a2, b2, c2);
-      } 
-      else 
-      {
-        if(!vVis.containsKey(he.next.v))
+        if(verts.size() > 2 && ccInside(verts.get(0), v) && ccInside(verts.get(1), v))
         {
-          drawCircumcircle2D(he.ixn, he.next.ixn, he.next.twin.next.ixn);
-          vVis.put(he.next.v, true);
+          fill(176, 196, 222, 90);
         }
+        drawCircumcircle2D(v.a, v.b, v.c);
       }
-      
-      q.add(he.next);
-      q.add(he.twin);
     }
   }
 }

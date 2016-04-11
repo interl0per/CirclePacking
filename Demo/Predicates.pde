@@ -47,6 +47,31 @@ void drawCircumcircle2D(Vertex a, Vertex b, Vertex c) {
   ellipse(x, y, 2*r, 2*r);
 }
 
+boolean ccInside(Vertex a0, Vertex b0)
+{//is 1's circumcircle contained in 2's? 
+  Vertex a = a0.a, b = a0.b, c = a0.c;
+  
+  float mr = (b.y-a.y) / (b.x-a.x);
+  float mt = (c.y-b.y) / (c.x-b.x);
+  float x = (mr*mt*(c.y-a.y) + mr*(b.x+c.x) - mt*(a.x+b.x)) / (2*(mr-mt));
+  float y = (a.y+b.y)/2 - (x - (a.x+b.x)/2) / mr;
+  float r = sqrt(((b.x-x)*(b.x-x) +  (b.y-y)*(b.y-y)));
+  
+  a = b0.a;
+  b = b0.b;
+  c = b0.c;
+    
+  float mr2 = (b.y-a.y) / (b.x-a.x);
+  float mt2 = (c.y-b.y) / (c.x-b.x);
+  float x2 = (mr2*mt2*(c.y-a.y) + mr2*(b.x+c.x) - mt2*(a.x+b.x)) / (2*(mr2-mt2));
+  float y2 = (a.y+b.y)/2 - (x2 - (a.x+b.x)/2) / mr2;
+  float r2 = sqrt(((b.x-x2)*(b.x-x2) +  (b.y-y2)*(b.y-y2)));
+  
+  if(sqrt((x-x2)*(x-x2) + (y-y2)*(y-y2)) < r2)
+    return true;
+  return false;
+}
+
 void drawCircumcircle3D(Vertex a, Vertex b, Vertex c) { 
   Vertex ct = c;
   a = a.add(c.negate());

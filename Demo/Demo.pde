@@ -24,11 +24,10 @@ void setup() {
   drawKoebe = false;
   mode = 0;
   dyc = dxc = 0;
-  
   textFont(createFont("Arial",20));
 }
 
-
+boolean first = true;
 void draw() 
 {
   background(255);
@@ -50,7 +49,6 @@ void draw()
 
   if (keyPressed) 
   {
-    
     if (keyCode==LEFT) 
     {
       radii_update(curr);
@@ -61,31 +59,39 @@ void draw()
     }
     if(keyCode == RIGHT || keyCode == LEFT)
     {
-       curr.G.computeIxn();
-       HashMap<HalfEdge, Boolean> done = new HashMap<HalfEdge, Boolean>();
+      curr.G.comp2();
+      // curr.G.computeIxn();
+      // HashMap<HalfEdge, Boolean> done = new HashMap<HalfEdge, Boolean>();
   
-       for (int i= 0; i < curr.G.edges.size(); i++) {
-       if (done.containsKey(curr.G.edges.get(i).h1)) {
-         continue;
+       //for (int i= 0; i < curr.G.edges.size(); i++) {
+       //if (done.containsKey(curr.G.edges.get(i).h1)) {
+       //  continue;
+       //}
+       //done.put(curr.G.edges.get(i).h1, true);
+  
+       //Vertex v = curr.G.edges.get(i).h1.ixnp;
+  
+       //v.rotate('x', dxc);
+       //v.rotate('y', dyc);
+  
+       //curr.G.edges.get(i).h1.ixnp = v;
+     //}
+       for(Vertex v : curr.G.verts)
+       {
+        v.ap.rotate('x', dxc);
+        v.ap.rotate('y', dyc);
+        v.bp.rotate('x', dxc);
+        v.bp.rotate('y', dyc);
+        v.cp.rotate('x', dxc);
+        v.cp.rotate('y', dyc);
        }
-       done.put(curr.G.edges.get(i).h1, true);
-  
-       Vertex v = curr.G.edges.get(i).h1.ixnp;
-  
-       v.rotate('x', dxc);
-       v.rotate('y', dyc);
-  
-       curr.G.edges.get(i).h1.ixnp = v;
-     }
     }
   }
 
   if (drawing) 
   {
     float dx = mouseX - sx, dy = mouseY - sy, r = sqrt(dx*dx + dy*dy);
-
     noStroke();
-  //  fill(185, 205, 240);
     ellipse(sx-width/2, sy-height/2, 2*r, 2*r);
   }
 
@@ -96,44 +102,41 @@ void draw()
   if (rotating)
   {
     float dyt = sx - mouseX, dxt = sy - mouseY;
-    
     dyc += dyt/70;
     dxc += -dxt/70;
-    
-    HashMap<HalfEdge, Boolean> done = new HashMap<HalfEdge, Boolean>();
-
-    for (int i= 0; i < curr.G.edges.size(); i++) {
-      if (done.containsKey(curr.G.edges.get(i).h1)) {
-        continue;
-      }
-      done.put(curr.G.edges.get(i).h1, true);
-
-      Vertex v = curr.G.edges.get(i).h1.ixnp;
-
-      v.rotate('x', -dxt/70);
-      v.rotate('y', dyt/70);
-
-      curr.G.edges.get(i).h1.ixnp = v;
+    if(first)
+    {
+      dyt = 2;
+      dxt = 2;
     }
-    curr.G.down();
+    for(Vertex vv : curr.G.verts)
+    {
+      vv.ap.rotate('x', -dxt/70);
+      vv.ap.rotate('y', dyt/70);
+      vv.bp.rotate('x', -dxt/70);
+      vv.bp.rotate('y', dyt/70);
+      vv.cp.rotate('x', -dxt/70);
+      vv.cp.rotate('y', dyt/70);
+    }
+    curr.G.down2();
+    
     curr.G.fancyDraw(drawKoebe);
 
     sx = mouseX; 
     sy = mouseY;
+    first = false;
   }
+  
   fill(230);
   if(showHelp)
   {
-    stroke(100);
+   stroke(100);
    rect(-200,-200, 500, 300);
    fill(0);
    text("Help", -200, -200);
-      fill(0);
-
-   text("-Press 'h' to toggle off center help menu", -150, -170);
-
+   fill(0);
+   text("-Press 'h' to toggle help menu", -150, -170);
   }
-  
   fill(230);
 }
 
@@ -143,13 +146,6 @@ void mousePressed() {
     sy = mouseY;
     drawing = true;
   } 
-//  else if (mouseButton == RIGHT/* && curr.isPacking()*/) 
-//  {
-//    curr.G.computeIxn();
-//    sx = mouseX; 
-//    sy = mouseY;
-//    rotating = true;
-//  }
 }
 
 void mouseReleased() {
@@ -158,9 +154,6 @@ void mouseReleased() {
     curr.addVertex(sx-width/2, sy-height/2, sqrt(dx*dx + dy*dy));
     drawing = false;
   } 
-  //else if (mouseButton == RIGHT) {
-//    rotating = false;
-  //}
 }
 
 void keyPressed() 
@@ -195,14 +188,15 @@ void keyPressed()
     {
       sx = mouseX; 
       sy = mouseY;
-      curr.G.computeIxn();
+      curr.G.comp2();
+      first = true;
       rotating = true;
     }
     else if(mode==3)
     {
       sx = mouseX; 
       sy = mouseY;
-      curr.G.computeIxn();
+      curr.G.comp2();
       rotating = true;
       drawKoebe = true;
     }
