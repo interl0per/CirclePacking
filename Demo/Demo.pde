@@ -60,23 +60,16 @@ void draw()
     if(keyCode == RIGHT || keyCode == LEFT)
     {
       curr.G.comp2();
-      // curr.G.computeIxn();
-      // HashMap<HalfEdge, Boolean> done = new HashMap<HalfEdge, Boolean>();
-  
-       //for (int i= 0; i < curr.G.edges.size(); i++) {
-       //if (done.containsKey(curr.G.edges.get(i).h1)) {
-       //  continue;
-       //}
-       //done.put(curr.G.edges.get(i).h1, true);
-  
-       //Vertex v = curr.G.edges.get(i).h1.ixnp;
-  
-       //v.rotate('x', dxc);
-       //v.rotate('y', dyc);
-  
-       //curr.G.edges.get(i).h1.ixnp = v;
-     //}
        for(Vertex v : curr.G.verts)
+       {
+        v.ap.rotate('x', dxc);
+        v.ap.rotate('y', dyc);
+        v.bp.rotate('x', dxc);
+        v.bp.rotate('y', dyc);
+        v.cp.rotate('x', dxc);
+        v.cp.rotate('y', dyc);
+       }
+       for(Vertex v : curr.G.outerVerts)
        {
         v.ap.rotate('x', dxc);
         v.ap.rotate('y', dyc);
@@ -110,6 +103,15 @@ void draw()
       dxt = 2;
     }
     for(Vertex vv : curr.G.verts)
+    {
+      vv.ap.rotate('x', -dxt/70);
+      vv.ap.rotate('y', dyt/70);
+      vv.bp.rotate('x', -dxt/70);
+      vv.bp.rotate('y', dyt/70);
+      vv.cp.rotate('x', -dxt/70);
+      vv.cp.rotate('y', dyt/70);
+    }
+    for(Vertex vv : curr.G.outerVerts)
     {
       vv.ap.rotate('x', -dxt/70);
       vv.ap.rotate('y', dyt/70);

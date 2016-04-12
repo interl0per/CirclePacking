@@ -87,7 +87,8 @@ class Complex
   }
 
   void drawComplex() {
-    stroke(100, 100, 100, 50);
+    stroke(100, 100, 100, 85);
+    strokeWeight(2);
     for (Edge e : edges) {
       line(e.v1.x, e.v1.y, e.v2.x, e.v2.y);
     }
@@ -195,11 +196,26 @@ class Complex
      v.bp = stereoProj(v.b);
      v.cp = stereoProj(v.c);
     }
+    for(Vertex v : outerVerts)
+    {
+     v.a = new Vertex(v.x + v.r, v.y, 0); 
+     v.b = new Vertex(v.x - v.r, v.y, 0); 
+     v.c = new Vertex(v.x, v.y + v.r, 0);
+     v.ap = stereoProj(v.a);
+     v.bp = stereoProj(v.b);
+     v.cp = stereoProj(v.c);
+    }
   }
   
   void down2()
   {
     for(Vertex v : verts)
+    {
+      v.a = stereoProjI(v.ap);
+      v.b = stereoProjI(v.bp);
+      v.c = stereoProjI(v.cp);
+    }
+    for(Vertex v : outerVerts)
     {
       v.a = stereoProjI(v.ap);
       v.b = stereoProjI(v.bp);
@@ -212,6 +228,22 @@ class Complex
     stroke(0);
 
     for(Vertex v : verts)
+    {
+      fill(176, 196, 222);
+      if(d3)
+      {
+        drawCircumcircle3D(v.ap, v.bp, v.cp);
+      }
+      else
+      {
+        if(verts.size() > 2 && ccInside(verts.get(0), v) && ccInside(verts.get(1), v))
+        {
+          fill(176, 196, 222, 90);
+        }
+        drawCircumcircle2D(v.a, v.b, v.c);
+      }
+    }
+    for(Vertex v : outerVerts)
     {
       fill(176, 196, 222);
       if(d3)
