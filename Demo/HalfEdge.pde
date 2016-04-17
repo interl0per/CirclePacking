@@ -64,6 +64,19 @@ class HalfEdge {
   }
 }
 
+class Edge {
+  HalfEdge h1, h2;
+  Vertex v1, v2;
+  float stress = 1;
+  Edge dual;
+  public Edge(HalfEdge _h1, HalfEdge _h2) {  
+    h1 = _h1; 
+    h2 = _h2;
+    v1 = h1.v;
+    v2 = h2.v;
+  }
+}
+
 class JStack<T> {
   ArrayList<T> container = new ArrayList<T>();
   void push(T e) {
@@ -87,18 +100,5 @@ class JQueue<T> {
   }
   boolean isEmpty() {
     return(container.size()==0);
-  }
-}
-
-class Edge {
-  HalfEdge h1, h2;
-  Vertex v1, v2;
-  float stress = 1;
-  Edge dual;
-  public Edge(HalfEdge _h1, HalfEdge _h2) {  
-    h1 = _h1; 
-    h2 = _h2;
-    v1 = h1.v;
-    v2 = h2.v;
   }
 }

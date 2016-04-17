@@ -3,14 +3,17 @@ boolean turn(Vertex p, Vertex q, Vertex r) {
   return((q.x - p.x)*(r.y - p.y) - (r.x - p.x)*(q.y - p.y)>=0);
 }
 
-boolean inFace(HalfEdge h, Vertex d) {
+boolean inFace(HalfEdge h, Vertex d) 
+{
   //is d in the face defined by h?
   HalfEdge start = h;
   HalfEdge temp = h.next;
   boolean first = true;
-  while (first || h!=start) {
+  while (first || h!=start) 
+  {
     first = false;
-    if (turn(h.v, temp.v, d)) {
+    if (turn(h.v, temp.v, d)) 
+    {
       return false;
     }
     h = h.next;
@@ -55,7 +58,6 @@ boolean ccInside(Vertex a0, Vertex b0)
   float mt = (c.y-b.y) / (c.x-b.x);
   float x = (mr*mt*(c.y-a.y) + mr*(b.x+c.x) - mt*(a.x+b.x)) / (2*(mr-mt));
   float y = (a.y+b.y)/2 - (x - (a.x+b.x)/2) / mr;
-  float r = sqrt(((b.x-x)*(b.x-x) +  (b.y-y)*(b.y-y)));
   
   a = b0.a;
   b = b0.b;
@@ -69,6 +71,7 @@ boolean ccInside(Vertex a0, Vertex b0)
   
   if(sqrt((x-x2)*(x-x2) + (y-y2)*(y-y2)) < r2)
     return true;
+    
   return false;
 }
 
@@ -77,7 +80,6 @@ void drawCircumcircle3D(Vertex a, Vertex b, Vertex c) {
   a = a.add(c.negate());
   b = b.add(c.negate());
   c = new Vertex(0, 0, 0, 0);
-  //b.drw();
 
   float rx, ry, rz;
   ry = atan2(a.z, a.x);
@@ -110,7 +112,7 @@ Vertex stereoProj(Vertex init) {
   return new Vertex(orthoSphereR*2*x/denom, orthoSphereR*2*y/denom, orthoSphereR*(x*x + y*y -1)/denom, 0);
 }
 
-Vertex stereoProjI(Vertex init) {
+Vertex stereoProjI(Vertex init) {//inverse
   return new Vertex(init.x*orthoSphereR/(orthoSphereR-init.z), init.y*orthoSphereR/(orthoSphereR-init.z), 0, 0);
 }
 
@@ -123,19 +125,14 @@ Vertex grad(HalfEdge f) {
 
   Vertex pq = q.add(p.negate());
   Vertex pr = r.add(p.negate());
-  Vertex ansT = pq.cross(pr);
+  //Vertex ansT = pq.cross(pr);
   return pq.cross(pr);
 }
 
-float distv(Vertex p, Vertex q) {
+float distv(Vertex p, Vertex q) 
+{
   float dx = p.x - q.x;
   float dy = p.y - q.y;
   float dz = p.z - q.z;
-
   return sqrt(dx*dx + dy*dy + dz*dz);
 }
-//
-//public enum Mode 
-//{
-//  DEFAULT, DUAL, MOBIUS, KOEBE
-//}

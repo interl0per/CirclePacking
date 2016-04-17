@@ -2,6 +2,7 @@ class Vertex {
   color shade = 200;
   float x, y, z, r;
   boolean internal = true, f = false;
+  boolean special = false;
   HalfEdge h;
   Complex parent;//Complex this vertex belongs to 
   Vertex a,b,c;//points on boundary
@@ -71,13 +72,8 @@ class Vertex {
     }
   }
   void drawVertex() {
-    //   pushStyle();
-
-   // noStroke();
     fill(176, 196, 222);
     ellipse(x, y, 2*r, 2*r);
-
-    //   popStyle();
   }
 
   float getZ() {
