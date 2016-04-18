@@ -8,7 +8,7 @@ class Complex
 
   public Complex() {
   }
-
+  
   public Complex(int n) 
   {
     //create outer face (a regular n-gon)
@@ -30,6 +30,41 @@ class Complex
       outerVerts.get(i%n).attach(outerVerts.get(i-1));
     }
   }
+  
+  void sctr()
+  {
+    float minx = 99999, miny = 999999;
+    int itx = 0, ity = 0;
+    for(int i =0;i < outerVerts.size(); i++)
+    {
+      if(outerVerts.get(i).x < minx)
+      {
+        minx = outerVerts.get(i).x;
+        itx = i;
+      }
+      if(outerVerts.get(i).y < miny)
+      {
+        miny = outerVerts.get(i).y;
+        ity = i;
+      }
+    }
+
+    float diffx = -width/2 -outerVerts.get(itx).r/4 - outerVerts.get(itx).x;
+    float diffy = -height/2 - outerVerts.get(ity).y;
+    
+    for(Vertex v : outerVerts)
+    {
+     v.x += diffx;
+    //v.y += diffy;
+    }
+    for(Vertex v : verts)
+    {
+     v.x += diffx;  
+     //v.y += diffy;
+
+    }
+  }
+  
   void drawDual()
   {
     HashMap<HalfEdge, Boolean> visited = new HashMap<HalfEdge, Boolean>();

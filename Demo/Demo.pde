@@ -39,6 +39,7 @@ void draw()
     }
     else
     {
+      curr.G.sctr();
       curr.drawPSLG();
       curr.drawRadii();
     }
@@ -92,8 +93,8 @@ void draw()
     dxc += dxt;
     if(first)
     {
-      dyt = 2;
-      dxt = 2;
+      dyt = EPSILON;
+      dxt = EPSILON;
     }
     for(Vertex vv : curr.G.verts)
     {
@@ -149,20 +150,19 @@ void draw()
   {
    stroke(100);
    fill(230);
-
    rect(-200,-200, 500, 300);
    fill(0);
    text("Instructions", -200, -210);
-   //Add weighted points to the triangulation by clicking and dragging left mouse.
+  // Add weighted points to the triangulation by clicking and dragging left mouse.
    //Press left arrow to run the radii-update algorithm, or right arrow to run the spring algorithm.
    //Press space to change modes. To restart press 'c'.
-   text("Press 'h' to toggle instructions", -150, -170);
-   text("Press SPACE to change modes", -150, -150);
-   text("Press LEFT to run the radii-update algorithm", -150, -130);
-   text("Press RIGHT to run the spring algorithm", -150, -110);
-   text("Press 'c' to restart", -150, -70);
-   text("Press ',' to save the current embedding", -150, -50);
-   text("Press '.' to load the saved embedding", -150, -30);
+   text("Add weighted points to the triangulation by clicking \n and dragging left mouse. \n Press left arrow to run the radii-update algorithm, or \n right arrow to run the spring algorithm. \n Press space to change modes. \n Press , to save the current embedding, and . to load \n a saved embedding. \n To restart, press c.", -180, -170);
+   //text("Press SPACE to change modes", -150, -150);
+   //text("Press LEFT to run the radii-update algorithm", -150, -130);
+   //text("Press RIGHT to run the spring algorithm", -150, -110);
+   //text("Press 'c' to restart", -150, -70);
+   //text("Press ',' to save the current embedding", -150, -50);
+   //text("Press '.' to load the saved embedding", -150, -30);
   }
   fill(230);
 }
