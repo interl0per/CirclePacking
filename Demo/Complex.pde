@@ -8,24 +8,63 @@ class Complex
 
   public Complex() {
   }
-
-  public Complex(int n) {
+  
+  public Complex(int n) 
+  {
     //create outer face (a regular n-gon)
     Vertex center = new Vertex(0, 0, 0, 1000, this);
+    center.special = true;
     float step = 2*PI/n;
     //place the verticies on the outer face
 
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++) 
+    {
       Vertex bv = new Vertex(-100, -100, 0, 800, this);
       bv.internal = false;
       placeVertex(bv, i*step, center);
       outerVerts.add(bv);
     }
 
-    for (int i =1; i < n+1; i++) {
+    for (int i =1; i < n+1; i++) 
+    {
       outerVerts.get(i%n).attach(outerVerts.get(i-1));
     }
   }
+  
+  void sctr()
+  {
+    float minx = 99999, miny = 999999;
+    int itx = 0, ity = 0;
+    for(int i =0;i < outerVerts.size(); i++)
+    {
+      if(outerVerts.get(i).x < minx)
+      {
+        minx = outerVerts.get(i).x;
+        itx = i;
+      }
+      if(outerVerts.get(i).y < miny)
+      {
+        miny = outerVerts.get(i).y;
+        ity = i;
+      }
+    }
+
+    float diffx = -width/2 -outerVerts.get(itx).r/4 - outerVerts.get(itx).x;
+    float diffy = -height/2 - outerVerts.get(ity).y;
+    
+    for(Vertex v : outerVerts)
+    {
+     v.x += diffx;
+    //v.y += diffy;
+    }
+    for(Vertex v : verts)
+    {
+     v.x += diffx;  
+     //v.y += diffy;
+
+    }
+  }
+  
   void drawDual()
   {
     HashMap<HalfEdge, Boolean> visited = new HashMap<HalfEdge, Boolean>();
@@ -59,56 +98,57 @@ class Complex
       he.ocr = sqrt(s*(s-p1p2)*(s-p1p3)*(s-p2p3))/s;
 
       //update radii
-      float x1 = he.ocx, y1 = he.ocy;
-      float x2 = he.twin.ocx, y2 = he.twin.ocy;
 
-      float x3 = he.v.x, y3 = he.v.y;
-      float x4 = he.next.v.x, y4 = he.next.v.y;
-
-      float m1 = (y1-y2)/(x1-x2);
-      float m2 = (y3-y4)/(x3-x4);
-      float b1 = y1-m1*x1;
-      float b2 = y3-m2*x3;
-
-      float ix = (b2 - b1)/(m1 - m2);
-      float iy = (b2*m1 - b1*m2)/(m1 - m2);
+      fill(176, 196, 222);
+      stroke(0);
       
-     noFill();
-     stroke(0);
-      ellipse(he.ocx, he.ocy, 2*he.ocr, 2*he.ocr);
+      if(he.v.internal || he.next.v.internal || he.prev.v.internal)
+        ellipse(he.ocx, he.ocy, 2*he.ocr, 2*he.ocr);
 
       q.add(he.next);
       q.add(he.twin);
     }
+    for(Edge e : edges)
+    {
+      if(e.v1.internal || e.v2.internal)
+        line(e.h1.ocx, e.h1.ocy, e.h2.ocx, e.h2.ocy);
+    }
   }
-  void placeVertex(Vertex targ, float theta, Vertex ref) {
+  void placeVertex(Vertex targ, float theta, Vertex ref) 
+  {
     targ.x = (ref.r + targ.r)*cos(theta) + ref.x;
     targ.y = (ref.r + targ.r)*sin(theta) + ref.y;
   }
 
-  void drawComplex() {
-    stroke(100, 100, 100, 85);
-    strokeWeight(2);
-    for (Edge e : edges) {
+  void drawComplex() 
+  {
+    stroke(50);
+    strokeWeight(1.5);
+    for (Edge e : edges) 
+    {
       line(e.v1.x, e.v1.y, e.v2.x, e.v2.y);
     }
   }  
 
-  void triangulate(HalfEdge h, Vertex v) {
+  void triangulate(HalfEdge h, Vertex v) 
+  {
     int sides = 1;
     HalfEdge temp = h.next;
-    while (temp!=h) {
+    while (temp!=h) 
+    {
       sides++;
       temp = temp.next;
     }
 
-    for (int i = 0; i < sides; i++) {
+    for (int i = 0; i < sides; i++) 
+    {
       v.attach(h.v);
       h = h.next;
     }
   }
 
-  boolean addVertex(Vertex v) {
+  boolean addVertex(Vertex v) 
+  {
     //add a vertex to the complex (delaunay triangulation)
     if (v.r < EPSILON)  
       v.r = 10;
@@ -166,8 +206,10 @@ class Complex
         }
       }
       verts.add(v);
-      for (int i = 0; i < verts.size(); i++) {
-        if (verts.get(i).isIsolated()) {
+      for (int i = 0; i < verts.size(); i++) 
+      {
+        if (verts.get(i).isIsolated()) 
+        {
           verts.remove(i);
           i--;
         }
@@ -176,16 +218,19 @@ class Complex
     }
   }
 
-  void checkEdges(Edge[] checkEdge, HashMap<Edge, Boolean> inStack, JStack<Edge> edgesToCheck) { //delaunay Complex helper
-    for (Edge e : checkEdge) {
-      if (inStack.get(e) == null || !inStack.get(e)) {
+  void checkEdges(Edge[] checkEdge, HashMap<Edge, Boolean> inStack, JStack<Edge> edgesToCheck) 
+  { //delaunay Complex helper
+    for (Edge e : checkEdge) 
+    {
+      if (inStack.get(e) == null || !inStack.get(e)) 
+      {
         edgesToCheck.push(e);
         inStack.put(e, true);
       }
     }
   }
   
-  void comp2()
+  void updateStereo()
   {
     for(Vertex v : verts)
     {
@@ -207,7 +252,7 @@ class Complex
     }
   }
   
-  void down2()
+  void upateFromStereo()
   {
     for(Vertex v : verts)
     {
@@ -223,14 +268,15 @@ class Complex
     }
   }
 
-  void fancyDraw(boolean d3) {
+  void fancyDraw(boolean koebe)
+  {
     strokeWeight(2);
     stroke(0);
 
     for(Vertex v : verts)
     {
       fill(176, 196, 222);
-      if(d3)
+      if(koebe)
       {
         drawCircumcircle3D(v.ap, v.bp, v.cp);
       }
@@ -243,10 +289,11 @@ class Complex
         drawCircumcircle2D(v.a, v.b, v.c);
       }
     }
+    
     for(Vertex v : outerVerts)
     {
       fill(176, 196, 222);
-      if(d3)
+      if(koebe)
       {
         drawCircumcircle3D(v.ap, v.bp, v.cp);
       }
