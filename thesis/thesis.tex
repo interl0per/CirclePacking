@@ -52,14 +52,15 @@
 
 The Circle Packing Theorem provides a link between questions of geometry, topology, combinatorics and complex analysis. Discovered by Paul Koebe and later reintroduced by William Thurston, circle packings have become a principle area of study for many mathematicians and geometers \cite{wilkerson}. Before introducing a formal definition, we will develop an intuition for circle packings. A circle packing is a configuration of circles with a specified pattern of tangencies \cite{stephenson05introduction}. The circle packings most often studied are those that require the interior of the circles to be disjoint, called univalent packings, this means the circles are non-overlapping \cite{stephenson05introduction}. In this case, a circle packing can be thought of as a graph formed by a set of circles with disjoint interiors, where each circle kisses, intersects at exactly one point, its neighboring circles in the graph.
 
-Common geometric settings for circle packings are the \emph{euclidean plane}, the \emph{sphere} and the \emph{hyperbolic plane}. Each pair of circles in a packing forms a tangent pair, every three form a triple and the empty space between each $triple$ forms an $interstice$ \cite{stephenson05introduction}. A $flower$ is the next level of structure, which consists of a central circle and some number of $petal$ circles. The number of petals defines the $degree$ of the central circle. In our application we will enforce the condition that every circle packing has to have a flower. Note that while not all circle packings are univalent, the ones discussed in this paper and created by the corresponding application will all be univalent. 
-This means that the interior of all the circles will be mutually disjoint and that the angle sum at each label will be $2\pi$.
+Common geometric settings for circle packings are the \emph{euclidean plane}, the \emph{sphere} and the \emph{hyperbolic plane}. Each pair of circles in a packing forms a tangent pair, every three form a triple and the empty space between each $triple$ forms an $interstice$ \cite{stephenson05introduction}. A $flower$ is the next level of structure, which consists of a central circle and some number of $petal$ circles. The number of petals defines the $degree$ of the central circle. In our application we will enforce the condition that every circle packing has to have a flower. Note that while not all circle packings are univalent, the ones discussed in this paper and created by the corresponding application will all be univalent. As a result of this property the angle sum, the sum of the angles around each vertex, will be $2\pi$.
 
-The primary objective of this paper is to explore the connections between equivalent representations of circle packings. The secondary goal is to introduce the reader to the world of circle packings. To this end, basic Geometric principles will be introduced.
+The primary objective of this paper is to explore the connections between equivalent representations of circle packings. These representations include Delaunay triangulations, liftings, stresses and packings on the sphere. The secondary goal is to introduce the reader to the world of circle packings. To this end, basic Geometric principles will be introduced.
 
 \section{Introduction to Geometric Figures}
 \subsection{Graphs}
-A \emph{graph} is an ordered pair $G=(V,E)$ which represents a set of objects or veticies $v$ and the links between them, or edges $E$. Edges in a graph can be directed or undirected, however, we will focus on undirected edges in our application. A graph $G' = (V',E')$ is a \emph{subgraph} of $G$ ($G' \subseteq G$), if $V' \subseteq V$ and $E' \subseteq E$.
+A \emph{graph} is an ordered pair $G=(V,E)$ which represents a set of objects or \emph{vetices} $v$ and the links between them, or \emph{edges} $E$. Edges in a graph can be directed or undirected, however, we will focus on undirected edges in our application. For undirected graphs, we can define edges as unordered pairs of vertices such that $(v_1, v_2) = (v_2, v_1)$. In this case, a graph $G' = (V',E')$ is a \emph{subgraph} of $G$ ($G' \subseteq G$), if $V' \subseteq V$ and $E' \subseteq E$.
+
+A \emph{path} is a finite or infinite sequence of edges which connect a sequence of vertices.
 
   A component or \emph{connected component} of a graph is a subgraph in which any two vertices are connected to each other by a path which is connected to no additional vertices in the supergraph.
 
@@ -73,10 +74,10 @@ A \emph{graph} is an ordered pair $G=(V,E)$ which represents a set of objects or
   A \emph{simple graph} is an unweighted, undirected graph, containing no loops or multiple edges \cite{mathworld:SimpleGraphs}. 
   A simple graph may either be connected or disconnected.
   
-  A \emph{planar graph} is one that can be embedded in the plane. 
-  In other words, the graph can be drawn on the plane in such a way that its edges intersect only at their endpoints (no edges cross each other) \cite{mathworld:PlanarGraph}.
+  The \emph{dual graph} $G'$ of a planar graph $G$ is one whose vertices each corresponds to a face in $G$. Two vertices are connected by an edge if the corresponding faces in $G$ have a boundary edge in common \cite{dualGraph}. 
   
-  Lastly, an \emph{embedding} of a graph $G$ on a surface $\Sigma$ is a representation of $G$ on $\Sigma$ in which points of $\Sigma$ are associated to vertices and simple arcs are associated to edges in such a way that:
+  \subsubsection{Embeddings and Topology}
+    An \emph{embedding} of a graph $G$ on a surface $\Sigma$ is a representation of $G$ on $\Sigma$ in which points of $\Sigma$ are associated to vertices and simple arcs are associated to edges in such a way that:
   \begin{itemize}
 	\item The endpoints of the arc associated to the edge $e$ are the points associated to the end vertices of $e$.
 	\item No arcs include points associated with other vertices.
@@ -92,26 +93,41 @@ A \emph{graph} is an ordered pair $G=(V,E)$ which represents a set of objects or
 	\label{fig:embedding}
 \end{wrapfigure}
 
-  This can be stated mathematically as the following: Given edges $e=(u,v)$, the function mapping the vertices to the plane $ \phi :V \rightarrow \R^2$, and the function mapping the edges to the plane $ \rho_e :[0,1] \rightarrow \R^2$, the embedding $= <\phi, \{\rho_e\} \in E >$. The difference between a graph and an embedding can best be illustrated with an example. Essentially, a graph $G=(V,E)$ just defines the structure, whereas an embedding defines the positioning of the graph in the plane.
+  This can be stated mathematically as the following: Given edges $e=(u,v)$, the function mapping the vertices to the plane $ \phi :V \rightarrow \R^2$, and the function mapping the edges to the plane $ \rho_e :[0,1] \rightarrow \R^2$, the embedding $= \langle \phi, \{\rho_e : e \in E \} \rangle$. The difference between a graph and an embedding can best be illustrated with an example. Essentially, a graph $G=(V,E)$ just defines the structure, whereas an embedding defines the positioning of the graph in the plane.
 
   A \emph{straight-line embedding} is a embedding of a planar graph in which all arcs are straight. The figures from the example above are straight-line embeddings.
+  
+  A \emph{planar graph} is one that can be embedded in the plane. 
+  In other words, the graph can be drawn on the plane in such a way that its edges intersect only at their endpoints (no edges cross each other) \cite{mathworld:PlanarGraph}.
 
-Now that we have established the some basic geometric concepts, we can introduce the formal definition of a circle packing.
+A \emph{simplex} is the generalization of a triangle to arbitrary dimensions.
+
+A \emph{topology} on a nonempty set $X$ is a collection of subsets of $X$, called open sets, such that: (1) the empty set $\emptyset$ and the set $X$ are open, (2) the union of an arbitrary collection of open sets is open, and (3) the intersection of a finite number of open sets is open.
+	
+The \emph{neighborhood}	of a point is a set containing the point where one can move that point some amount without leaving the set. This leads us to the definition for a \emph{topological space} which is defined as a set of points, along with a set of neighborhoods for each point, that satisfy a set of axioms relating points and neighborhoods.
+
+A \emph{simplicial complex} is a topological space constructed by the union of points line segments, triangles and their n-dimensional counterparts. A \emph{simplicial k-complex} is a simplicial complex where the largest dimension of any simplex in $K$ equals $k$. For instance, a 2-complex must contain at least one triangle. If we replace each simplex in a simplicial complex by the set of its vertices, then we get a system of subsets of the vertex set. In doing so, we throw away the geometry of the simplices and are left with the combinatorial structure \cite{simplicialComplexes}.
+
+A \emph{metric} is a function that defines a distance between each pair of elements in a set. A set with a metric is called a \emph{metric space}.
+
+An \emph{oriented surface} is one in positive and negative directions have been defined. The positive direction is the one in which the unit normal vector points. 
+
+Now that we have defined general geometric and topological concepts, we may introduce the formal definition of a circle packing.
 
 \section{Circle Packings}
-If $\xi$ is an oriented surface with a distance metric, then a collection $P = \{c_v\}$ of circles in $\xi$ is said to be a circle packing for a complex $K$ if (1) $P$ has a circle $c_v$ associated with each vertex $v$ of $K$, (2) two circles $c_u$, $c_v$ are tangent whenever $<u,v>$ is an edge of $K$, and (3) three circles $c_u$, $c_v$, $c_w$ form a positively oriented triple in $\xi$ whenever $<u,v,w>$ forms a positively oriented face of $K$ \cite{stephenson05introduction}. 
+If $\xi$ is an oriented surface with a metric, then a collection $P = \{c_v\}$ of circles in $\xi$ is said to be a circle packing for an abstract simplicial 2-complex $K$ if (1) $P$ has a circle $c_v$ associated with each vertex $v$ of $K$, (2) two circles $c_u$, $c_v$ are tangent whenever $(u,v)$ is an edge of $K$, and (3) three circles $c_u$, $c_v$, $c_w$ form a positively oriented triple in $\xi$ whenever $(u,v,w)$ forms a positively oriented face of $K$ \cite{stephenson05introduction}. 
 
 The \textbf{Discrete Uniformization Theorem}, states, in more general terms, that given any planar graph $G$ with vertex set $V(G) = \{v_1, ... v_n \}$ and edge set $E(G)$, we can find a packing of n (not necessarily congruent) circular discs $C= \{C_1,... C_n\}$ in the plane with the property that $C_i$ and $C_j$ touch each other if and only if $v_i v_j \in E(G)$ for $1 \le i \le n$ \cite{stephenson05introduction}.
 By this theorem, circle packings exists for any planar graph, however it is often simpler algorithmically to work with 3-connected, triangulated planar graphs.
 
-The first algorithm in the application is an incremental relaxation algorithm proposed by Stephenson in his book \emph{Introduction to Circle Packing}. The algorithm begins with a set of tentative radii not necessarily corresponding to a valid packing. In our application, these radii are those input by the user. The algorithm then performs the following steps:
+The first algorithm in our circle packing application is an incremental relaxation algorithm proposed by Stephenson in his book \emph{Introduction to Circle Packing}. The algorithm begins with a set of tentative radii not necessarily corresponding to a valid packing. In our application, these radii are those input by the user. The algorithm then performs the following steps:
 	\begin{enumerate}
 		\item Choose an internal vertex $v$ of the input graph.
 		\item Calculate the total angle $\theta$ that its $k$ neighboring circles would cover around the circle for $v$, if the neighbors were placed tangent to each other and to the central circle using their tentative radii.
-		\item Determine a representative radius $r$ for the neighboring circles, such that $k$ circles of radius $r$ would give the same covering angle $\theta$ as the neighbors of $v$ give.
+		\item Determine the radius $r$ for the neighboring circles, such that $k$ circles of radius $r$ would give the same covering angle $\theta$ as the neighbors of $v$ give.
 		\item Set the new radius for $v$ to be the value for which $k$ circle of radius $r$ would give a covering angle of exactly $2\pi$.
 	\end{enumerate}
-These steps cause the system to converge to a fixed point for which all covering angles are exactly $2\pi$. Once the system has converged, the circles may be placed one at a time, at each step using the positions and radii of two neighboring circles to determine the center of each successive circle.
+These steps cause the system to converge to a fixed point for which the sum of the angles around each vertex is $2\pi$. Once the system has converged, the circles may be placed one at a time, at each step using the positions and radii of two neighboring circles to determine the center of each successive circle.
 
 
 \begin{figure}%
@@ -133,11 +149,11 @@ These steps cause the system to converge to a fixed point for which all covering
 \end{wrapfigure}
 
 	Delaunay triangulations are intimately connected to circle packings. The vertices in a Delaunay triangulation are the centers of the circles in a packing while the edges indicate tangencies between the circles. Before we can explore this connection further, we must build up a formal definition.
-	A \emph{triangulation}, also referred to as a \emph{maximal planar graph}, is a planar graph in which there is no way to add another edge and have the graph continue to be planar \cite{meshGeneration}. In practice, this means that each face is bounded by three edges - each face is a triangle. This is partially explained by $Whitney's$ $Theorem$ which concludes that if a graph is planar and 3-connected, all the faces of the graph will be the same shape.
+	A \emph{triangulation}, also referred to as a \emph{maximal planar graph}, is a simple planar graph in which there is no way to add another edge and have the graph continue to be simple and planar \cite{meshGeneration}. This means that each face is bounded by three edges --- each face is a triangle.
+	
+Formally, a triangulation of $S$, a finite set of points in the plane, is a simplicial complex $\tau$ such that $S$ is the set of vertices in $\tau$, and the union of all the simplices in $\tau$ is the convex hull of $S$ \cite{meshGeneration}.
 
-Formally, a triangulation of $S$, a finite set of points in the plane, is a simplicial complex $\tau$ such that $S$ is the set of vertices in $\tau$, and the union of all the simplices in $\tau$ is the convex hull of $S$ \cite{meshGeneration}. Where a simplex is the generalization of a triangle to arbitrary dimensions.
-
-There are many specific types of triangulations in mathematics, however, we will focus on Delaunay and Weighted Delaunay triangulations. To explain Delaunay triangulations, some properties of triangles must first be defined. The \emph{circumcircle} of a triangle is the circle which passes through all three of its vertices \cite{mathworld:Circumcenter}. The center of the circumcircle is called the \emph{circumcenter} and the radius is the \emph{circumradius}. The circumcenter can be found by finding the intersection of the \emph{altitudes}, which are formed by drawing a perpendicular line from each vertex to the opposite side of the triangle.
+There are many specific types of triangulations in mathematics, however, we will focus on Delaunay and Weighted Delaunay triangulations. To explain Delaunay triangulations, some properties of triangles must first be defined. The \emph{circumcircle} of a triangle is the unique circle passing through its three vertices \cite{mathworld:Circumcenter}. The center of the circumcircle is called the \emph{circumcenter} and the radius is the \emph{circumradius}. The circumcenter can be found by finding the intersection of the three \emph{perpendicular bisectors} of the triangle which can be found by extending lines from the midpoint of each edge perpendicular to that edge.
   
 A \emph{Delaunay Triangulation} for a set of points $P$ is the triangulation of those points such that no point in $P$ is inside the circumcircle of any other triangle \cite{meshGeneration}. Delaunay triangulations are important to geometers largely because in two dimensions they maximize the minimum angle in the triangulation.
 
@@ -445,7 +461,7 @@ Given a planar framework with an associated combinatorial spherical polyhedron $
 	\item There is a spatial polyhedron $((V,F;E);Q)$ with the framework as its vertical projection (and the reciprocal as its face diagram).
  \end{enumerate}
  
- This result combined with Tutte's theorem can almost be used to prove \textbf{Steinitz's Theorem} which says that every planar 3-connected graph can be represented by a convex 3-dimensional polytope \cite{realizationSpaces}. However this is not a complete proof because Tutte's algorithm only yields a global equilibrium stress when the outer face is a triangle. Thus we have proved that every planar 3-connected graph with a triangular outer face can be represented by a convex 3---dimensional polytope. Despite this limitation on the shape of the outer face, it is not difficult to prove the rest of the theorem. To prove the rest of the theorem, it must be proven that if the outer face is not a triangle, then the dual will have a triangular outer face. Once this has been proven, we can perform our operations on the dual and obtain Steinitz's result. This is left for the reader to explore.
+ This result combined with Tutte's theorem can almost be used to prove \textbf{Steinitz's Theorem} which says that every planar 3-connected graph can be represented by a convex 3-dimensional polytope \cite{realizationSpaces}. However this is not a complete proof because Tutte's algorithm only yields a global equilibrium stress when the outer face is a triangle. Thus we have proved that every planar 3-connected graph with a triangular outer face can be represented by a convex 3-dimensional polytope. Despite this limitation on the shape of the outer face, it is not difficult to prove the rest of the theorem. To prove the rest of the theorem, it must be proven that if the outer face is not a triangle, then the dual will have a triangular outer face. Once this has been proven, we can perform our operations on the dual and obtain Steinitz's result. This is left for the reader to explore.
  
  In total this means that every Circle packing can be represented by a Delaunay Triangulation (embedding with an equilibrium stress), which has multiple equivalent representations including, a convex 3-dimensional polytope (lifting) and a reciprocal diagram (dual embedding or Voronoi Diagram). 
 
