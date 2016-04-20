@@ -115,7 +115,7 @@ The primary objective of this paper is to explore the connections between equiva
   	\theoremstyle{definition}
 	\begin{definition}{Dual Graph}
 		The \emph{dual graph} $G'$ of a planar graph $G$ is one whose vertices each corresponds to a face in $G$. 
-		Two vertices are connected by an edge if the corresponding faces in $G$ have a boundary edge in common \cite{dualGraph}. 
+		Two vertices are connected by an edge if the corresponding faces in $G$ have a boundary edge in common \cite{mathworld:dualGraph}. 
   	\end{definition}
 	
 \subsubsection{Embeddings and Topology}
@@ -363,7 +363,7 @@ By this theorem, circle packings exists for any planar graph, however it is ofte
 	Let $\omega : E \rightarrow \R$ be an assignment of weights to the edges of a graph and let $p:V \rightarrow \R^2$ be an embedding in $\R^2$ for the vertices of $G$. 
 	A vertex $v \in V$ is in equilibrium if  $\sum\limits_{\{v,w\} \in E} \omega_{v,w}(p_v - p_w) = 0$
  
- 	\begin{theorem}{\textbf{Tutte's Theorem}}
+ 	\begin{theorem}{(Tutte's Theorem)}
  		Let $G = (\{1,...,n\},E)$ be a 3-connected planar graph that has a face $(1,...,k)$ for some $k<n$. Let $p_1,...,p_k$ be the vertices of a convex k-gon. 
 		Let $E'$ be the set of interior edges and let $w : E \rightarrow \R^+$ be an assignment of positive weights to the interior edges \cite{realizationSpaces}. Then,
  		\begin{itemize}
@@ -372,55 +372,123 @@ By this theorem, circle packings exists for any planar graph, however it is ofte
 		\end{itemize}
 	\end{theorem}
 
-% TODO: fix this section
 \subsubsection{Proof of Tutte's Theorem}
-The following is an outline of a proof of Tutte's Theorem by Jurgen Richter-Gebert \cite{realizationSpaces}. Richter-Gebert first proves that Tutte's algorithm yields stresses such that all interior vertices are in equilibrium. This portion of the proof is reproduced in full.
-
-Assume that the positions of the points making up the outer face, points $p_v = (x_v,y_v); v \in \{k+1,...,n\}$, are given. We have to prove that suitable positions $p_v = (x_v,y_v); v \in \{1,...,k\}$ for the interior vertices exist and that these positions are unique. Without loss of generality we may assume that $p_n = (0,0)$. Consider the function
-\begin{center}
-$E(z) = \frac{1}{2} \sum\limits_{\{v,w\} \in E'} \omega_{v,w}((x_v - x_w)^2 + (y_v - y_w)^2)$ \\
-$= \frac{1}{2} \sum\limits_{\{v,w\} \in E'} \omega_{v,w} \|p_v - p_w\|^2$. \\
-\end{center}
-where $z = (x_1,..x_k, y_1,...y_k)$.
-$E$ is a quadratic function that is non-negative everywhere. Assume that one of the points has a coordinate, either $x$ or $y$ with large absolute value. Without loss of generality lets say this coordinate is $x_i$. This implies that $p_i$ is far away from the point $p_n = (0,0)$. Since the graph $G$ is connected, there is a path that connects $p_i$ with $p_n$ and for at least one edge $(v,w)$. In this path the distance $\|p_v - p_w\|$ is large. Since the squared distances are weighted with positive coefficients $E(z)$ is also large. Thus for sufficiently large $\alpha > 0, \|z\| > \alpha$ implies $E(z) > E(0)$. This means that $E$ must be strictly convex and thus takes its unique minimum on $\{z | |z| < \alpha \}$. The assertion follows from the observation that the condition for a critical point $(\triangledown E = 0)$ of $E$ is
-\begin{center}
-$\frac{\delta E}{\delta x_i} = \sum\limits_{\{v,w\} \in E'} \omega_{v,w}(x_v - x_w) = 0$ and $\frac{\delta E}{\delta x_i} = \sum\limits_{\{v,w\} \in E'} \omega_{v,w}(y_v - y_w) = 0$
-\end{center}
-for all $i \in \{1,..,k\}$. This is exactly the equilibrium condition for the interior vertices.
-
-Next the fact that in the equilibrium situations the faces are represented by non-overlapping convex polygons must be proven. An overview of this part of the proof follows. 
-
-Again assume that the outer face is fixed. The inner points are uniquely determined according to the equilibrium conditions. This proof will be completed in steps by introducing lemmas and proving them one at a time.
-
-The \emph{relative interior} of a collection of points $P$ is defined by: 
-\begin{center}
-$relint(P) = \{\sum_{v=1}^{n} \lambda_vp_v | \sum_{v=1}^{n}\lambda_v =1 \mbox{ and } \lambda_v > 0 \mbox{ for all } v = 1,...,n\}$
-\end{center}
-The main properties of this equation are described in the next two lemmas. \\
-
-\textsc{Lemma} Let $p \in relint(p_1,...,p_m)$ with $p, p_1,...,p_m \in \R^2$, and let $\phi$ be a linear functional on $\R^2$
-	\begin{enumerate}
-		\item If there exists a $v \in \{1,...,m\}$ with $\phi(p) < \phi(p_v)$ then there also exists a $w \in \{1,...,m\}$ with $\phi(p) > \phi(p_w)$.
-		\item If $(p_1,...,p_m)$ affinely spans $R^2$ then $relint(p_1,...,p_m) = int(conv(p_1,...,p_m))$.
-	\end{enumerate} .
-
-\textsc{Lemma} The set of all configurations $(p_0, p_1,...,p_m) \in \R^{2(m+1)}$ for which 
-	\begin{enumerate}
-		\item $p_1,...,p_m$ affinely span $\R^2$ and
-		\item $p_0 \in relint(p_1,...,p_m)$
-	\end{enumerate}
-	is an open subset of $\R^{2(m+1)}$.
-
-The proofs for these lemmas, and for the following one are relatively concise and are left to the reader.
-
-\textsc{Lemma} let $P:=(p_1,...,p_n) \in \R^{2n}$ be an equilibrium representation of the vertices of $G$. Then for every interior vertex $p$ we have $p \in relint(N(p))$ where $N(v) = \{w | (v,w) \in E\}$, the set of neighbors of a vertex $v$ of $G$ and $N(p_v) = \{p_w | w \in N(V)\}$.
-
-Once these lemmas have been proven only one more theorem is needed to prove Tutte's theorem.
-
-\textsc{Theorem} Let $P \in \R^{2n}$ be a good representation of a 3-connected, planar graph $G = (V,E)$, then $P$ is a planar embedding of $G$ in which all interior faces are realized as non-overlapping convex polygons.
-
-Unlike the lemmas, the proof for this theorem is long, but it is given in full by Richter-Gebert. Tutte's algorithm follows from these statements.
-
+	The following proof is based on the outline given by Don Sheehy in his Computational Geometry lecture notes \cite{donTutte}.
+	
+	We begin by considering a single spring connecting two vertices, $u$ and $v$, in $\R^2$. 
+	The force of $v$ on $u$ is the vector $k(v-u)$ where $k$ is the spring constant.
+	Without loss of generality, we may set all the spring constants to 1.
+	Before we proceed, we will need a few definitions.
+	
+	\theoremstyle{definition}
+	\begin{definition}{Centroid}
+		A \emph{centroid} is the center of mass of a two-dimensional closed surface or three-dimensional solid \cite{mathworld:Centroid}.
+	\end{definition}
+	
+	\theoremstyle{definition}
+	\begin{definition}{Diagonal Matrix}
+		A \emph{diagonal matrix} is a square matrix of the form \cite{mathworld:DiagonalMatrix}:
+		$\begin{bmatrix}
+			c_1 & 0 & \dots & 0 \\
+			0 & c_2 & \dots & 0 \\
+			\vdots & \vdots  & \ddots  & \vdots \\
+			0 & 0 & \dots & c_n \\
+		\end{bmatrix}$. These matrices are sometimes written $D = \text{diag}(c_1, \dots, c_n)$
+	\end{definition}
+	
+	\theoremstyle{definition}
+	\begin{definition}{Transpose}
+		A \emph{transpose} of a matrix $M$, written $M^T$, is the matrix obtained by replacing all elements $m_{ij}$ with $m_{ji}$ \cite{mathworld:Transpose}.
+	\end{definition}
+	
+	\theoremstyle{definition}
+	\begin{definition}{Symmetric Matrix}
+		A \emph{symmetric matrix} is a square matrix that satisfies $A^T = A$ \cite{mathworld:SymmetricMatrix}.
+	\end{definition}
+	
+	\theoremstyle{definition}
+	\begin{definition}{Vertex Degree}
+		The \emph{vertex degree} of a vertex is the number of edges attached to that vertex \cite{mathworld:VertexDegree}.
+	\end{definition}
+	
+	\theoremstyle{definition}
+	\begin{definition}{Degree Matrix}
+		A \emph{degree matrix} is a diagonal matrix where the diagonal $d_i$ corresponds to the vertex degree of $v_i$ \cite{mathworld:DegreeMatrix}. 
+	\end{definition}
+	
+	\theoremstyle{definition}
+	\begin{definition}{Adjacency Matrix}
+		An \emph{adjacency matrix} of a simple labeled graph is a matrix with rows and columns labeled by graph vertices, with a 1 or 0 in position (i, j) according to whether $v_i$ and $v_j$ are adjacent (joined by an edge) or not \cite{mathworld:AdjacencyMatrix}. 
+	\end{definition}
+	
+	\theoremstyle{definition}
+	\begin{definition}{Laplacian}
+		A \emph{laplacian} of a graph $G$ is an $n \times n$ symmetric matrix with one row and one column for each vertex defined by $L = D - A$, where $D$ is the degree matrix and A is the adjacency matrix.
+	\end{definition}
+	
+	Given this information the total force acting on a vertex with neighbors $p_1, \dots, p_h$ is $F_q = \sum_{i=1}^{h}(p_i - q)$. 
+	As explained above, if a point is at equilibrium, then $F_q = \sum_{i=1}^{h}(p_i - q) = 0$, and we can rearrange the equation as follows $kq = \sum_{i=1}^{h}(p_i)$. 
+	Dividing by the spring constant yields the equation $q = \frac{1}{k}\sum_{i=1}^{h}(p_i)$ which is the formula for a centroid.
+	This means that if the vertices are at equilibrium, then they are located at the centroid of their neighbors.
+	
+	Rewriting the equation for the force $F_i$ exerted on a vertex $p_i$, in more general terms yields $F_i = \sum_{p_j \sim p_i} (p_i-p_j) = (\text{deg } p_i)p_i - \sum_{p_j \sim p_i}p_j$ where $p_j \sim p_i$ means that $p_i$ and $p_j$ are adjacent in the graph.
+	Because $F_i$ is a linear combination we can express the equilibrium in terms of a system of linear equations. 
+	Let $L$ be an $n \times n$ matrix with diagonal entries $L_{ii} = \text{deg }p_i$. For $i \neq j$, let $L_{ij} = -1$ if $p_i \sim p_j$ and 0 otherwise.
+	This matrix is known as the Laplacian matrix of $G$.
+	
+	We must observe that $F_i = \sum_{i =1}^{n}L_{ij}p_j$ to ensure that the Laplacian computes the forces correctly. 
+	Our objective is to obtain an equilibrium, in which all the forces are equal to zero. 
+	Therefore, we must solve the system $LP = 0$ where $P$ is the $n \times 2$ matrix of the $p_i$'s as row vectors. 
+	There is a solution to this system, however we will not obtain the results we desire unless we fix the outer face to keep the springs from collapsing the graph to a single point. 
+	
+	Let $k$ be the number of vertices in some face. We can break up the matrix $P$ into parts $P = 
+		\begin{bmatrix}
+    			P_1 \\
+    			P_2 \\
+		\end{bmatrix} $ 
+	so that $P_1$ is the first $k$ rows of $P$ and represents the vertices of the outer face. The Laplacian may be broken up similarly. $L = 
+		\begin{bmatrix}
+			L_1 & B^T \\
+			B & L_2 \\
+		\end{bmatrix}$. 
+		
+	We only care about achieving an equilibrium for the interior vertices, and therefore we only care about solving the following linear system:
+		\begin{equation}
+			\begin{bmatrix}
+				L_1 & B^T \\
+				B & L_2 \\
+			\end{bmatrix}
+			\begin{bmatrix}
+			 	P_1 \\
+    				P_2 \\
+			\end{bmatrix}
+			=
+			\begin{bmatrix}
+				\text{Don't Care} \\
+				0 \\
+			\end{bmatrix}
+		\end{equation}
+	
+	$P_1$ in this equation is chosen by pinning down the outer face.
+	$P_2$ is then found by the linear system suggested by the above equation: $BP_1 + L_2P_2 = 0$ and thus $P_2 = -L_2^{-1}BP_1$. 
+	For this equation to be valid $L_2$ must be invertible. Therefore, we must prove that it will always be invertible in this scenerio.
+	To prove this fact, we can, like Tutte, use the Matrix Tree Theorem.
+	
+	\begin{theorem}{(The Matrix Tree Theorem)}
+		If $L$ is the Laplacian of a graph and $L'$ is derived from $L$ by deleting the first row and column, then $\det L'$ is exactly the number of spanning trees of $G$.
+	\end{theorem}
+	
+	\begin{proof}
+	Matrix Tree Proof
+	\end{proof}
+	
+	
+	
+	
+	
+	
+	
+	
 \subsection{Maxwell-Cremona Theorem}
 In our application, the user inputs a planar straight line graph through drawing circles. Using Tutte's algorithm this graph can be assigned arbitrary stresses and converted into a convex planar embedding with an equilibrium stress on the interior. Next, because in our application the outer face is a triangle, it is possible to assign negative weights to the three outer edges to obtain an equilibrium self stress for the entire embedding. This yields one of the first equal representations discussed in the Maxwell-Cremona Theorem.
 
