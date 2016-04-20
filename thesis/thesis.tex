@@ -7,7 +7,11 @@
 \usepackage{tikz} % allows for figures
 \usepackage{float} % allows [H] on figure definition
 \usepackage{wrapfig}
-\usepackage{amsmath} % allows for matrix
+\usepackage{amsmath} % allows for matrix 
+\usepackage{amsthm} % definition environment
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
 \usepackage{subfig}
 
 \DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
@@ -18,6 +22,11 @@
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\C}{\mathbb{C}}
 \newcommand{\CP}{\hat{\mathbb{C}}}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
 % end user macros
 
 \title{Equivalent Representations of Circle Packings}
@@ -52,119 +61,205 @@
 
 The Circle Packing Theorem provides a link between questions of geometry, topology, combinatorics and complex analysis. Discovered by Paul Koebe and later reintroduced by William Thurston, circle packings have become a principle area of study for many mathematicians and geometers \cite{wilkerson}. Before introducing a formal definition, we will develop an intuition for circle packings. A circle packing is a configuration of circles with a specified pattern of tangencies \cite{stephenson05introduction}. The circle packings most often studied are those that require the interior of the circles to be disjoint, called univalent packings, this means the circles are non-overlapping \cite{stephenson05introduction}. In this case, a circle packing can be thought of as a graph formed by a set of circles with disjoint interiors, where each circle kisses, intersects at exactly one point, its neighboring circles in the graph.
 
-Common geometric settings for circle packings are the \emph{euclidean plane}, the \emph{sphere} and the \emph{hyperbolic plane}. Each pair of circles in a packing forms a tangent pair, every three form a triple and the empty space between each $triple$ forms an $interstice$ \cite{stephenson05introduction}. A $flower$ is the next level of structure, which consists of a central circle and some number of $petal$ circles. The number of petals defines the $degree$ of the central circle. In our application we will enforce the condition that every circle packing has to have a flower. Note that while not all circle packings are univalent, the ones discussed in this paper and created by the corresponding application will all be univalent. As a result of this property the angle sum, the sum of the angles around each vertex, will be $2\pi$.
+Common geometric settings for circle packings are the \emph{euclidean plane}, the \emph{sphere} and the \emph{hyperbolic plane}. Each pair of circles in a packing forms a \emph{tangent pair}, every three form a \emph{triple} and the empty space between each triple forms an $interstice$ \cite{stephenson05introduction}. A $flower$ is the next level of structure, which consists of a central circle and some number of $petal$ circles. The number of petals defines the $degree$ of the central circle. In our application we will enforce the condition that every circle packing has to have a flower. Note that while not all circle packings are univalent, the ones discussed in this paper and created by the corresponding application will all be univalent. As a result of this property the angle sum, the sum of the angles around each vertex, will be $2\pi$.
 
-The primary objective of this paper is to explore the connections between equivalent representations of circle packings. These representations include Delaunay triangulations, liftings, stresses and packings on the sphere. The secondary goal is to introduce the reader to the world of circle packings. To this end, basic Geometric principles will be introduced.
+The primary objective of this paper is to explore the connections between equivalent representations of circle packings. These representations include Delaunay triangulations, liftings, stresses, and packings on the sphere. The secondary goal is to introduce the reader to the world of circle packings. To this end, basic Geometric principles will be introduced.
 
 \section{Introduction to Geometric Figures}
 \subsection{Graphs}
-A \emph{graph} is an ordered pair $G=(V,E)$ which represents a set of objects or \emph{vetices} $v$ and the links between them, or \emph{edges} $E$. Edges in a graph can be directed or undirected, however, we will focus on undirected edges in our application. For undirected graphs, we can define edges as unordered pairs of vertices such that $(v_1, v_2) = (v_2, v_1)$. In this case, a graph $G' = (V',E')$ is a \emph{subgraph} of $G$ ($G' \subseteq G$), if $V' \subseteq V$ and $E' \subseteq E$.
-
-A \emph{path} is a finite or infinite sequence of edges which connect a sequence of vertices.
-
-  A component or \emph{connected component} of a graph is a subgraph in which any two vertices are connected to each other by a path which is connected to no additional vertices in the supergraph.
-
-  A \emph{self-loop} is an edge connecting a vertex to itself.
-  
-  A graph with multiple edges is one which has two or more edges connect the same two vertices.
-
-  A graph is \emph{connected} when there is a path between every pair of vertices \cite{mathworld:ConnectedGraphs}. 
-  In a connected graph every vertex is reachable. A graph with just one vertex is connected. A graph is said to be \emph{k-vertex-connected} if there does not exist a set of k-1 vertices whose removal disconnects the graph. Additionally, a graph is \emph{k-edge-connected} if there does not exist a set of k-1 edges whose removal disconnects the graph. Typically we will work with 3-vertex-connected graphs, which will be referred to as 3-connected for short.
-  
-  A \emph{simple graph} is an unweighted, undirected graph, containing no loops or multiple edges \cite{mathworld:SimpleGraphs}. 
-  A simple graph may either be connected or disconnected.
-  
-  The \emph{dual graph} $G'$ of a planar graph $G$ is one whose vertices each corresponds to a face in $G$. Two vertices are connected by an edge if the corresponding faces in $G$ have a boundary edge in common \cite{dualGraph}. 
-  
-  \subsubsection{Embeddings and Topology}
-    An \emph{embedding} of a graph $G$ on a surface $\Sigma$ is a representation of $G$ on $\Sigma$ in which points of $\Sigma$ are associated to vertices and simple arcs are associated to edges in such a way that:
-  \begin{itemize}
-	\item The endpoints of the arc associated to the edge $e$ are the points associated to the end vertices of $e$.
-	\item No arcs include points associated with other vertices.
-	\item Two arcs never intersect at a point which is interior to either of the arcs.
-  \end{itemize}
-  
-  \begin{wrapfigure}{r}{.4\textwidth}%
-	\centering
-	\subfloat[An embedding of a graph in the plane.]{\includegraphics[width=.15\textwidth]{embedding1}}%
-	\qquad
-	\subfloat[A different embedding of the same graph in the plane.]{\includegraphics[width=.15\textwidth]{embedding2}}%
-	\caption[]{Embeddings of the graph in the plane.}%
-	\label{fig:embedding}
-\end{wrapfigure}
-
-  This can be stated mathematically as the following: Given edges $e=(u,v)$, the function mapping the vertices to the plane $ \phi :V \rightarrow \R^2$, and the function mapping the edges to the plane $ \rho_e :[0,1] \rightarrow \R^2$, the embedding $= \langle \phi, \{\rho_e : e \in E \} \rangle$. The difference between a graph and an embedding can best be illustrated with an example. Essentially, a graph $G=(V,E)$ just defines the structure, whereas an embedding defines the positioning of the graph in the plane.
-
-  A \emph{straight-line embedding} is a embedding of a planar graph in which all arcs are straight. The figures from the example above are straight-line embeddings.
-  
-  A \emph{planar graph} is one that can be embedded in the plane. 
-  In other words, the graph can be drawn on the plane in such a way that its edges intersect only at their endpoints (no edges cross each other) \cite{mathworld:PlanarGraph}.
-
-A \emph{simplex} is the generalization of a triangle to arbitrary dimensions.
-
-A \emph{topology} on a nonempty set $X$ is a collection of subsets of $X$, called open sets, such that: (1) the empty set $\emptyset$ and the set $X$ are open, (2) the union of an arbitrary collection of open sets is open, and (3) the intersection of a finite number of open sets is open.
+	\theoremstyle{definition}
+	\begin{definition}{Graph}
+		A \emph{graph} is an ordered pair $G=(V,E)$ which represents a set of objects or \emph{vetices} $v$ and the links between them, or \emph{edges} $E$. 
+		Edges in a graph can be directed or undirected, however, we will focus on undirected edges in our application. 
+		For undirected graphs, we can define edges as unordered pairs of vertices such that $(v_1, v_2) = (v_2, v_1)$. 
+		In this case, a graph $G' = (V',E')$ is a \emph{subgraph} of $G$ ($G' \subseteq G$), if $V' \subseteq V$ and $E' \subseteq E$.
+	\end{definition}
 	
-The \emph{neighborhood}	of a point is a set containing the point where one can move that point some amount without leaving the set. This leads us to the definition for a \emph{topological space} which is defined as a set of points, along with a set of neighborhoods for each point, that satisfy a set of axioms relating points and neighborhoods.
+	\theoremstyle{definition}
+	\begin{definition}{Path}
+		A \emph{path} is a finite or infinite sequence of edges which connect a sequence of vertices.
+	\end{definition}
+	
+	\theoremstyle{definition}
+  	\begin{definition}{Connected Component}
+		A component or \emph{connected component} of a graph is a subgraph in which any two vertices are connected to each other by a path which is connected to no additional vertices in the supergraph.
+	\end{definition}
+	
+	\theoremstyle{definition}
+	\begin{definition}{Self-Loop}
+  		A \emph{self-loop} is an edge connecting a vertex to itself.
+  	\end{definition}
+	
+	\theoremstyle{definition}
+	\begin{definition}{Multiple Edges}
+  		A graph with \emph{multiple edges} is one which has two or more edges connect the same two vertices.
+	\end{definition}
+	
+	\theoremstyle{definition}
+	\begin{definition}{Connected Graph}
+		A graph is \emph{connected} when there is a path between every pair of vertices \cite{mathworld:ConnectedGraphs}. 
+	\end{definition}
 
-A \emph{simplicial complex} is a topological space constructed by the union of points line segments, triangles and their n-dimensional counterparts. A \emph{simplicial k-complex} is a simplicial complex where the largest dimension of any simplex in $K$ equals $k$. For instance, a 2-complex must contain at least one triangle. If we replace each simplex in a simplicial complex by the set of its vertices, then we get a system of subsets of the vertex set. In doing so, we throw away the geometry of the simplices and are left with the combinatorial structure \cite{simplicialComplexes}.
+	In a connected graph every vertex is reachable. A graph with just one vertex is connected. 
+	A graph is said to be \emph{k-vertex-connected} if there does not exist a set of k-1 vertices whose removal disconnects the graph. 
+	Additionally, a graph is \emph{k-edge-connected} if there does not exist a set of k-1 edges whose removal disconnects the graph. 
+	Typically we will work with 3-vertex-connected graphs, which will be referred to as 3-connected for short.
 
-A \emph{metric} is a function that defines a distance between each pair of elements in a set. A set with a metric is called a \emph{metric space}.
+	\theoremstyle{definition}
+	\begin{definition}{Simple Graph}  
+  		A \emph{simple graph} is an unweighted, undirected graph, containing no loops or multiple edges \cite{mathworld:SimpleGraphs}. 
+	\end{definition}
+	
+	A simple graph may either be connected or disconnected.
+  
+  	\theoremstyle{definition}
+	\begin{definition}{Dual Graph}
+		The \emph{dual graph} $G'$ of a planar graph $G$ is one whose vertices each corresponds to a face in $G$. 
+		Two vertices are connected by an edge if the corresponding faces in $G$ have a boundary edge in common \cite{dualGraph}. 
+  	\end{definition}
+	
+\subsubsection{Embeddings and Topology}
+    
+    \begin{wrapfigure}{r}{.4\textwidth}%
+		\centering
+		\subfloat[An embedding of a graph in the plane.]{\includegraphics[width=.15\textwidth]{embedding1}}%
+		\qquad
+		\subfloat[A different embedding of the same graph in the plane.]{\includegraphics[width=.15\textwidth]{embedding2}}%
+		\caption[]{Embeddings of the graph in the plane.}%
+		\label{fig:embedding}
+	\end{wrapfigure}
+    
+    	An \emph{embedding} of a graph $G$ on a surface $\Sigma$ is a representation of $G$ on $\Sigma$ in which points of $\Sigma$ are associated to vertices and simple arcs are associated to edges in such a way that:
+  		\begin{itemize}
+			\item The endpoints of the arc associated to the edge $e$ are the points associated to the end vertices of $e$.
+			\item No arcs include points associated with other vertices.
+			\item Two arcs never intersect at a point which is interior to either of the arcs.
+  		\end{itemize}
 
-An \emph{oriented surface} is one in positive and negative directions have been defined. The positive direction is the one in which the unit normal vector points. 
+	This can be stated mathematically as the following: 
+	\theoremstyle{definition}
+	\begin{definition}{Embedding}
+		Given edges $e=(u,v)$, the function mapping the vertices to the plane $ \phi :V \rightarrow \R^2$, and the function mapping the edges to the plane $ \rho_e :[0,1] \rightarrow \R^2$, the embedding $= \langle \phi, \{\rho_e : e \in E \} \rangle$. 
+	\end{definition}
+		The difference between a graph and an embedding can best be illustrated with an example. 
+		Essentially, a graph $G=(V,E)$ just defines the structure, whereas an embedding defines the positioning of the graph in the plane.
+	
+	\theoremstyle{definition}
+	\begin{definition}{Straight-Line Embedding}
+		A \emph{straight-line embedding} is a embedding of a planar graph in which all arcs are straight. The figures from the example above are straight-line embeddings.
+  	\end{definition}
+	
+	\theoremstyle{definition}
+	\begin{definition}{Planar Graph}
+		A \emph{planar graph} is one that can be embedded in the plane.
+	\end{definition}
+	
+	In other words, the graph can be drawn on the plane in such a way that its edges intersect only at their endpoints (no edges cross each other) \cite{mathworld:PlanarGraph}.
+	
+	\theoremstyle{definition}
+	\begin{definition}{Simplex}
+		A \emph{simplex} is the generalization of a triangle to arbitrary dimensions.
+	\end{definition}
+	
+%A \emph{topology} on a nonempty set $X$ is a collection of subsets of $X$, called open sets, such that: (1) the empty set $\emptyset$ and the set $X$ are open, (2) the union of an arbitrary collection of open sets is open, and (3) the intersection of a finite number of open sets is open.
+	
+%The \emph{neighborhood}	of a point is a set containing the point where one can move that point some amount without leaving the set. This leads us to the definition for a \emph{topological space} which is defined as a set of points, along with a set of neighborhoods for each point, that satisfy a set of axioms relating points and neighborhoods.
+
+%A \emph{simplicial complex} is a topological space constructed by the union of points line segments, triangles and their n-dimensional counterparts. A \emph{simplicial k-complex} is a simplicial complex where the largest dimension of any simplex in $K$ equals $k$. For instance, a 2-complex must contain at least one triangle. If we replace each simplex in a simplicial complex by the set of its vertices, then we get a system of subsets of the vertex set. In doing so, we throw away the geometry of the simplices and are left with the combinatorial structure \cite{simplicialComplexes}.
+
+%A \emph{metric} is a function that defines a distance between each pair of elements in a set. A set with a metric is called a \emph{metric space}.
+
+%An \emph{oriented surface} is one in positive and negative directions have been defined. The positive direction is the one in which the unit normal vector points. 
 
 Now that we have defined general geometric and topological concepts, we may introduce the formal definition of a circle packing.
 
 \section{Circle Packings}
-If $\xi$ is an oriented surface with a metric, then a collection $P = \{c_v\}$ of circles in $\xi$ is said to be a circle packing for an abstract simplicial 2-complex $K$ if (1) $P$ has a circle $c_v$ associated with each vertex $v$ of $K$, (2) two circles $c_u$, $c_v$ are tangent whenever $(u,v)$ is an edge of $K$, and (3) three circles $c_u$, $c_v$, $c_w$ form a positively oriented triple in $\xi$ whenever $(u,v,w)$ forms a positively oriented face of $K$ \cite{stephenson05introduction}. 
+	\theoremstyle{definition}
+	\begin{definition}{Circle Packing}
+		A collection $P = \{c_v\}$ of circles is said to be a circe packing for a graph $G$ if 
+		(1) $P$ has a circle $c_v$ for each vertex $v$ of $G$, 
+		(2) two circles $c_u$, $c_v$ are tangent whenever $(u,v)$ is an edge of $G$, and 
+		(3) three circles $c_u$, $c_v$, $c_w$ form a triple whenever $(u,v,w)$ forms a face in $G$ \cite{stephenson05introduction}.
+	\end{definition}
+
+%If $\xi$ is an oriented surface with a metric, then a collection $P = \{c_v\}$ of circles in $\xi$ is said to be a circle packing for an abstract simplicial 2-complex $K$ if (1) $P$ has a circle $c_v$ associated with each vertex $v$ of $K$, (2) two circles $c_u$, $c_v$ are tangent whenever $(u,v)$ is an edge of $K$, and (3) three circles $c_u$, $c_v$, $c_w$ form a positively oriented triple in $\xi$ whenever $(u,v,w)$ forms a positively oriented face of $K$ \cite{stephenson05introduction}. 
 
 The \textbf{Discrete Uniformization Theorem}, states, in more general terms, that given any planar graph $G$ with vertex set $V(G) = \{v_1, ... v_n \}$ and edge set $E(G)$, we can find a packing of n (not necessarily congruent) circular discs $C= \{C_1,... C_n\}$ in the plane with the property that $C_i$ and $C_j$ touch each other if and only if $v_i v_j \in E(G)$ for $1 \le i \le n$ \cite{stephenson05introduction}.
 By this theorem, circle packings exists for any planar graph, however it is often simpler algorithmically to work with 3-connected, triangulated planar graphs.
 
-The first algorithm in our circle packing application is an incremental relaxation algorithm proposed by Stephenson in his book \emph{Introduction to Circle Packing}. The algorithm begins with a set of tentative radii not necessarily corresponding to a valid packing. In our application, these radii are those input by the user. The algorithm then performs the following steps:
+	The first algorithm in our circle packing application is an incremental relaxation algorithm proposed by Stephenson in his book \emph{Introduction to Circle Packing}. 
+	The algorithm begins with a set of tentative radii not necessarily corresponding to a valid packing. In our application, these radii are those input by the user. 
+	The algorithm then performs the following steps:
+	
 	\begin{enumerate}
 		\item Choose an internal vertex $v$ of the input graph.
 		\item Calculate the total angle $\theta$ that its $k$ neighboring circles would cover around the circle for $v$, if the neighbors were placed tangent to each other and to the central circle using their tentative radii.
 		\item Determine the radius $r$ for the neighboring circles, such that $k$ circles of radius $r$ would give the same covering angle $\theta$ as the neighbors of $v$ give.
 		\item Set the new radius for $v$ to be the value for which $k$ circle of radius $r$ would give a covering angle of exactly $2\pi$.
 	\end{enumerate}
-These steps cause the system to converge to a fixed point for which the sum of the angles around each vertex is $2\pi$. Once the system has converged, the circles may be placed one at a time, at each step using the positions and radii of two neighboring circles to determine the center of each successive circle.
+	
+	These steps cause the system to converge to a fixed point for which the sum of the angles around each vertex is $2\pi$. 
+	Once the system has converged, the circles may be placed one at a time, at each step using the positions and radii of two neighboring circles to determine the center of each successive circle.
 
-
-\begin{figure}%
-    \centering
-    \subfloat[User input]{{\includegraphics[width=.4\textwidth]{figures/input} }}%
-    \qquad
-    \subfloat[User input packed]{{\includegraphics[width=.4\textwidth]{figures/output} }}%
-    \caption{Computing a circle packing}%
-    \label{fig:inout}%
-\end{figure}
+	\begin{figure}%
+    		\centering
+    		\subfloat[User input]{{\includegraphics[width=.4\textwidth]{figures/input} }}%
+    		\qquad
+    		\subfloat[User input packed]{{\includegraphics[width=.4\textwidth]{figures/output} }}%
+    		\caption{Computing a circle packing}%
+    		\label{fig:inout}%
+	\end{figure}
 
 \subsection{Delaunay Triangulations}
 
-\begin{wrapfigure}{r}{0.4\textwidth}
-  \begin{center}
-    \includegraphics[width=0.38\textwidth]{delaunayemph}
-  \end{center}
-  \caption{Delaunay Triangulation in black.}
-\end{wrapfigure}
+	\begin{wrapfigure}{r}{0.4\textwidth}
+  		\begin{center}
+    		\includegraphics[width=0.38\textwidth]{delaunayemph}
+  		\end{center}
+  		\caption{Delaunay Triangulation in black.}
+	\end{wrapfigure}
 
-	Delaunay triangulations are intimately connected to circle packings. The vertices in a Delaunay triangulation are the centers of the circles in a packing while the edges indicate tangencies between the circles. Before we can explore this connection further, we must build up a formal definition.
-	A \emph{triangulation}, also referred to as a \emph{maximal planar graph}, is a simple planar graph in which there is no way to add another edge and have the graph continue to be simple and planar \cite{meshGeneration}. This means that each face is bounded by three edges --- each face is a triangle.
+	Delaunay triangulations are intimately connected to circle packings. 
+	The vertices in a Delaunay triangulation are the centers of the circles in a packing while the edges indicate tangencies between the circles. 
+	Before we can explore this connection further, we must build up a formal definition.
 	
-Formally, a triangulation of $S$, a finite set of points in the plane, is a simplicial complex $\tau$ such that $S$ is the set of vertices in $\tau$, and the union of all the simplices in $\tau$ is the convex hull of $S$ \cite{meshGeneration}.
+	\theoremstyle{definition}
+	\begin{definition}{Triangulation}
+		A \emph{triangulation}, also referred to as a \emph{maximal planar graph}, is a simple planar graph in which there is no way to add another edge and have the graph continue to be simple and planar \cite{meshGeneration}. 
+		This means that each face is bounded by three edges --- each face is a triangle.
+	\end{definition}
 
-There are many specific types of triangulations in mathematics, however, we will focus on Delaunay and Weighted Delaunay triangulations. To explain Delaunay triangulations, some properties of triangles must first be defined. The \emph{circumcircle} of a triangle is the unique circle passing through its three vertices \cite{mathworld:Circumcenter}. The center of the circumcircle is called the \emph{circumcenter} and the radius is the \emph{circumradius}. The circumcenter can be found by finding the intersection of the three \emph{perpendicular bisectors} of the triangle which can be found by extending lines from the midpoint of each edge perpendicular to that edge.
-  
-A \emph{Delaunay Triangulation} for a set of points $P$ is the triangulation of those points such that no point in $P$ is inside the circumcircle of any other triangle \cite{meshGeneration}. Delaunay triangulations are important to geometers largely because in two dimensions they maximize the minimum angle in the triangulation.
+%Formally, a triangulation of $S$, a finite set of points in the plane, is a simplicial complex $\tau$ such that $S$ is the set of vertices in $\tau$, and the union of all the simplices in $\tau$ is the convex hull of $S$ \cite{meshGeneration}.
 
+	There are many specific types of triangulations in mathematics, however, we will focus on Delaunay and Weighted Delaunay triangulations. 
+	To explain Delaunay triangulations, some properties of triangles must first be defined. 
+	The \emph{circumcircle} of a triangle is the unique circle passing through its three vertices \cite{mathworld:Circumcenter}. 
+	The center of the circumcircle is called the \emph{circumcenter} and the radius is the \emph{circumradius}. 
+	The circumcenter can be found by finding the intersection of the three \emph{perpendicular bisectors} of the triangle which can be found by extending lines from the midpoint of each edge perpendicular to that edge.
+
+  	\theoremstyle{definition}
+  	\begin{definition}{Delaunay Triangulation}
+		A \emph{Delaunay triangulation} for a set of points $P$ is the triangulation of those points such that no point in $P$ is inside the circumcircle of any other triangle \cite{meshGeneration}.
+	\end{definition}
+	
 \subsubsection{The Edge Flip Algorithm}
-An alternate way of describing a Delaunay triangulation is a triangulation in which every edge is \emph{locally Delaunay} \cite{meshGeneration}. For an edge $e$ in the triangulation $\tau$, if $e$ is an edge of fewer than two triangles, then it is automatically locally Delaunay. If $e$ is an edge of exactly two triangles, then $e$ is locally Delaunay if it has an open circumcircle containing no vertex of either triangle. 
+	An edge $e$ in the triangulation $\tau$ is \emph{locally Delaunay}, if $e$ is an edge of fewer than two triangles, or if $e$ is an edge of exactly two triangles and it has an open circumcircle containing no vertex of either triangle. 
+	A triangulation is Delaunay if it is locally Delaunay for every edge \cite{meshGeneration}.
 
-As a result of this property, a trivial algorithm can be formulated that creates a Delaunay triangulation. If $S$ is the point set, this algorithm begins with any triangulation $\tau$ of $S$. Begin with a list of all the edges in the triangulation. Remove an edge from the list, check if the edge is still in the triangulation and if so, if it is locally Delaunay. If the edge is present but not locally Delaunay, flip the edge and add the four surrounding edges to the list of edges to check. This yields an $O(n + k)$ runtime, where in the worst case $k = O(n^2)$ \cite{meshGeneration}.
+	The union of any two triangles is a quadrilateral, and the shared edge is the diagonal of that quadrilateral. 
+	To perform an edge flip is to replace the diagonal with the quadrilateral's other diagonal.
 
-This leaves one issue, how do we determine whether an edge is locally Delaunay or not. This can be done using the \emph{InCircle test}. Given triangle $abc$ and point $p \in P$ $InCircle(a,b,c,d) \neq 1$ if $abc$ if Delaunay \cite{princeton:CCW}. 
+	As a result of this property, we can formulate an algorithm that creates a Delaunay triangulation. 
+	If $S$ is the point set, this algorithm begins with any triangulation $\tau$ of $S$ and a list of edges in $\tau$. 
+	Remove an edge from the list, check if the edge is still in the triangulation and if so, if it is locally Delaunay. 
+	If the edge is present but not locally Delaunay, perform an edge flip and add the four surrounding edges to the list of edges to check. 
+	This yields an $O(n + k)$ runtime, where $k$ is the number of flips performed and in the worst case $k = O(n^2)$ \cite{meshGeneration}.
+
+	This leaves one issue, how do we determine whether an edge is locally Delaunay. 
+	This can be done using the \emph{InCircle test}. 
+	Given triangle $abc$ and point $p \in P$ $InCircle(a,b,c,d) \neq 1$ if $abc$ if Delaunay \cite{princeton:CCW}. 
 	\begin{equation}
-		InCircle(a,b,c,d) = \frac{sign(det
+		InCircle(a,b,c,d) = \frac{sign(\det
 		\begin{bmatrix}
     			a & b & c & d \\
     			\|a\|^2 & \|b\|^2 & \|c\|^2 & \|d\|^2 \\
@@ -173,13 +268,15 @@ This leaves one issue, how do we determine whether an edge is locally Delaunay o
 		)}{ccw(a,c,b)}
 	\end{equation}
 	\begin{equation}
-		ccw(a,c,b) = det[c-a,b-a] = det
+		ccw(a,c,b) = \det[c-a,b-a] = \det
 		\begin{bmatrix}
     			a & b & c \\
     			1 & 1 & 1\\
 		\end{bmatrix} 
 	\end{equation} 
-	The \emph{counter clockwise test} or $ccw$ determines whither point $d$ is above or below the plane defined by points $a,b,c$. This is because for any point $a = (x,y)$ the parabolic lifting is defined as $h(x,y) = x^2 + y^2 = \| 
+	
+	The \emph{counter clockwise test} or $ccw$ determines whither point $d$ is above or below the plane defined by points $a,b,c$. 
+	This is because for any point $a = (x,y)$ the parabolic lifting is defined as $h(x,y) = x^2 + y^2 = \| 
 	\begin{bmatrix} 
 		x \\
 		y \\ 
@@ -197,68 +294,85 @@ This leaves one issue, how do we determine whether an edge is locally Delaunay o
 	\end{bmatrix}$ 
 	is the parabolic lifting of the points $a,b,c$.
 
-An incremental Delaunay algorithm can now be constructed. Given a Delaunay triangulation and a point $p$ to add to the set of points $P$, a new Delaunay triangulation can be created containing point $p$ by first finding the triangle containing point $p$ and then splitting the triangle three ways. This is done by creating edges from point $p$ to each vertex of the triangle. Now that a we have a triangulation the edge flip algorithm is run to make it a Delaunay triangulation. The base case of this algorithm is there are only three points, in which case, the points are connected to create a triangle \cite{meshGeneration}. 
+	An incremental Delaunay algorithm can now be constructed. 
+	Given a Delaunay triangulation and a point $p$ to add to the set of points $P$, a new Delaunay triangulation can be created containing point $p$ by first finding the triangle containing point $p$ and then splitting the triangle three ways. 
+	This is done by creating edges from point $p$ to each vertex of the triangle. 
+	Now that a we have a triangulation the edge flip algorithm is run to make it a Delaunay triangulation. 
+	The base case of this algorithm is there are only three points, in which case, the points are connected to create a triangle \cite{meshGeneration}. 
 
 \subsubsection{Voronoi Diagrams}
 
-\begin{wrapfigure}{r}{0.4\textwidth}
-  \begin{center}
-    \includegraphics[scale=.18,width=0.45\textwidth]{voronoi}
-  \end{center}
-  \caption{A circle packing with its dual in red and the Voronoi diagram in black.}
-\end{wrapfigure}
+	\begin{wrapfigure}{r}{0.4\textwidth}
+  		\begin{center}
+    		\includegraphics[scale=.18,width=0.45\textwidth]{voronoi}
+  		\end{center}
+  		\caption{A circle packing with its dual in red and the Voronoi diagram in black.}
+	\end{wrapfigure}
 
-Voronoi diagrams are the geometric $dual$ of Delaunay triangulations. A \emph{Voronoi diagram} is the partitioning of a plane into regions based on distance to points in a specific subset of the plane. Formally, the Voronoi diagram of metric space $X$, with a distance function $d$, where $K$ is the set of indices and $P_k, k \in K$ is a tuple of nonempty subsets in the space $X$, is composed of Voronoi cells $C_k$ associated with the site $P_k$. $C_k$ is the set of all points in $X$ whose distance to $P_k$ is not greater than their distance to the other sites $P_j$ \cite{voronoiDiagrams}. 
+	Voronoi diagrams are the geometric $dual$ of Delaunay triangulations. 
+	A \emph{Voronoi diagram} is the partitioning of a plane into regions based on distance to points in a specific subset of the plane. 
+	Formally, in Euclidean space each Voronoi cell $C_k$ is a convex polygon associated with a generator point $p_k$ where all locations in $C_k$ are closer to $p_k$ then any other generator point \cite{voronoiDiagrams}. 
 
-While Voronoi diagrams can be explained without a definition of geometric duals, expanding our understanding of duals will help build intuition for the connection between Voronoi diagrams and Delaunay triangulations. As a result of the dual relationship the faces, or 2-cells, of the Voronoi diagram correspond to the points of the Delaunay triangulation. The edges, or 1-cells, of the Voronoi diagram correspond to the edges of the Delaunay triangulation and the vertices, or 0-cells, of the Voronoi diagram correspond to faces of the Delaunay triangulation. The edges of the Voronoi Diagram are orthogonal to the edges of the Delaunay triangulation. 
-%These relationships are a result of the fundamental relationships between a dual and primal graph.
+	As a result of the dual relationship the faces, or 2-cells, of the Voronoi diagram correspond to the points of the Delaunay triangulation. 
+	The edges, or 1-cells, of the Voronoi diagram correspond to the edges of the Delaunay triangulation and the vertices, or 0-cells, of the Voronoi diagram correspond to faces of the Delaunay triangulation.
+	Lastly, the edges of the Voronoi Diagram are orthogonal to the edges of the Delaunay triangulation. 
 
-%In two dimensions, those relationships are as follows: point $p = 
-%	\begin{bmatrix}
-%		p_x \\
-%		p_y \\
-%	\end{bmatrix} \leftrightarrow $ line $p* = 
-%	\begin{bmatrix}
-%		2p_x \\
-%		-p_y \\
-%	\end{bmatrix}$ and line $\ell = 
-%	\begin{bmatrix}
-%		\ell_n \\
-%		\ell_b \\
-%	\end{bmatrix}$ point $\ell* = 
-%	\begin{bmatrix}
-%		\frac{1}{2}\ell_n
-%		-\ell_b
-%	\end{bmatrix}$. In three dimensions, the relationships undergo similar transformations $point \leftrightarrow plane$, $line \leftrightarrow line$. As a result, lifting the points of a graph from the plane to a 3-dimensional space then taking the dual of those points to obtain hyperplanes and lastly, projecting those planes back onto the original 2-dimensional plane yields a Voronoi diagram and as a result is another way to obtain the Delaunay triangulation.
+	Each vertex of every cell in the Voronoi diagram is the center of a circle in the dual packing. 
+	Additionally, if there is an edge of the from one vertex to another, the circles encompassing those vertices must kiss. 
 
-% TODO: Add to this subsubsection
 \subsubsection{Weighted Delaunay Triangulations}
-The weighted Delaunay triangulation is the dual to the so-called power diagram, a Voronoi diagram on the points where the (squared) distance to a circle $c$ with center $p$ and radius $r$ is defined to be $\pi_c(x)^2 := \|x-p\|^2 - r^2$.
-  A circle packing representation of a graph realizes the graph as the weighted Delaunay triangulation where the vertices are the centers of the disks and the weights are the radii.
+	The weighted Delaunay triangulation is the dual to the so-called power diagram, a Voronoi diagram on the points where the (squared) distance to a circle $c$ with center $p$ and radius $r$ is defined to be $\pi_c(x)^2 := \|x-p\|^2 - r^2$.
+  	A circle packing representation of a graph realizes the graph as the weighted Delaunay triangulation where the vertices are the centers of the disks and the weights are the radii.
   
 \section{Embeddings, Liftings and Stress}
-From the Discrete Uniformization Theorem we have seen that every planar graph has a circle packing, however we will deal with 3-connected, triangulated graphs. These graphs in particular allow us to easily examine other equivalent representations of circle packings. In this section, we will explore the relationship between embeddings, liftings, and stresses and their connection to circle packings.
+	
+	From the Discrete Uniformization Theorem we have seen that every planar graph has a circle packing, however we will deal with 3-connected, triangulated graphs. 
+	These graphs in particular allow us to easily examine other equivalent representations of circle packings. 
+	In this section, we will explore the relationship between embeddings, liftings, stresses, and circle packings.
 
-First, these three terms must be well defined. A \emph{stress} is an assignment of values to edges that may be interpreted as spring constants. By Hook's Law, the magnitude of the force exerted by a spring is the spring constant times its length. A stress is an \emph{equilibrium stress} if for each vertex, the sum of the forces exerted on it by all its incident edges is exactly zero \cite{AresRiboMor}.
-Second, a \emph{lifting} (of a planar straight line graph) is an assignment of heights to vertices such that the vertices of each face are coplanar in $\R^3$ (the faces are flat) \cite{WhiteleyHandbook}. Lastly we restate the mathematical definition of an embedding from above. Given edges $e=(u,v)$, the function mapping the vertices to the plane $ \phi :V \rightarrow \R^2$, and the function mapping the edges to the plane $ \rho_e :[0,1] \rightarrow \R^2$, the embedding $= <\phi, \{\rho_e\} \in E >$ \cite{mathworld:Embedding}.
+	First, we restate the mathematical definition of an embedding from above. 
+	Given edges $e=(u,v)$, the function mapping the vertices to the plane $ \phi :V \rightarrow \R^2$, and the function mapping the edges to the plane $ \rho_e :[0,1] \rightarrow \R^2$, the embedding $= \langle \phi, \{\rho_e\} \in E \rangle$ \cite{mathworld:Embedding}.
+	Second, a \emph{stress} is an assignment of values to edges that may be interpreted as spring constants. 
+	By Hook's Law, the magnitude of the force exerted by a spring is the spring constant times its length. 
+	A stress is an \emph{equilibrium stress} if for each vertex, the sum of the forces exerted on it by all its incident edges is exactly zero \cite{AresRiboMor}.
+	Laslty, a \emph{lifting} (of a planar straight line graph) is an assignment of heights to vertices such that the vertices of each face are coplanar in $\R^3$ (the faces are flat) \cite{WhiteleyHandbook}.
 
-  The relationship between embeddings, liftings, and stresses is largely defined by the Maxwell Cremona Theorem, while the relationship between a graph and its interior equilibrium stress is defined by Tutte's Theorem.  Tutte's Theroem allows us to convert from a simple 3-connected planar graph to an embedding where all the faces are convex. The algorithm to get to this result involves fixing the outer face and assigning arbitrary stresses, in our case of value 1, to each interior edge. Then the equilibrium stress is computed on the interior edges. While the outer face does not have a stress after performing this algorithm, because we have a special case, we can assign the outer face negative stresses to balance out those on the interior and obtain the equilibrium stress. This notion will now be formalized.
+  	The relationship between embeddings, liftings, and stresses is largely defined by the Maxwell-Cremona Theorem, while the relationship between a graph and its interior equilibrium stress is defined by Tutte's Theorem.  
+	Tutte's Theroem allows us to convert from a simple 3-connected planar graph to an embedding where all the faces are convex. 
+	His algorithm involves fixing the outer face and assigning arbitrary stresses, in our case of value 1, to each interior edge. 
+	Then the equilibrium stress is computed on the interior edges. 
+	In most cases, a stress cannot be assigned to the outer face after performing this algorithm, however, because our outer face is a triangle, we can assign the outer face negative stresses to balance out those on the interior and obtain the equilibrium stress. 
+	This notion will now be formalized.
 
 \subsection{Tutte's Theroem}
- Given a graph $G=(V,E)$ to each edge $\{i,j\}\in\sigma$ we assign as weight $w_ij\in\R$ also known as a \emph{stress} that represents the elasticity constant of the corresponding rubber band. $w_ij$ must be equivalent to $w_ji$. A negative weight means that the edge is pushing on its two endpoints, whereas a positive weight means that the edge is pulling on the endpoints. 
-  
-  A \emph{Tutte embedding} or barycentric embedding of a simple 3-connected planar graph is a crossing-free straight-line embedding with the properties that the outer face is a convex polygon and that each interior vertex is at the average (or barycenter) of its neighbor's positions. If the outer polygon is fixed, this condition on the interior vertices determines their position uniquely as the solution to a system of linear equations. Solving these equations thus produces a planar embedding. 
-  
-  Tutte's spring theorem states that this unique solution is always crossing-free, and more strongly that every face of the resulting planar embedding is convex. It is called the spring theorem because such an embedding can be found as the equilibrium position for a system of springs representing the edges of the graph provided the outer face is fixed.
- 
- \textbf{Tutte's Theorem} \cite{realizationSpaces}: Let $G = (\{1,...,n\},E)$ be a 3-connected planar graph that has a face $(1,...,k)$ for some $k<n$. Let $p_1,...,p_k$ be the vertices of a convex k-gon. Let $E'$ be the set of interior edges and let $w : E \rightarrow \R^+$ be an assignment of positive weights to the interior edges. Then,
- 	\begin{itemize}
-		\item There are unique equilibrium positions $p_{k+1}, ...p_n \in \R^2$ for the interior vertices. 
-		\item All faces of $G$ are realized as non-overlapping convex polygons.
-	\end{itemize}
-	
-Let $\omega : E \rightarrow \R$ be an assignment of weights to the edges of a graph and let $p:V \rightarrow \R^2$ be an assignment of positions in $\R^2$ for the vertices of $G$. A vertex $v \in V$ is in equilibrium if  $\sum\limits_{\{v,w\} \in E} \omega_{v,w}(p_v - p_w) = 0$
 
+	Given a graph $G=(V,E)$ we assign as weight $w_{ij}\in\R$, also known as a \emph{stress}, to each edge $\{i,j\}\in\sigma$. 
+	This weight represents the spring constant of the corresponding rubber band. 
+	An edge with a negative weight is pushing its endpoints apart, while an edge with a positive weight is pulling its endpoints together.
+  	
+	\theoremstyle{definition}
+	\begin{definition}
+ 		A \emph{Tutte embedding} or barycentric embedding of a simple, 3-connected planar graph is a crossing-free straight-line embedding with the properties that the outer face is a convex polygon and that each interior vertex is at the average (or barycenter) of its neighbor's positions. 
+		If the outer polygon is fixed, this condition on the interior vertices determines their position uniquely as the solution to a system of linear equations. 
+		Solving these equations thus produces a planar embedding. 
+  	\end{definition}
+	
+	Tutte's spring theorem states that this unique solution is always crossing-free, and more strongly that every face of the resulting planar embedding is convex. 
+	It is called the spring theorem because such an embedding can be found as the equilibrium position for a system of springs representing the edges of the graph provided the outer face is fixed.
+ 
+	Let $\omega : E \rightarrow \R$ be an assignment of weights to the edges of a graph and let $p:V \rightarrow \R^2$ be an embedding in $\R^2$ for the vertices of $G$. 
+	A vertex $v \in V$ is in equilibrium if  $\sum\limits_{\{v,w\} \in E} \omega_{v,w}(p_v - p_w) = 0$
+ 
+ 	\begin{theorem}{\textbf{Tutte's Theorem}}
+ 		Let $G = (\{1,...,n\},E)$ be a 3-connected planar graph that has a face $(1,...,k)$ for some $k<n$. Let $p_1,...,p_k$ be the vertices of a convex k-gon. 
+		Let $E'$ be the set of interior edges and let $w : E \rightarrow \R^+$ be an assignment of positive weights to the interior edges \cite{realizationSpaces}. Then,
+ 		\begin{itemize}
+			\item There are unique equilibrium positions $p_{k+1}, ...p_n \in \R^2$ for the interior vertices. 
+			\item All faces of $G$ are realized as non-overlapping convex polygons.
+		\end{itemize}
+	\end{theorem}
+
+% TODO: fix this section
 \subsubsection{Proof of Tutte's Theorem}
 The following is an outline of a proof of Tutte's Theorem by Jurgen Richter-Gebert \cite{realizationSpaces}. Richter-Gebert first proves that Tutte's algorithm yields stresses such that all interior vertices are in equilibrium. This portion of the proof is reproduced in full.
 
@@ -307,14 +421,14 @@ Once these lemmas have been proven only one more theorem is needed to prove Tutt
 
 Unlike the lemmas, the proof for this theorem is long, but it is given in full by Richter-Gebert. Tutte's algorithm follows from these statements.
 
-\subsection{Maxwell Cremona Theorem}
-In our application, the user inputs a planar straight line graph through drawing circles. Using Tutte's algorithm this graph can be assigned arbitrary stresses and converted into a convex planar embedding with an equilibrium stress on the interior. Next, because in our application the outer face is a triangle, it is possible to assign negative weights to the three outer edges to obtain an equilibrium self stress for the entire embedding. This yields one of the first equal representations discussed in the Maxwell Cremona Theorem.
+\subsection{Maxwell-Cremona Theorem}
+In our application, the user inputs a planar straight line graph through drawing circles. Using Tutte's algorithm this graph can be assigned arbitrary stresses and converted into a convex planar embedding with an equilibrium stress on the interior. Next, because in our application the outer face is a triangle, it is possible to assign negative weights to the three outer edges to obtain an equilibrium self stress for the entire embedding. This yields one of the first equal representations discussed in the Maxwell-Cremona Theorem.
 
  The Maxwell-Cremona Theorem, in plain english, states that there is a natural correspondence between equilibrium stresses of planar embedding and the liftings of that embedding.
  
  $Equilibrium$  $Stress \leftrightarrow Reciprocal$ $Diagrams \leftrightarrow Liftings$ \\
 \\
-More technically, the \textbf{Maxwell Cremona Theorem}: Given a planar framework (an embedding) with an associated combinatorial spherical polyhedron $(V,F;E)$ the following are equivalent:
+More technically, the \textbf{Maxwell-Cremona Theorem}: Given a planar framework (an embedding) with an associated combinatorial spherical polyhedron $(V,F;E)$ the following are equivalent:
 \begin{enumerate}
 	\item There is a self stress on the framework with all $\omega_e \neq 0$.
 	\item There is a reciprocal framework on the dual graph $(F;E)$.
@@ -323,7 +437,7 @@ More technically, the \textbf{Maxwell Cremona Theorem}: Given a planar framework
 
  
 \subsubsection{Preliminaries}
-Unlike our overview of Tutte's Theorem, we will prove the Maxwell Cremona Theorem in full due to its importance in establishing the relationships between the embedding, lifting and stress. To prove the Maxwell Cremona Theorem, some definitions must be established. First, an \emph{edge patch}, which is simply an different notation for describing an edge in an embedding. It is written $<h,i;j,k>$ where it connects vertices $h,i$ and separates the faces $j,k$ \cite{mccProof}.
+Unlike our overview of Tutte's Theorem, we will prove the Maxwell-Cremona Theorem in full due to its importance in establishing the relationships between the embedding, lifting and stress. To prove the Maxwell-Cremona Theorem, some definitions must be established. First, an \emph{edge patch}, which is simply an different notation for describing an edge in an embedding. It is written $<h,i;j,k>$ where it connects vertices $h,i$ and separates the faces $j,k$ \cite{mccProof}.
 
 \begin{wrapfigure}{r}{0.25\textwidth}
   \begin{center}
@@ -377,7 +491,7 @@ To show the graph is edge 3-connected assume that removing 2 edges disconnects t
 Part B:
 Given any vertex 2-connected, edge 3-connected graph, form a corresponding combinatorial spherical polyhedron: arcs and vertices surround simple disks which become faces along with the outer face. After placing point $f^j$ in each face we add $<h,i;j,k>$ if and only if the circuit $p_h, f^i,p_i,f^k$ around an arc $d_{ij}$ is clockwise. This means that the patches around each vertex form a cycle, and since the graph is not a multi-graph the vertices are distinct. If a cycle around a vertex contained a face twice, then the graph could be disconnected by removing this vertex. This contradicts the vertex 2-connectivity. Additionally, the patches around a face form a cycle. Assume a vertex occurs twice in a cycle. Since there are no loops removing this vertex violates 2-connectivity. Assume an adjacent face in a cycle occurs twice, removing edges violates 3-connectivity \cite{mccProof}.
 
-\subsection{Proof of Maxwell Cremona Theorem}
+\subsection{Proof of Maxwell-Cremona Theorem}
 The following is a reproduction of the proof by Carpo and Whiteley \cite{mccProof}.
 \subsubsection{Part 1: Stress and Reciprocal Diagram}
 A reciprocal framework, or dual embedding, $H* = ((F,E);P)$ on the dual combinatorial polyhedron is a framework such that for each edge patch $<h,i;j,k>$  the vector $v_e = p_i - p_h$ is perpendicular to the vector $v^e = p^k - p^j$ from the reciprocal. \\
@@ -406,7 +520,7 @@ For any face-edge cycle $\omega_e v_e = (V^e)^{\bot}$ since the vectors $V^e$ fo
 Part B: Given a full self-stress $P^1 = P^0 + \sum_e \omega_ev_e^\bot = reciprocal$.
 Given any two paths between $F^0$ and $F^1$ we get the same value for $P^1$ since the sum up one path and back the other is a cycle and yields zero.
 
-We have thus proven the first half of the Maxwell Cremona Theorem.
+We have thus proven the first half of the Maxwell-Cremona Theorem.
 
 \emph{stress} $\leftrightarrow$ \emph{reciprocal diagram}
 
@@ -468,7 +582,7 @@ Given a planar framework with an associated combinatorial spherical polyhedron $
 This also yields intuition for a Circle packing algorithm which, though has not been proven to always work, seems to work very well on small problem instances. This force-directed algorithm computes the embedding of the graph using Tutte's algorithm to iteratively modify the force of each edge by changing the distance between the two points while updating the radii of each circle iteratively. The algorithm is as follows: While the embedding is not a valid Circle Packing, for every edge, reposition the two vertices it connects, provided they are interior vertices, based on the stress of the edge. Then, for every edge, calculate the length of the edge and determine if the radii of the two circles add up to that distance. If not, increase the stress and the radii, otherwise, decrease the stress and the radii. This algorithm can be observed working in our application.
  
 \section{Stereographic Mappings}
-There are many equivalent representations of Circle Packings in two dimensions, namely, Weighted Delaunay Triangulations, dual circle packings, and Voronoi diagrams. Additionally, from the Maxwell Cremona theorem Circle packings can be represented as convex 3-dimensional polytopes, essentially they can be lifted into three dimensional space. However, this is not the only way to represent a Circle packing in three dimensions. Using Stereographic Mappings, an additional representation, on the Riemann sphere,  can be discovered. In this section, we will cover circle packings on the sphere and the insights this representation yields.
+There are many equivalent representations of Circle Packings in two dimensions, namely, Weighted Delaunay Triangulations, dual circle packings, and Voronoi diagrams. Additionally, from the Maxwell-Cremona theorem Circle packings can be represented as convex 3-dimensional polytopes, essentially they can be lifted into three dimensional space. However, this is not the only way to represent a Circle packing in three dimensions. Using Stereographic Mappings, an additional representation, on the Riemann sphere,  can be discovered. In this section, we will cover circle packings on the sphere and the insights this representation yields.
 
 \subsection{Riemann Sphere}
 The euclidean plane which has been operated on thus far can be represented mathematically by: $\R^2 = \C = \{z = x + iy : x, y \in \R \}$. In contrast, the Riemann sphere, also known as the unit sphere or the complex projective line is modeled as such: $\mathbb{P} = \{(x,y,z):x^2 + y^2 + z^2 = 1\} \subset \R^3$. This sphere can be thought of as the wrapping of the complex plane around a ball, with the addition of one point at infinity. The plane is found to be a subset of the sphere via stereographic projection, which is a mapping that projects a sphere onto the plane. This mapping is bijective and is often used to describe the mapping of the plane to the sphere as well. Formally, start at the infinity point and draw a line towards a point on the plane. This line will pass through both the sphere and the plane. Let the point where the line punctures the sphere be $p = (x,y,z)$ and the point where it touches the plane point $w = u + iv$. Then using similarity of triangles and recalling that $x^2 + y^2 + z^2 = 1$ the following relationships can be obtained: $u = \frac{x}{1 + z}$, $v = \frac{y}{1+ z}$. $z = \frac{1 = (u^2 + v^2}{1 + (u^2 + v^2)}$, $x = u(1+z)$, and $y =v(1+z)$.
