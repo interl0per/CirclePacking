@@ -9,7 +9,6 @@
 \usepackage{wrapfig}
 \usepackage{amsmath} % allows for matrix 
 \usepackage{amsthm} % definition environment
-
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage{subfig}
@@ -71,10 +70,23 @@ The primary objective of this paper is to explore the connections between equiva
 	\begin{definition}{Graph}
 		A \emph{graph} is an ordered pair $G=(V,E)$ which represents a set of objects or \emph{vetices} $v$ and the links between them, or \emph{edges} $E$. 
 		Edges in a graph can be directed or undirected, however, we will focus on undirected edges in our application. 
-		For undirected graphs, we can define edges as unordered pairs of vertices such that $(v_1, v_2) = (v_2, v_1)$. 
-		In this case, a graph $G' = (V',E')$ is a \emph{subgraph} of $G$ ($G' \subseteq G$), if $V' \subseteq V$ and $E' \subseteq E$.
 	\end{definition}
 	
+	\theoremstyle{definition}
+	\begin{definition}{Directed Graph}
+  		A \emph{directed graph} is a graph in which each edge is replaced by a directed edge, which is an ordered pair of vertices.
+  	\end{definition}
+	
+	\theoremstyle{definition}
+	\begin{definition}{Undirected Graph}
+  		A \emph{undirected graph} is a graph in which each edge is an unordered pair of vertices such that $(v_1, v_2) = (v_2, v_1)$.
+  	\end{definition}
+	
+	\theoremstyle{definition}
+	\begin{definition}{Subgraph}
+			If graph $G$ is undirected then, a graph $G' = (V',E')$ is a \emph{subgraph} of $G$ ($G' \subseteq G$), if $V' \subseteq V$ and $E' \subseteq E$.
+  	\end{definition}
+
 	\theoremstyle{definition}
 	\begin{definition}{Path}
 		A \emph{path} is a finite or infinite sequence of edges which connect a sequence of vertices.
@@ -160,18 +172,83 @@ The primary objective of this paper is to explore the connections between equiva
 	\begin{definition}{Simplex}
 		A \emph{simplex} is the generalization of a triangle to arbitrary dimensions.
 	\end{definition}
+
+\subsubsection{Matrix Manipulation and Terminology}
+
+	\theoremstyle{definition}
+	\begin{definition}{Eigenvalues}
+		Let $A$ be a linear transformation represented by a matrix. If there is a vector $X \in \R^n \neq 0$ such that $AX = \lambda X$ for some scalar $\lambda$, then $\lambda$ is called the \emph{eigenvalue} of $A$ \cite{mathworld:Eigenvalue}.
+	\end{definition}
 	
-%A \emph{topology} on a nonempty set $X$ is a collection of subsets of $X$, called open sets, such that: (1) the empty set $\emptyset$ and the set $X$ are open, (2) the union of an arbitrary collection of open sets is open, and (3) the intersection of a finite number of open sets is open.
+	\theoremstyle{definition}
+	\begin{definition}{Diagonal Matrix}
+		A \emph{diagonal matrix} is a square matrix of the form \cite{mathworld:DiagonalMatrix}:
+		$\begin{bmatrix}
+			c_1 & 0 & \dots & 0 \\
+			0 & c_2 & \dots & 0 \\
+			\vdots & \vdots  & \ddots  & \vdots \\
+			0 & 0 & \dots & c_n \\
+		\end{bmatrix}$. These matrices are sometimes written $D = \text{diag}(c_1, \dots, c_n)$
+	\end{definition}
 	
-%The \emph{neighborhood}	of a point is a set containing the point where one can move that point some amount without leaving the set. This leads us to the definition for a \emph{topological space} which is defined as a set of points, along with a set of neighborhoods for each point, that satisfy a set of axioms relating points and neighborhoods.
+	\theoremstyle{definition}
+	\begin{definition}{Identity Matrix}
+		The \emph{identity matrix} is the diagonal matrix $I = \text{diag}(1, \dots, 1)$.
+	\end{definition}
+	
+	\theoremstyle{definition}
+	\begin{definition}{Adjacency Matrix}
+		An \emph{adjacency matrix}, $A$, of a simple labeled graph is a matrix with rows and columns labeled by graph vertices, with a 1 or 0 in position (i, j) according to whether $v_i$ and $v_j$ are adjacent (joined by an edge) or not \cite{mathworld:AdjacencyMatrix}. 
+	\end{definition}
+	
+	\theoremstyle{definition}
+	\begin{definition}{Characteristic Polynomial}
+		The \emph{characteristic polynomial is the polynomial left-hand side of the characteristic equation --- $\det(A - \lambda I) = 0$} \cite{mathworld:CharacteristicPoly}.
+	\end{definition}
+	
+	\theoremstyle{definition}
+	\begin{definition}{Transpose}
+		A \emph{transpose} of a matrix $M$, written $M^T$, is the matrix obtained by replacing all elements $m_{ij}$ with $m_{ji}$ \cite{mathworld:Transpose}.
+	\end{definition}
+	
+	\theoremstyle{definition}
+	\begin{definition}{Symmetric Matrix}
+		A \emph{symmetric matrix} is a square matrix that satisfies $A^T = A$ \cite{mathworld:SymmetricMatrix}.
+	\end{definition}
+	
+	\theoremstyle{definition}
+	\begin{definition}{Vertex Degree}
+		The \emph{vertex degree} of a vertex is the number of edges attached to that vertex \cite{mathworld:VertexDegree}.
+	\end{definition}
+	
+	\theoremstyle{definition}
+	\begin{definition}{Out Degree}
+		The number of outward directed graph edges from a given vertex in a directed graph.
+	\end{definition}
+	
+	\theoremstyle{definition}
+	\begin{definition}{Degree Matrix}
+		A \emph{degree matrix} is a diagonal matrix where the diagonal $d_i$ corresponds to the vertex degree of $v_i$ \cite{mathworld:DegreeMatrix}. 
+	\end{definition}
+	
+	\theoremstyle{definition}
+	\begin{definition}{Laplacian}
+		A \emph{laplacian} of a graph $G$ is an $n \times n$ symmetric matrix with one row and one column for each vertex defined by $L = D - A$, where $D$ is the degree matrix and A is the adjacency matrix \cite{mathworld:Laplacian}.
+	\end{definition}
 
-%A \emph{simplicial complex} is a topological space constructed by the union of points line segments, triangles and their n-dimensional counterparts. A \emph{simplicial k-complex} is a simplicial complex where the largest dimension of any simplex in $K$ equals $k$. For instance, a 2-complex must contain at least one triangle. If we replace each simplex in a simplicial complex by the set of its vertices, then we get a system of subsets of the vertex set. In doing so, we throw away the geometry of the simplices and are left with the combinatorial structure \cite{simplicialComplexes}.
-
-%A \emph{metric} is a function that defines a distance between each pair of elements in a set. A set with a metric is called a \emph{metric space}.
-
-%An \emph{oriented surface} is one in positive and negative directions have been defined. The positive direction is the one in which the unit normal vector points. 
-
-Now that we have defined general geometric and topological concepts, we may introduce the formal definition of a circle packing.
+\subsubsection{Misc.}
+	\theoremstyle{definition}
+	\begin{definition}{Bijection}
+		A map is called \emph{bijective} it is both a one-to-one and an onto map. 
+		This means that each value in the domain has only one corresponding value in the range and that there are no values in the range or domain that don't have a corresponding value \cite{mathworld:Bijection}. 
+	\end{definition}
+	
+	\theoremstyle{definition}
+	\begin{definition}{Permutation}
+		 A \emph{permutation} is a rearrangement of the elements of an ordered list $S$ into a one-to-one correspondence with itself \cite{mathworld:Permutation}.
+	\end{definition}
+	
+	Now that we have defined general geometric and topological concepts, we may introduce the formal definition of a circle packing.
 
 \section{Circle Packings}
 	\theoremstyle{definition}
@@ -182,10 +259,7 @@ Now that we have defined general geometric and topological concepts, we may intr
 		(3) three circles $c_u$, $c_v$, $c_w$ form a triple whenever $(u,v,w)$ forms a face in $G$ \cite{stephenson05introduction}.
 	\end{definition}
 
-%If $\xi$ is an oriented surface with a metric, then a collection $P = \{c_v\}$ of circles in $\xi$ is said to be a circle packing for an abstract simplicial 2-complex $K$ if (1) $P$ has a circle $c_v$ associated with each vertex $v$ of $K$, (2) two circles $c_u$, $c_v$ are tangent whenever $(u,v)$ is an edge of $K$, and (3) three circles $c_u$, $c_v$, $c_w$ form a positively oriented triple in $\xi$ whenever $(u,v,w)$ forms a positively oriented face of $K$ \cite{stephenson05introduction}. 
-
-The \textbf{Discrete Uniformization Theorem}, states, in more general terms, that given any planar graph $G$ with vertex set $V(G) = \{v_1, ... v_n \}$ and edge set $E(G)$, we can find a packing of n (not necessarily congruent) circular discs $C= \{C_1,... C_n\}$ in the plane with the property that $C_i$ and $C_j$ touch each other if and only if $v_i v_j \in E(G)$ for $1 \le i \le n$ \cite{stephenson05introduction}.
-By this theorem, circle packings exists for any planar graph, however it is often simpler algorithmically to work with 3-connected, triangulated planar graphs.
+	By \textbf{Koebe's theorem}, circle packings exists for any maximal planar graph, however it is often simpler algorithmically to work with 3-connected, triangulated planar graphs.
 
 	The first algorithm in our circle packing application is an incremental relaxation algorithm proposed by Stephenson in his book \emph{Introduction to Circle Packing}. 
 	The algorithm begins with a set of tentative radii not necessarily corresponding to a valid packing. In our application, these radii are those input by the user. 
@@ -201,7 +275,7 @@ By this theorem, circle packings exists for any planar graph, however it is ofte
 	These steps cause the system to converge to a fixed point for which the sum of the angles around each vertex is $2\pi$. 
 	Once the system has converged, the circles may be placed one at a time, at each step using the positions and radii of two neighboring circles to determine the center of each successive circle.
 
-	\begin{figure}%
+	\begin{figure}[H]%
     		\centering
     		\subfloat[User input]{{\includegraphics[width=.4\textwidth]{figures/input} }}%
     		\qquad
@@ -210,15 +284,7 @@ By this theorem, circle packings exists for any planar graph, however it is ofte
     		\label{fig:inout}%
 	\end{figure}
 
-\subsection{Delaunay Triangulations}
-
-	\begin{wrapfigure}{r}{0.4\textwidth}
-  		\begin{center}
-    		\includegraphics[width=0.38\textwidth]{delaunayemph}
-  		\end{center}
-  		\caption{Delaunay Triangulation in black.}
-	\end{wrapfigure}
-
+\subsection{Delaunay Triangulations}\
 	Delaunay triangulations are intimately connected to circle packings. 
 	The vertices in a Delaunay triangulation are the centers of the circles in a packing while the edges indicate tangencies between the circles. 
 	Before we can explore this connection further, we must build up a formal definition.
@@ -228,8 +294,6 @@ By this theorem, circle packings exists for any planar graph, however it is ofte
 		A \emph{triangulation}, also referred to as a \emph{maximal planar graph}, is a simple planar graph in which there is no way to add another edge and have the graph continue to be simple and planar \cite{meshGeneration}. 
 		This means that each face is bounded by three edges --- each face is a triangle.
 	\end{definition}
-
-%Formally, a triangulation of $S$, a finite set of points in the plane, is a simplicial complex $\tau$ such that $S$ is the set of vertices in $\tau$, and the union of all the simplices in $\tau$ is the convex hull of $S$ \cite{meshGeneration}.
 
 	There are many specific types of triangulations in mathematics, however, we will focus on Delaunay and Weighted Delaunay triangulations. 
 	To explain Delaunay triangulations, some properties of triangles must first be defined. 
@@ -249,6 +313,12 @@ By this theorem, circle packings exists for any planar graph, however it is ofte
 	The union of any two triangles is a quadrilateral, and the shared edge is the diagonal of that quadrilateral. 
 	To perform an edge flip is to replace the diagonal with the quadrilateral's other diagonal.
 
+	\begin{wrapfigure}{r}{0.4\textwidth}
+  		\begin{center}
+    		\includegraphics[width=0.38\textwidth]{delaunayemph}
+  		\end{center}
+  		\caption{Delaunay Triangulation in black.}
+	\end{wrapfigure}
 	As a result of this property, we can formulate an algorithm that creates a Delaunay triangulation. 
 	If $S$ is the point set, this algorithm begins with any triangulation $\tau$ of $S$ and a list of edges in $\tau$. 
 	Remove an edge from the list, check if the edge is still in the triangulation and if so, if it is locally Delaunay. 
@@ -385,47 +455,7 @@ By this theorem, circle packings exists for any planar graph, however it is ofte
 		A \emph{centroid} is the center of mass of a two-dimensional closed surface or three-dimensional solid \cite{mathworld:Centroid}.
 	\end{definition}
 	
-	\theoremstyle{definition}
-	\begin{definition}{Diagonal Matrix}
-		A \emph{diagonal matrix} is a square matrix of the form \cite{mathworld:DiagonalMatrix}:
-		$\begin{bmatrix}
-			c_1 & 0 & \dots & 0 \\
-			0 & c_2 & \dots & 0 \\
-			\vdots & \vdots  & \ddots  & \vdots \\
-			0 & 0 & \dots & c_n \\
-		\end{bmatrix}$. These matrices are sometimes written $D = \text{diag}(c_1, \dots, c_n)$
-	\end{definition}
-	
-	\theoremstyle{definition}
-	\begin{definition}{Transpose}
-		A \emph{transpose} of a matrix $M$, written $M^T$, is the matrix obtained by replacing all elements $m_{ij}$ with $m_{ji}$ \cite{mathworld:Transpose}.
-	\end{definition}
-	
-	\theoremstyle{definition}
-	\begin{definition}{Symmetric Matrix}
-		A \emph{symmetric matrix} is a square matrix that satisfies $A^T = A$ \cite{mathworld:SymmetricMatrix}.
-	\end{definition}
-	
-	\theoremstyle{definition}
-	\begin{definition}{Vertex Degree}
-		The \emph{vertex degree} of a vertex is the number of edges attached to that vertex \cite{mathworld:VertexDegree}.
-	\end{definition}
-	
-	\theoremstyle{definition}
-	\begin{definition}{Degree Matrix}
-		A \emph{degree matrix} is a diagonal matrix where the diagonal $d_i$ corresponds to the vertex degree of $v_i$ \cite{mathworld:DegreeMatrix}. 
-	\end{definition}
-	
-	\theoremstyle{definition}
-	\begin{definition}{Adjacency Matrix}
-		An \emph{adjacency matrix} of a simple labeled graph is a matrix with rows and columns labeled by graph vertices, with a 1 or 0 in position (i, j) according to whether $v_i$ and $v_j$ are adjacent (joined by an edge) or not \cite{mathworld:AdjacencyMatrix}. 
-	\end{definition}
-	
-	\theoremstyle{definition}
-	\begin{definition}{Laplacian}
-		A \emph{laplacian} of a graph $G$ is an $n \times n$ symmetric matrix with one row and one column for each vertex defined by $L = D - A$, where $D$ is the degree matrix and A is the adjacency matrix.
-	\end{definition}
-	
+		
 	Given this information the total force acting on a vertex with neighbors $p_1, \dots, p_h$ is $F_q = \sum_{i=1}^{h}(p_i - q)$. 
 	As explained above, if a point is at equilibrium, then $F_q = \sum_{i=1}^{h}(p_i - q) = 0$, and we can rearrange the equation as follows $kq = \sum_{i=1}^{h}(p_i)$. 
 	Dividing by the spring constant yields the equation $q = \frac{1}{k}\sum_{i=1}^{h}(p_i)$ which is the formula for a centroid.
@@ -474,19 +504,91 @@ By this theorem, circle packings exists for any planar graph, however it is ofte
 	For this equation to be valid $L_2$ must be invertible. Therefore, we must prove that it will always be invertible in this scenerio.
 	To prove this fact, we can, like Tutte, use the Matrix Tree Theorem.
 	
-	\begin{theorem}{(The Matrix Tree Theorem)}
+	\theoremstyle{definition}
+	\begin{definition}{Spanning Tree}
+		A \emph{Spanning tree} of a graph on $n$ vertices is a subset of $n-1$ edges that form a tree \cite{mathworld:SpanningTree}.
+	\end{definition}
+	
+	\begin{theorem}{(The Matrix-Tree Theorem)}
 		If $L$ is the Laplacian of a graph and $L'$ is derived from $L$ by deleting the first row and column, then $\det L'$ is exactly the number of spanning trees of $G$.
+		In other words, $\kappa(G) = \frac{1}{n} \lambda_1\lambda_2 \dots \lambda_{n-1}$ where $\lambda_1, \dots, \lambda_{n-1}$ are non-zero eigenvalues of the Laplacian matrix $L$ of $G$.
+	\end{theorem}
+	
+	To prove this theorem, we will introduce and prove the Matrix-Tree theorem for directed graphs and then show that it implies the version for undirected graphs.
+	This is the approach used by Lionel Levine in his lecture notes from Algebraic Combinatorics \cite{matrixTree}.
+	
+	Let $\Gamma = (V,E)$ be a directed graph.
+	
+	\theoremstyle{definition}
+	\begin{definition}{Oriented spanning tree}
+			An \emph{oriented spanning tree} of $\Gamma$ rooted at $r \in V$ is a spanning subgraph $T = (V,A)$ such that:
+			\begin{enumerate}
+				\item Every vertex $v \neq r$ has out degree 1.
+				\item $r$ has out degree 0.
+				\item $T$ has no oriented cycles.
+			\end{enumerate}
+	\end{definition}
+	
+	\theoremstyle{definition}
+	\begin{definition}{Laplacian matrix of directed graph}
+			The Laplacian matrix $L$ of $\Gamma$ is equal to $D-A$ where $D = \text{diag } (d_1, \dots, d_n)$ where $d_i$ is the out degree of vertex $i$ and $A$ is the adjacency matrix of $\Gamma$.
+	\end{definition}
+	
+	\begin{theorem}{(The Matrix-Tree Theorem --- Oriented Graphs)}
+			Let $\kappa(\Gamma, r) =$ \# \{oriented spanning trees of $\Gamma \text{ rooted at } r\}$ and $L_r$ be the Laplacian matrix of $\Gamma$ with the row and column correspond to vertex $r$ crossed out. 
+			Then, $\kappa(\Gamma, r) = \det L_r$, where $L_r$ is the Laplacian matrix $L$ with row and column $r$ removed.
 	\end{theorem}
 	
 	\begin{proof}
-	Matrix Tree Proof
+		Reorder the vertices of $\Gamma$ so that $r$ is the $n$th vertex. 
+		Then $\det L_r = d_1d_2 \dots d_{n-1} -$ (other terms), since $L_r$ has the $d_i$'s on the diagonal and either -1 or 1 for the off-diagonal entries. 
+		The number of subgraphs $H$ of $\Gamma$ is counted by $d_1d_2 \dots d_{n-1}$ such that each vertex $v \neq r$ has out degree 1. 
+		This yields: $H = T \cup C_1 \cup \dots \cup C_k$, where $T$ is an oriented tree rooted at $r$ and each $C_i$ is an oriented cycle. 
+		
+		If $\sigma$ is a permutation of the set $S_{n-1}$,
+		then $\det L_r = \sum_{\sigma \in S_{n-1}} \text{sgn} (\sigma)L_{1, \sigma(1)} \dots L_{n-1, \sigma(n-1)}$.
+		We then fix $(\sigma) = \{i | \sigma(i) = i\}$ and obtain 
+		$\det L_r = \sum_{\sigma \in S_{n-1}} \text{sgn}(\sigma) \prod_{i \in \text{fix}(\sigma)} d_i \prod_{i \not \in \text{fix}(\sigma)} L_{i, \sigma(i)}$.
+		However, $\prod_{i \not \in \text{fix}(\sigma)} L_{i, \sigma(i)}$ is only non-zero when $(i,\sigma(i)) \in E$ for all $i \not \in \text{fix}(\sigma)$.
+		In this case, $\prod_{i \not \in \text{fix}(\sigma)} L_{i, \sigma(i)} = (-1)^{n -1 - | \text{fix}(\sigma)|}$.
+		
+		We wish to write $\det L_r = \sum_{\text{subgraphs } H \subset \Gamma} C_H$, where $C_H$ is 1 if $H$ is an oriented spanning tree and 0 otherwise.
+		Any permutation $\sigma$ consists of fixed points and cycles. A subgraph $H = T \cup C_1 \cup \dots \cup C_k$ arises from $\sigma$ if and only if the union of all cycles $C_i$ of $H$ contains all vertices not fixed by $H$, which, in turn is true if and only if $T \subseteq \text{fix}(\sigma)$.
+		
+		We can conclude that $ C_H = \sum_{\sigma \in S_{n-1} | T \subseteq \text{fix}(\sigma)} \text{sgn}(\sigma)(-1)^{n -1 - | \text{fix}(\sigma)|}$
+		
+		Our goal is then to show that $C_H$ is 1 when $H$ is a tree and 0 otherwise. When $H$ is a tree, $H = T$ and there are no cycles. Then all vertices are in $|\text{fix}(\sigma)|$ and $\sigma$ is the identity permutation.
+		The sign of the identity permutation is 1 and $n-1$ points are fixed, so $C_H = 1$.
+		
+		Lastly we need to show that $C_H = 0$ if $k \geq 1$, i.e. if $H$ has a cycle. 
+		For each $C_i$, we can either choose $C_i \subset \text{fix}(\sigma)$ or $C_i$ to be a cycle of $\sigma$. 
+		Let $i_1, \dots, i_l$ be the indices of the $C_i$'s that are formed from vertices in cycles of $\sigma$. 
+		All other points must be fixed by $\sigma$, so $\text{sgn}(\sigma) = (-1)^{(|C_{i_1}| -1) + \dots + (|C_{i_l}| -1)} (-1)^{|C_{i_1}| + \dots + |C_{i_l}|}$.
+		This means that $C_H = \sum_{\{i_1, \dots, i_l\} \in [k]} (-1)^{(|C_{i_1}| -1) + \dots + (|C_{i_l}| -1)} (-1)^{|C_{i_1}| + \dots + |C_{i_l}|}$.
+		So, 
+		\begin{center}
+			$C_H = \sum_{S \subseteq [k]}(-1)^{|S|}$ \\
+			$ = \sum_{l=0}^{k} {k \choose l} (1-1)^k$ \\
+			$ = 0 \text{ if } k \geq 1$
+		\end{center}
 	\end{proof}
 	
+	We can now use the Matrix-Tree theorem for directed graphs to prove the theorem for unoriented graphs.
 	
+	\begin{proof}
+		Given graph $G$, let $\Gamma$ be the directed graph with edges $(i,j)$ and $(j,i)$ for every edge of $G$. 
+		We first observe that there is a bijection between the set of oriented spanning trees of $\Gamma$ rooted at $r$ and the set of spanning trees of $G$. 
+		We can take any oriented spanning tree of $\Gamma$ rooted at $r$ and get a spanning tree of $G$ by disregarding the root and the orientation of the edges. 
+		For any spanning tree $T$ of $G$, we can get an oriented spanning tree of $\Gamma$ by orienting the edges along the unique path from each vertex to $r$. 
+		Such a path exists because $T$ is connected and is unique because $T$ has no cycles. 
+		Then, $n \kappa(G) = \sum_{r=1}^{n} \kappa(\Gamma, r)$.
+		Let $L$ be the Laplacian matrix of $\Gamma$.
+		Then the characteristic polynomial of $L$ is $\chi(t) = \det(tI - L)$.
+		It is true that $\sum_{r=1}^{n} \det L_r = (-1)^{n-1} [t]\chi(t)$, where $[t]\chi(t)$ is the coefficient of $t$ in $\chi(t)$
+	\end{proof}
 	
-	
-	
-	
+	This proves the first portion of Tutte's theorem --- that there are unique equilibrium positions for the interior vertices.
+	It is left to the reader to prove that all faces of $G$ are realized as non-overlapping convex polygons. 	
 	
 	
 \subsection{Maxwell-Cremona Theorem}
@@ -614,7 +716,8 @@ To prove the second half of the Theorem, we must first establish a few more defi
  \textsc{Proof} Part A: For each face $F^i$ the vector $N^j = (A^j, B^j,1)$ is normal to the plane $Q^j$. For each edge $e = <h,i;j,k>:  (x_h-x_i,,y_h-y_i, z_h-z_i)=(q_h-q_i) = \omega^e N^j \times N^k = \omega^e(B^j-B^k,A^k-A^j,A^jB^k-A^kB^j)$. This shows that $-\omega^e(A^j-A^k,B^j-B^k)^\bot = (x_h - x_i, y_h-y_i)$ or $-\omega^e(V^e)^\bot = v_e$. The frameworks are reciprocal, with scalars $\omega^e$ for the self stress in the face diagram.
  Part B: Around any vertex-edge cycle of the polyhedron, $\sum(x_h - x_i, y_h-y_i, z_h-z_i) = 0$ and for any edge $(x_h-x_i,y_h-y_i) = -\omega^e(A^j-A^k,B^j-B^k)^\bot = -\omega^e(V^e)^\bot$. Therefore, for any vertex-edge cycle in the original polyhedron, $\sum_e \omega^eV^e = \sum_e \omega^e(x_h-x_i,y_h-y_i)^\bot = 0$. In addition $(z_h-z_i) = \omega^e(A^jB^k-A^kB^j) = -\omega^e(P^j-P^k) \times P^j = \omega^eM^e$. Therefore, for any vertex-edge cycle in the original polyhedron $\sum \omega^eM^e = \sum(z_h-z_i) = 0$. 
  
- We still must show that $\sum \omega_e v_e = 0$ and that $\sum \omega_em_e = 0$ for any face-edge cycle in the vertex diagram. We apply the Maxwell polarity. % TODO: define this!!
+ We still must show that $\sum \omega_e v_e = 0$ and that $\sum \omega_em_e = 0$ for any face-edge cycle in the vertex diagram. We apply the Maxwell polarity. 
+ % TODO: define this!!
   This makes the vertex diagram of the original polyhedral surface into the face diagram of the polar polyhedral surface. As a face diagram it must satisfy $\sum \omega_e v_e = 0$ and $\sum \omega_em_e = 0$.
  
  \textsc{Theorem} Given a reciprocal pair of plane frameworks $H=((V;E);p)$ and $H^* = ((F;E);P)$ on the oriented combinatorial polyhedron $(V,F;E)$ the following are equivalent: 
