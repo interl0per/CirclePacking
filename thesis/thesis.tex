@@ -49,8 +49,8 @@
 \maketitle
 
 \begin{abstract}
-  We explore equivalent representations of circle packings and the connections between them while presenting an interactive tool for visualizing and experimenting with different circle packing algorithms. 
-  The source code can be found at: https://github.com/interl0per/CirclePacking
+  We explore equivalent representations of circle packings and the relationships between them connecting them to theorems by Maxwell and Tutte.  
+  The source code for tool used to create the circle packing figures can be found at: https://github.com/interl0per/CirclePacking
 \end{abstract}
 
 \section{Introduction}
@@ -62,11 +62,24 @@
   \caption{A univalent circle packing in a triangle.}
 \end{wrapfigure}
 
-The Circle Packing Theorem provides a link between questions of geometry, topology, combinatorics and complex analysis. Discovered by Paul Koebe and later reintroduced by William Thurston, circle packings have become a principle area of study for many mathematicians and geometers \cite{wilkerson}. Before introducing a formal definition, we will develop an intuition for circle packings. A circle packing is a configuration of circles with a specified pattern of tangencies \cite{stephenson05introduction}. The circle packings most often studied are those that require the interior of the circles to be disjoint, called univalent packings, this means the circles are non-overlapping \cite{stephenson05introduction}. In this case, a circle packing can be thought of as a graph formed by a set of circles with disjoint interiors, where each circle kisses, intersects at exactly one point, its neighboring circles in the graph.
+	The Circle Packing Theorem provides a link between questions of geometry, topology, combinatorics and complex analysis. 
+	Discovered by Paul Koebe and later reintroduced by William Thurston, circle packings have become a principle area of study for many mathematicians and geometers \cite{wilkerson}. 
+	Before introducing a formal definition, we will develop an intuition for circle packings. 
+	A circle packing is a configuration of circles with a specified pattern of tangencies \cite{stephenson05introduction}. 
+	The circle packings most often studied are those that require the interior of the circles to be disjoint, called univalent packings, this means the circles are non-overlapping \cite{stephenson05introduction}. 
+	In this case, a circle packing can be thought of as a graph formed by a set of circles with disjoint interiors, where each circle kisses, intersects at exactly one point, its neighboring circles in the graph.
 
-Common geometric settings for circle packings are the \emph{euclidean plane}, the \emph{sphere} and the \emph{hyperbolic plane}. Each pair of circles in a packing forms a \emph{tangent pair}, every three form a \emph{triple} and the empty space between each triple forms an $interstice$ \cite{stephenson05introduction}. A $flower$ is the next level of structure, which consists of a central circle and some number of $petal$ circles. The number of petals defines the $degree$ of the central circle. In our application we will enforce the condition that every circle packing has to have a flower. Note that while not all circle packings are univalent, the ones discussed in this paper and created by the corresponding application will all be univalent. As a result of this property the angle sum, the sum of the angles around each vertex, will be $2\pi$.
+	Common geometric settings for circle packings are the \emph{euclidean plane}, the \emph{sphere} and the \emph{hyperbolic plane}. 
+	Each pair of circles in a packing forms a \emph{tangent pair}, every three form a \emph{triple} and the empty space between each triple forms an $interstice$ \cite{stephenson05introduction}. 
+	A $flower$ is the next level of structure, which consists of a central circle and some number of $petal$ circles. 
+	The number of petals defines the $degree$ of the central circle. 
+	In the visualization tool used to create the circle packing figures we enforce the condition that every circle packing has to have a flower. 
+	Note that while not all circle packings are univalent, the ones discussed in this paper and created by the visualization tool will all be univalent. 
+	As a result of this property the angle sum, the sum of the angles around each vertex, will be $2\pi$.
 
-The primary objective of this paper is to explore the connections between equivalent representations of circle packings. These representations include Delaunay triangulations, liftings, stresses, and packings on the sphere. The secondary goal is to introduce the reader to the world of circle packings. To this end, basic Geometric principles will be introduced.
+	The primary objective of this paper is to explore the connections between equivalent representations of circle packings. 
+	These representations include Delaunay triangulations, liftings, stresses, and packings on the sphere. 
+	The secondary goal is to introduce the reader to the world of circle packings. To this end, basic Geometric principles will be introduced.
 
 \section{Introduction to Geometric Figures}
 \subsection{Graphs}
@@ -78,8 +91,8 @@ The primary objective of this paper is to explore the connections between equiva
 	
 	\theoremstyle{definition}
 	\begin{definition}{\textsc{Directed Graph}}
-  		A \emph{directed graph} is a graph in which each edge is replaced by a directed edge, which is an ordered pair of vertices.
-  	\end{definition}
+  		A \emph{directed graph} is a graph in which each edge is an ordered pair of vertices.
+	\end{definition}
 	
 	\theoremstyle{definition}
 	\begin{definition}{\textsc{Undirected Graph}}
@@ -173,6 +186,11 @@ The primary objective of this paper is to explore the connections between equiva
 	In other words, the graph can be drawn on the plane in such a way that its edges intersect only at their endpoints (no edges cross each other) \cite{mathworld:PlanarGraph}.
 	
 	\theoremstyle{definition}
+	\begin{definition}{\textsc{Planar Straight-Line Graph}}
+		A planar straight line graph is a graph that can be embedded in the plane where all the edges are straight lines. $PSLG = (V,E,F, \{\pi : V \rightarrow \R^2 \})$, where a face of a PSLG is a set of edges.
+	\end{definition}
+	
+	\theoremstyle{definition}
 	\begin{definition}{\textsc{Simplex}}
 		A \emph{simplex} is the generalization of a triangle to arbitrary dimensions.
 	\end{definition}
@@ -207,7 +225,7 @@ The primary objective of this paper is to explore the connections between equiva
 	
 	\theoremstyle{definition}
 	\begin{definition}{\textsc{Characteristic Polynomial}}
-		The \emph{characteristic polynomial is the polynomial left-hand side of the characteristic equation --- $\det(A - \lambda I) = 0$} \cite{mathworld:CharacteristicPoly}.
+		The \emph{characteristic polynomial} is the polynomial left-hand side of the characteristic equation --- $\det(A - \lambda I) = 0$ \cite{mathworld:CharacteristicPoly}.
 	\end{definition}
 	
 	\theoremstyle{definition}
@@ -244,7 +262,7 @@ The primary objective of this paper is to explore the connections between equiva
 	\theoremstyle{definition}
 	\begin{definition}{\textsc{Bijection}}
 		A map is called \emph{bijective} it is both a one-to-one and an onto map. 
-		This means that each value in the domain has only one corresponding value in the range and that there are no values in the range or domain that don't have a corresponding value \cite{mathworld:Bijection}. 
+		Essentially, it is one-to-one and invertible. \cite{mathworld:Bijection}. 
 	\end{definition}
 	
 	\theoremstyle{definition}
@@ -256,12 +274,12 @@ The primary objective of this paper is to explore the connections between equiva
 	\begin{definition}{\textsc{Centroid}}
 		A \emph{centroid} is the center of mass of a two-dimensional closed surface or three-dimensional solid \cite{mathworld:Centroid}.
 	\end{definition}
-	Now that we have defined general geometric and topological concepts, we may introduce the formal definition of a circle packing.
+	Now that we have defined general geometric, topological and matrix concepts, we may introduce the formal definition of a circle packing.
 
 \section{Circle Packings}
 	\theoremstyle{definition}
 	\begin{definition}{\textsc{Circle Packing}}
-		A collection $P = \{c_v\}$ of circles is said to be a circe packing for a graph $G$ if 
+		A collection $P = \{c_v\}$ of circles is said to be a circle packing for a graph $G$ if 
 		(1) $P$ has a circle $c_v$ for each vertex $v$ of $G$, 
 		(2) two circles $c_u$, $c_v$ are tangent whenever $(u,v)$ is an edge of $G$, and 
 		(3) three circles $c_u$, $c_v$, $c_w$ form a triple whenever $(u,v,w)$ forms a face in $G$ \cite{stephenson05introduction}.
@@ -292,10 +310,7 @@ The primary objective of this paper is to explore the connections between equiva
     		\label{fig:inout}%
 	\end{figure}
 
-\subsection{Delaunay Triangulations}\
-	Delaunay triangulations are intimately connected to circle packings. 
-	The vertices in a Delaunay triangulation are the centers of the circles in a packing while the edges indicate tangencies between the circles. 
-	Before we can explore this connection further, we must build up a formal definition.
+\subsection{Delaunay Triangulations}
 	
 	\theoremstyle{definition}
 	\begin{definition}{\textsc{Triangulation}}
@@ -303,7 +318,7 @@ The primary objective of this paper is to explore the connections between equiva
 		This means that each face is bounded by three edges --- each face is a triangle.
 	\end{definition}
 
-	There are many specific types of triangulations in mathematics, however, we will focus on Delaunay and Weighted Delaunay triangulations. 
+	There are many specific types of triangulations in mathematics, however, we will focus on Delaunay and Weighted Delaunay triangulations which are intimately connected to circle packings.
 	To explain Delaunay triangulations, some properties of triangles must first be defined. 
 	The \emph{circumcircle} of a triangle is the unique circle passing through its three vertices \cite{mathworld:Circumcenter}. 
 	The center of the circumcircle is called the \emph{circumcenter} and the radius is the \emph{circumradius}. 
@@ -314,6 +329,10 @@ The primary objective of this paper is to explore the connections between equiva
 		A \emph{Delaunay triangulation} for a set of points $P$ is the triangulation of those points such that no point in $P$ is inside the circumcircle of any other triangle \cite{meshGeneration}.
 	\end{definition}
 	
+	The vertices in a Delaunay triangulation are the centers of the circles in a packing while the edges indicate tangencies between the circles.
+	 In our visualization tool we show the Delaunay triangulation of the user's input. 
+	 This triangulation is computed using the edge flip algorithm.	
+	 
 \subsubsection{The Edge Flip Algorithm}
 	An edge $e$ in the triangulation $\tau$ is \emph{locally Delaunay}, if $e$ is an edge of fewer than two triangles, or if $e$ is an edge of exactly two triangles and it has an open circumcircle containing no vertex of either triangle. 
 	A triangulation is Delaunay if it is locally Delaunay for every edge \cite{meshGeneration}.
@@ -327,7 +346,7 @@ The primary objective of this paper is to explore the connections between equiva
   		\end{center}
   		\caption{Delaunay Triangulation in black.}
 	\end{wrapfigure}
-	As a result of this property, we can formulate an algorithm that creates a Delaunay triangulation. 
+	As a result of this property, we can formulate an algorithm (the edge flip algoirthm) that creates a Delaunay triangulation. 
 	If $S$ is the point set, this algorithm begins with any triangulation $\tau$ of $S$ and a list of edges in $\tau$. 
 	Remove an edge from the list, check if the edge is still in the triangulation and if so, if it is locally Delaunay. 
 	If the edge is present but not locally Delaunay, perform an edge flip and add the four surrounding edges to the list of edges to check. 
@@ -372,7 +391,7 @@ The primary objective of this paper is to explore the connections between equiva
 	\end{bmatrix}$ 
 	is the parabolic lifting of the points $a,b,c$.
 
-	An incremental Delaunay algorithm can now be constructed. 
+	We can develop an incremental algorithm for finding Delaunay triangulations using, in part, the edge flip algorithm.
 	Given a Delaunay triangulation and a point $p$ to add to the set of points $P$, a new Delaunay triangulation can be created containing point $p$ by first finding the triangle containing point $p$ and then splitting the triangle three ways. 
 	This is done by creating edges from point $p$ to each vertex of the triangle. 
 	Now that a we have a triangulation the edge flip algorithm is run to make it a Delaunay triangulation. 
@@ -397,14 +416,16 @@ The primary objective of this paper is to explore the connections between equiva
 
 	Each vertex of every cell in the Voronoi diagram is the center of a circle in the dual packing. 
 	Additionally, if there is an edge of the from one vertex to another, the circles encompassing those vertices must kiss. 
+	
+	Interestingly, if you take the edge in the Delaunay triangulation that is orthogonal to a corresponding edge in the Voronoi diagram, the length from the vertex to the Voronoi edge is the length of the radius of the circle centered at that vertex.
 
 \subsubsection{Weighted Delaunay Triangulations}
 	The weighted Delaunay triangulation is the dual to the so-called power diagram, a Voronoi diagram on the points where the (squared) distance to a circle $c$ with center $p$ and radius $r$ is defined to be $\pi_c(x)^2 := \|x-p\|^2 - r^2$.
-  	A circle packing representation of a graph realizes the graph as the weighted Delaunay triangulation where the vertices are the centers of the disks and the weights are the radii.
+  	A circle packing representation of a graph realizes the graph as the weighted Delaunay triangulation where the vertices are the centers of the disks, the edges are the tangencies, and the weights are the radii.
   
 \section{Embeddings, Liftings and Stress}
 	
-	From the Discrete Uniformization Theorem we have seen that every planar graph has a circle packing, however we will deal with 3-connected, triangulated graphs. 
+	From Koebe's theorem we know that every planar graph has a circle packing, however we will deal with 3-connected, triangulated graphs. 
 	These graphs in particular allow us to easily examine other equivalent representations of circle packings. 
 	In this section, we will explore the relationship between embeddings, liftings, stresses, and circle packings.
 
@@ -422,7 +443,7 @@ The primary objective of this paper is to explore the connections between equiva
 	In most cases, a stress cannot be assigned to the outer face after performing this algorithm, however, because our outer face is a triangle, we can assign the outer face negative stresses to balance out those on the interior and obtain the equilibrium stress. 
 	This notion will now be formalized.
 
-\subsection{Tutte's Theroem}
+\subsection{Tutte's Theorem}
 	\theoremstyle{definition}
 	\begin{definition}{\textsc{Tutte Embedding}}
 		A \emph{Tutte embedding} or barycentric embedding of a simple, 3-connected planar graph is a crossing-free straight-line embedding with the properties that the outer face is a convex polygon and that each interior vertex is at the average (or barycenter) of its neighbor's positions. 
@@ -516,13 +537,13 @@ The primary objective of this paper is to explore the connections between equiva
 		In other words, $\kappa(G) = \frac{1}{n} \lambda_1\lambda_2 \dots \lambda_{n-1}$ where $\lambda_1, \dots, \lambda_{n-1}$ are non-zero eigenvalues of the Laplacian matrix $L$ of $G$.
 	\end{theorem}
 	
-	To prove this theorem, we will introduce and prove the Matrix-Tree theorem for directed graphs and then show that it implies the version for undirected graphs.
+	To prove this theorem, we will introduce and prove the Matrix-Tree theorem for oriented graphs and then show that it implies the version for unoriented graphs.
 	This is the approach used by Lionel Levine in his lecture notes from Algebraic Combinatorics \cite{matrixTree}.
 	
-	Let $\Gamma = (V,E)$ be a directed graph.
+	Let $\Gamma = (V,E)$ be a oriented graph.
 	
 	\theoremstyle{definition}
-	\begin{definition}{Oriented spanning tree}
+	\begin{definition}{\textsc{Oriented spanning tree}}
 			An \emph{oriented spanning tree} of $\Gamma$ rooted at $r \in V$ is a spanning subgraph $T = (V,A)$ such that:
 			\begin{enumerate}
 				\item Every vertex $v \neq r$ has out degree 1.
@@ -532,7 +553,7 @@ The primary objective of this paper is to explore the connections between equiva
 	\end{definition}
 	
 	\theoremstyle{definition}
-	\begin{definition}{\textsc{Laplacian matrix of directed graph}}
+	\begin{definition}{\textsc{Laplacian matrix of an oriented graph}}
 			The Laplacian matrix $L$ of $\Gamma$ is equal to $D-A$ where $D = \text{diag } (d_1, \dots, d_n)$ where $d_i$ is the out degree of vertex $i$ and $A$ is the adjacency matrix of $\Gamma$.
 	\end{definition}
 	
@@ -547,13 +568,20 @@ The primary objective of this paper is to explore the connections between equiva
 		The number of subgraphs $H$ of $\Gamma$ is counted by $d_1d_2 \dots d_{n-1}$ such that each vertex $v \neq r$ has out degree 1. 
 		This yields: $H = T \cup C_1 \cup \dots \cup C_k$, where $T$ is an oriented tree rooted at $r$ and each $C_i$ is an oriented cycle. 
 		
-		If $\sigma$ is a permutation of the set $S_{n-1}$,
-		then $\det L_r = \sum_{\sigma \in S_{n-1}} \text{sgn} (\sigma)L_{1, \sigma(1)} \dots L_{n-1, \sigma(n-1)}$.
-		We then fix $(\sigma) = \{i | \sigma(i) = i\}$ and obtain 
-		$\det L_r = \sum_{\sigma \in S_{n-1}} \text{sgn}(\sigma) \prod_{i \in \text{fix}(\sigma)} d_i \prod_{i \not \in \text{fix}(\sigma)} L_{i, \sigma(i)}$.
-		However, $\prod_{i \not \in \text{fix}(\sigma)} L_{i, \sigma(i)}$ is only non-zero when $(i,\sigma(i)) \in E$ for all $i \not \in \text{fix}(\sigma)$.
-		In this case, $\prod_{i \not \in \text{fix}(\sigma)} L_{i, \sigma(i)} = (-1)^{n -1 - | \text{fix}(\sigma)|}$.
+		If $\sigma$ is a permutation of the set $S_{n-1}$, then 
+		\begin{center}
+			$\det L_r = \sum_{\sigma \in S_{n-1}} \text{sgn} (\sigma)L_{1, \sigma(1)} \dots L_{n-1, \sigma(n-1)}$.
+		\end{center}
 		
+		We then fix $(\sigma) = \{i | \sigma(i) = i\}$ and obtain 
+		\begin{center}
+			$\det L_r = \sum_{\sigma \in S_{n-1}} \text{sgn}(\sigma) \prod_{i \in \text{fix}(\sigma)} d_i \prod_{i \not \in \text{fix}(\sigma)} L_{i, \sigma(i)}$.
+		\end{center}
+		However, $\prod_{i \not \in \text{fix}(\sigma)} L_{i, \sigma(i)}$ is only non-zero when $(i,\sigma(i)) \in E$ for all $i \not \in \text{fix}(\sigma)$.
+		In this case, 
+			\begin{center}
+				$\prod_{i \not \in \text{fix}(\sigma)} L_{i, \sigma(i)} = (-1)^{n -1 - | \text{fix}(\sigma)|}$.
+			\end{center}
 		We wish to write $\det L_r = \sum_{\text{subgraphs } H \subset \Gamma} C_H$, where $C_H$ is 1 if $H$ is an oriented spanning tree and 0 otherwise.
 		Any permutation $\sigma$ consists of fixed points and cycles. A subgraph $H = T \cup C_1 \cup \dots \cup C_k$ arises from $\sigma$ if and only if the union of all cycles $C_i$ of $H$ contains all vertices not fixed by $H$, which, in turn is true if and only if $T \subseteq \text{fix}(\sigma)$.
 		
@@ -594,118 +622,104 @@ The primary objective of this paper is to explore the connections between equiva
 	
 	
 \subsection{Maxwell-Cremona Theorem}
-	Beginning with a graph, using Tutte's algorithm, we may assign the graph arbitrary psotive stresses and convert it into a convex planar embedding with an equilibrium stress on the interior. 
+	Beginning with a graph, using Tutte's algorithm, we may assign the graph arbitrary positive stresses and convert it into a convex planar embedding with an equilibrium stress on the interior. 
 	Next, because the outer face is a triangle, it is possible to assign negative weights to the three outer edges to obtain an equilibrium stress for the entire embedding. 
 	This yields a starting point for the Maxwell-Cremona Theorem.
 
- 	The Maxwell-Cremona Theorem, in plain english, states that there is a natural correspondence between equilibrium stresses of planar embedding and the liftings of that embedding.
+ 	The Maxwell-Cremona Theorem, in plain english, states that there is a natural correspondence between the equilibrium stress of a planar embedding and the lifting of that embedding.
  
  
- 	$Equilibrium$  $Stress \leftrightarrow Reciprocal$ $Diagrams \leftrightarrow Liftings$ \\
-	\\
-	More technically, the theorem reads:
-	\begin{theorem}{(Maxwell-Cremona Theorem)} 
-	Given a planar framework (an embedding) with an associated combinatorial spherical polyhedron $(V,F;E)$ the following are equivalent:
-		\begin{enumerate}
-			\item There is a equalibruim stress on the framework with all $\omega_e \neq 0$.
-			\item There is a reciprocal framework on the dual graph $(F;E)$.
-			\item There is a spatial polyhedron $((V,F;E);Q)$ with the framework as its vertical projection (and the reciprocal as its face diagram).
- 		\end{enumerate}
-	\end{theorem}
-
- 
-\subsubsection{Preliminaries}
+ 	\emph{Equilibrium Stress} $\leftrightarrow$ \emph{Dual Emersion} $\leftrightarrow$ \emph{Lifting}
+	
+	\subsubsection{Preliminaries}
 	Unlike our overview of Tutte's Theorem, we will prove the Maxwell-Cremona Theorem in full due to its importance in establishing the relationships between the embedding, lifting and stress. 
-	To prove the Maxwell-Cremona Theorem, some definitions must be established. 
+	To prove the Maxwell-Cremona Theorem, a few definitions and theorems must be established. 
 	\theoremstyle{definition}
 	\begin{definition}{\textsc{Edge Patch}}
 		An \emph{edge patch} is a different notation for describing an edge in an embedding. 
 		It is written $<h,i;j,k>$ where it connects vertices $h,i$ and separates the faces $j,k$ \cite{mccProof}.
 	\end{definition}
 	
-	\begin{wrapfigure}{r}{0.25\textwidth}
+		\begin{figure}[h]
   		\begin{center}
-  			\includegraphics[width=.23\textwidth]{edge_patch2}
+  			\includegraphics[width=.3\textwidth]{edge_patch2}
   		\end{center}
   		\caption{The edge patch $<h,i;j,k>$.}
-	\end{wrapfigure}
+	\end{figure}
 	
-  	\theoremstyle{definition}
-  	\begin{definition}{\textsc{Framework}}
-		A \emph{framework} in the plane is a finite graph $G=(V,E)$ and a mapping $p: V \rightarrow \R^2$ such that there are no self-loops, ie. $p(a) \neq p(b)$ if $(a,b) \in E$ \cite{mccProof}. 
-		Essentially, a framework is a graph and its embedding.The notation for frameworks is as follows: 
-		\begin{itemize}
-			\item The framework is written as $G(p)$
-			\item $p(a)$ is a point treated as a position vector. 
-			\item Joints are written as $p(i)$ or more commonly $p_i$.
-			\item Bars are written as $p_ip_j$ or $\{i,j\}$
-			\item Edges are written $ij$.
-		\end{itemize}
+	\theoremstyle{definition}
+	\begin{definition}{\textsc{Emersion}}
+		An \emph{emersion} is a relaxation of an embedding that allows crossings. (ie. An emersion is not planar.)
 	\end{definition}
 	
-	The forces exerted by a bar, an edge placed in the embedding, are a pair of equal but opposite forces along the bar: $\omega_{ij}(p_j - p_i)$ at $p_i$ and $\omega_{ij}(p_i - p_j)$ at $p_j$. 
+	We will also need the notion of a \emph{dual emersion}. However, in our notion of the dual emersion, we will place $\{\infty\}$ in the center of the emersion.
 	
+	\begin{theorem}{(Whitney's Theorem)}
+		If $G$ is a simple 3-connected, planar graph then the faces of the embedding $\pi(G)$ are uniquely defined independent of $\pi$.
+	\end{theorem}
+	
+	As a result of Whitney's theorem, we can assign combinatorial properties to the faces of a simple 3-connected, planar graph. 
+	This yields the following combinatorial structure:
 	\theoremstyle{definition}
 	\begin{definition}{\textsc{Combinatorial Oriented Polyhedron}}
 		A \emph{combinatorial oriented polyhedron} is a finite set of vertices, faces and edge patches such that \cite{mccProof}:
 		\begin{enumerate}
-			\item If $<h,i;j,k> \in E$ then $<i,h;k,j> \in E$ but $<h,i;k,j> \not\in E$ and $<h,i;j,k> \not\in E$. Essentially, there are two edge patches for each edge in the graph, notated as indicated.
-			\item For each vertex $a_0$ all edge patches with first entry $a_0$ form a cycle $<a_0,i_s;j_s,k_s>$ for $1\leq s \leq t$, $t\geq3$ with $k_s = j_s + 1$ and $j_t = k_1$ where all $k_s$ and $i_s$ are distinct. 
-			\item For each face $F^0$ all edge patches with last entry $F^0$ form a cycle $<h_s, i_s;j_s,F^0>$ for $1\leq s \leq t$ $t\geq3$ with $i_s = h_s + 1$ and $i_t = h_1$ where all $h_s$ and $j_s$ are distinct.
-			\item Each pair $a_0$, $a_1$ is joined by a vertex edge path. Each pair of faces is connected by a face-edge path. 
+			\item There are two edge patches per edge. I.e. if $<h,i;j,k> \in E$ then $<i,h;k,j> \in E$ but $<h,i;k,j> \not\in E$ and $<h,i;j,k> \not\in E$.
+			\item For each vertex $a_0$ all edge patches with first entry $a_0$ form a cycle. 
+			\item For each face $F^0$ all edge patches with last entry $F^0$ form a cycle.
+			\item Each pair $a_0$, $a_1$ is joined by a vertex edge path. Each pair of faces is connected by a face-edge path (the vertex edge path in the dual). 
 		\end{enumerate}
 	\end{definition}
-	
-	Lastly, three other definitions that will be references are as follows:
-	A \emph{cut} is a partition of the vertices of a graph into two disjoints subsets. 
-	\emph{Concentric circles} are circles which share a common center and an \emph{annulus} is the space between two concentric circles with different radii \cite{mathworld:ConcentricCircles}.
 
-\subsubsection{Spherical Combinatorial Polyhedron}
+	\theoremstyle{definition}
+	\begin{definition}{\textsc{Jordan Curve}}
+		A Jordan curve or a simple closed curve in the plane $\R^2$ is the image $C$ of an one-to-one continuous map of a circle into the plane, $\phi : \mathbb{S}^1 \rightarrow \R^2$. 
+	\end{definition}
+	
+	\begin{theorem}{(Jordan-Curve Theorem)}
+		Let $C$ be a Jordan curve in the plane $\R^2$. 
+		Then its complement, $\R^2 \setminus C$, consists of exactly two connected components. 
+		One of these components is bounded (the interior) and the other is unbounded (the exterior), and the curve $C$ is the boundary of each component.
+	\end{theorem}
+
+	Any closed path of faces and distinct edges in a 3-connected, planar straight line graph divides the graph into two components.
+	This path is a Jordan curve and therefore, by the Jordan-Curve theorem we know that both of the components will be connected. 
+	From the definition of connected, we know that each of the components must have at least one vertex.
+	Therefore, every closed path of faces and distinct edges will disconnect the vertices in this graph.
+	
+	We define this as a combinatorial object:
+	
 	\theoremstyle{definition}
 	\begin{definition}{\textsc{Spherical Combinatorial Polyhedron}}
 		A combinatorial polyhedron and its dual are spherical if every closed path of faces and distinct edges $<h_r,i_r;j_r,k_r>$ for $1 \leq r \leq t$ such that $j_{r+1} = k_r$ and $j_1 = k_t$ disconnects the vertices \cite{mccProof}.
 	\end{definition}
-	
-	\begin{theorem}
-		$G$ is a graph of a spherical combinatorial polyhedron if and only if it is vertex 2-connected and edge 3-connected \cite{mccProof}. 
-		In other words, the graph of a spherical polyhedron is planar.
-	\end{theorem}
-
-	\begin{proof}
-		Part A: First it must been shown that the graph of the combinatorial oriented polyhedron is vertex 2-connected and edge 3-connected. 
-		From property two above, the graph is already known to be connected. 
-		We prove this by contradiction.
-		First we assume the graph can be separated by removing an arbitrary vertex $v_0$. 
-		Next we select subgraph $C$ surrounded by an annulus in the sphere, reinserting $v_0$. 
-		We must insert wedges from $C$ to $v_0$, around $C$ this breaks the annulus into a single face contacting $v_0$ twice. 
-		This contradicts property 3 from above \cite{mccProof}.
-		To show the graph is edge 3-connected assume that removing 2 edges disconnects the graph. 
-		These two edges connect from $\{a,a^{'}\}$ and $\{b, b^{'}\}$ joining 2 components and cut out two faces $F^1$ and $F^2$. 
-		In the cycle around $F^1$, the face $F^2$ now occurs across two edges. 
-		This contradicts property 3 of the combinatorial oriented polyhedron \cite{mccProof}.
-
-		Part B:
-		Given any vertex 2-connected, edge 3-connected graph, form a corresponding combinatorial spherical polyhedron: arcs and vertices surround simple disks which become faces along with the outer face. 
-		After placing point $f^j$ in each face we add $<h,i;j,k>$ if and only if the circuit $p_h, f^i,p_i,f^k$ around an arc $d_{ij}$ is clockwise. 
-		This means that the patches around each vertex form a cycle, and since the graph is not a multi-graph the vertices are distinct. 
-		If a cycle around a vertex contained a face twice, then the graph could be disconnected by removing this vertex. 
-		This contradicts the vertex 2-connectivity. 
-		Additionally, the patches around a face form a cycle. 
-		Assume a vertex occurs twice in a cycle. 
-		Since there are no loops removing this vertex violates 2-connectivity. 
-		Assume an adjacent face in a cycle occurs twice, removing edges violates 3-connectivity \cite{mccProof}.
-	\end{proof}
+		
+	Lastly, three other definitions that will be references are as follows:
+	A \emph{cut} is a partition of the vertices of a graph into two disjoints subsets. 
+	\emph{Concentric circles} are circles which share a common center and an \emph{annulus} is the space between two concentric circles with different radii \cite{mathworld:ConcentricCircles}.
 	
 \subsection{Proof of Maxwell-Cremona Theorem}
+	We now have sufficient vocabulary to state the Maxwell-Cremona Theorem in its full technical definition.
+	
+	\begin{theorem}{(Maxwell-Cremona Theorem)} 
+	Given an embedding with an associated spherical combinatorial polyhedron $(V,F;E)$ the following are equivalent:
+		\begin{enumerate}
+			\item There is a equilibrium stress on the embedding with all $\omega_e \neq 0$.
+			\item There is a dual emersion on the dual graph $(F;E)$.
+			\item There is a spatial polyhedron $((V,F;E);Q)$ with the embedding as its vertical projection (and the dual emersion as its face diagram).
+ 		\end{enumerate}
+	\end{theorem}
+	
 	The following is a reproduction of the proof by Carpo and Whiteley \cite{mccProof}.
+	
 \subsubsection{Part 1: Stress and Reciprocal Diagram}
-	\theoremstyle{definition}
-	\begin{definition}{Reciprocal Framework}
-		A reciprocal framework, or dual embedding, $H* = ((F,E);P)$ on the dual combinatorial polyhedron is a framework such that for each edge patch $<h,i;j,k>$  the vector $v_e = p_i - p_h$ is perpendicular to the vector $v^e = p^k - p^j$ from the reciprocal. 
-	\end{definition}
+	%\theoremstyle{definition}
+	%\begin{definition}{Reciprocal Framework}
+		%A reciprocal framework, or dual embedding, $H* = ((F,E);P)$ on the dual combinatorial polyhedron is a framework such that for each edge patch $<h,i;j,k>$  the vector $v_e = p_i - p_h$ is perpendicular to the vector $v^e = p^k - p^j$ from the reciprocal. 
+	%\end{definition}
 	
 	\begin{theorem}
-		A plane framework on a planar vertex 2-connected, edge 3-connected graph, supports a self stress if and only if it has a reciprocal framework.
+		A planar vertex 2-connected, edge 3-connected, straight line graph supports an equalibruim stress if and only if it has a dual emersion.
 	\end{theorem}
 	
 	A note on notation: $90^o$ clockwise rotation will be written $u^\bot$ and $90^o$ counter-clockwise rotation will be written $-u^\bot$
@@ -713,12 +727,12 @@ The primary objective of this paper is to explore the connections between equiva
 	\begin{proof}
 		Starting with a planar drawing of a graph, form the associated spherical polyhedron.
 		
-		Part A: Assume the spherical polyhedron has a reciprocal framework.
+		Part A: Assume the spherical polyhedron has a dual emersion.
 		For each edge patch $<h,i;j,k>$ we will use the equation $\omega_{hi}(p_i - p_h) = -(P^k - P^j)^\bot$ or $\omega_ev_e = (V^e)^\bot$ to define scalars $\omega_{hi} = \omega_e$. 
-		None of the weights will equal zero because $P^j \neq P^k$ in a framework. 
-		From the facial polyhedrons of the reciprocal framework we get $\sum\omega_ev_e = 0 = \sum\omega_{hi}(p_i - p_h)$.
+		None of the weights will equal zero because $P^j \neq P^k$ in an emersion. 
+		From the facial polyhedrons of the dual emersion we get $\sum\omega_ev_e = 0 = \sum\omega_{hi}(p_i - p_h)$.
 
-		Part B: Assume we have a full self stress on the framework.
+		Part B: Assume we have an equalibruim stress on the embedding.
 		Pick a face $F^0$ and a point $P^0$ for the this face. 
 		Any other face is connected to this face by a simple face-edge path of edge patches $\{...e...\}$. 
 		We define point $P^1 = P^0 + \sum\omega_ev_e^\bot$. 
@@ -726,9 +740,9 @@ The primary objective of this paper is to explore the connections between equiva
 		Two such paths form a closed path on the spherical polyhedron and therefore the edges of the path form a cut set for the graph of the polyhedron. 
 		If we travel on one path and back on the other we see the sums on the two paths are equal, as required $\sum\omega_ev_e = \sum\omega_e^{'}v_e^{'} = 0$. 
 		For each edge $e = <i,h;j,k>$ the path from $P^j$ to $P^k$ is this single edge and the difference in position is $P^j - P^k = -\omega_ev_e^\bot$. 
-		Thus, we have a true reciprocal.
+		Thus, we have a true dual emersion.
 
-		Part B of this proof in layman's terms is that from the definition of a self stress, a simple cycle that sums around a vertex will equal zero. 
+		Part B of this proof in layman's terms is that from the definition of an equalibruim stress, a simple cycle that sums around a vertex will equal zero. 
 		As a result of this fact, you can divide the graph into cut sets that each have a self stress of zero. 
 		Adding these self stresses up, you obtain the final result of zero.
 	\end{proof}
@@ -736,20 +750,20 @@ The primary objective of this paper is to explore the connections between equiva
 	These results generalize to any combinatorial oriented polyhedron.
 	
 	\begin{corollary} 
-		Given a combinatorial oriented polyhedron $(V,F,E)$ and any framework $H = ((V,E);P)$ there is a full self stress on the framework satisfying $\sum \omega_ev_e = 0$ if and only if there is a reciprocal framework $H* = ((F,E);P)$. 
+		Given a combinatorial oriented polyhedron $(V,F,E)$ and any emersion $H = ((V,E);P)$ there is an equilibrium stress on the embedding satisfying $\sum \omega_ev_e = 0$ if and only if there is a dual emersion $H* = ((F,E);P)$. 
 	\end{corollary}
 
 	\begin{proof} 
-		Part A: Given a reciprocal there is a full self stress.
-		For any face-edge cycle $\omega_e v_e = (V^e)^{\bot}$ since the vectors $V^e$ form a closed polygon in the reciprocal $\sum_e(V^e)^\bot = 0$.
+		Part A: Given a dual emersion there is an equilibrium stress.
+		For any face-edge cycle $\omega_e v_e = (V^e)^{\bot}$ since the vectors $V^e$ form a closed polygon in the dual $\sum_e(V^e)^\bot = 0$.
 
-		Part B: Given a full self-stress $P^1 = P^0 + \sum_e \omega_ev_e^\bot = reciprocal$.
+		Part B: Given an equilibrium stress $P^1 = P^0 + \sum_e \omega_ev_e^\bot = \text{dual emersion}$.
 		Given any two paths between $F^0$ and $F^1$ we get the same value for $P^1$ since the sum up one path and back the other is a cycle and yields zero.
 	\end{proof}
 	
 	We have thus proven the first half of the Maxwell-Cremona Theorem.
 
-	\emph{stress} $\leftrightarrow$ \emph{reciprocal diagram}
+	\emph{stress} $\leftrightarrow$ \emph{dual emersion}
 
 \subsubsection{Part 2: Lifting and Reciprocal Diagrams}
 
@@ -757,12 +771,12 @@ The primary objective of this paper is to explore the connections between equiva
 	
 	\theoremstyle{definition}
 	\begin{definition}{\textsc{Vertex Diagram}}
-		The \emph{vertex diagram} of an oriented polyhedral surface $((V,F;E);Q)$ is the plane framework on the projection with the graph $(V,E)$ and points $p_i = (x_i,y_i,0)$ if $q_i = (x_i,y_i,z_i)$.
+		The \emph{vertex diagram} of an oriented polyhedral surface $((V,F;E);Q)$ is the embedding on the projection with the graph $(V,E)$ and points $p_i = (x_i,y_i,0)$ if $q_i = (x_i,y_i,z_i)$.
 	\end{definition}
 	
 	\theoremstyle{definition}
 	\begin{definition}{\textsc{Face Diagram}}
-		The \emph{face diagram} of an oriented polyhedral surface $((V,F;E);Q)$ is the framework with the graph $(F,E)$ and points $P^i = (A^i,B^i,0)$ for $F^i$ if $Q^i = (A^i,B^i,1,C^i)$. 
+		The \emph{face diagram} of an oriented polyhedral surface $((V,F;E);Q)$ is the emersion of the graph $(F,E)$ and points $P^i = (A^i,B^i,0)$ for $F^i$ if $Q^i = (A^i,B^i,1,C^i)$. 
 		The points in the face diagram are the intersections of the plane $z=0$ with the normals to the faces through the point $(0,0,-1)$. 
 		Equivalently, they are the negatives of the gradients of the face planes threaded as functions of $x$ and $y$.
 	\end{definition}
@@ -786,9 +800,9 @@ The primary objective of this paper is to explore the connections between equiva
 	\end{proof}
  
 	\begin{theorem}
-		Part A: For any polyhedral surface $((V,F;E);p)$ the vertex diagram and the face diagram are reciprocal frameworks.
+		Part A: For any polyhedral surface $((V,F;E);p)$ the vertex diagram and the face diagram are dual emersions.
 		
- 		Part B: The dependencies induced by this reciprocal pair satisfy 
+ 		Part B: The dependencies induced by this pair satisfy 
 		(1), the vector condition $\sum \omega_e v_e = 0$ and the moment condition $\sum \omega_e m_e = 0$ and 
 		(2), the dual conditions $\sum \omega^e V^e = 0$ and $\sum \omega^e M^e = 0$.
 	\end{theorem}
@@ -798,7 +812,7 @@ The primary objective of this paper is to explore the connections between equiva
 		For each face $F^i$ the vector $N^j = (A^j, B^j,1)$ is normal to the plane $Q^j$. 
 		For each edge $e = <h,i;j,k>:  (x_h-x_i,,y_h-y_i, z_h-z_i)=(q_h-q_i) = \omega^e N^j \times N^k = \omega^e(B^j-B^k,A^k-A^j,A^jB^k-A^kB^j)$. 
 		This shows that $-\omega^e(A^j-A^k,B^j-B^k)^\bot = (x_h - x_i, y_h-y_i)$ or $-\omega^e(V^e)^\bot = v_e$. 
-		The frameworks are reciprocal, with scalars $\omega^e$ for the self stress in the face diagram.
+		The emersions are dual, with scalars $\omega^e$ for the equilibrium stress in the face diagram.
  
  		Part B: 
 		Around any vertex-edge cycle of the polyhedron, $\sum(x_h - x_i, y_h-y_i, z_h-z_i) = 0$ and for any edge $(x_h-x_i,y_h-y_i) = -\omega^e(A^j-A^k,B^j-B^k)^\bot = -\omega^e(V^e)^\bot$. 
@@ -813,12 +827,12 @@ The primary objective of this paper is to explore the connections between equiva
 	As a face diagram it must satisfy $\sum \omega_e v_e = 0$ and $\sum \omega_em_e = 0$.
 
 	\begin{theorem} 
-		Given a reciprocal pair of plane frameworks $H=((V;E);p)$ and $H^* = ((F;E);P)$ on the oriented combinatorial polyhedron $(V,F;E)$ the following are equivalent: 
+		Given a dual pair of emersions $H=((V;E);p)$ and $H^* = ((F;E);P)$ on the oriented combinatorial polyhedron $(V,F;E)$ the following are equivalent: 
  		\begin{enumerate} 
- 			\item The reciprocal dependence in the original framework satisfies $\sum \omega_em_e = 0$ and second, there is a polyhedral surface 
+ 			\item The dual dependence in the original emersion satisfies $\sum \omega_em_e = 0$.
  			\item There is a polyhedral surface $((V,F;E);Q)$ with $H$ as its vertical projection and $H^*$ as its face diagram.
 			\item There is a polar polyhedral surface $((F,V;E);Q^*)$ with $H^*$ as its vertical projection and $H$ as its face diagram.
-			\item The dependence in the reciprocal framework satisfies the equation: $\sum \omega^eM^e = 0$
+			\item The dependence in the dual emersion satisfies the equation: $\sum \omega^eM^e = 0$
 		\end{enumerate}
 	\end{theorem}
 	
@@ -844,11 +858,11 @@ The primary objective of this paper is to explore the connections between equiva
 \subsubsection{Result}
 
 	\begin{theorem}{Maxwell-Cremona Theorem}
-		Given a planar framework with an associated combinatorial spherical polyhedron $(V,F;E)$ the following are equivalent:
+		Given an embedding with an associated combinatorial spherical polyhedron $(V,F;E)$ the following are equivalent:
 			\begin{enumerate}
-				\item There is a self stress on the framework with all $\omega_e \neq 0$.
-				\item There is a reciprocal framework on the dual graph $(F;E)$.
-				\item There is a spatial polyhedron $((V,F;E);Q)$ with the framework as its vertical projection (and the reciprocal as its face diagram).
+				\item There is an equilibrium stress on the embedding with all $\omega_e \neq 0$.
+				\item There is a dual emersion on the dual graph $(F;E)$.
+				\item There is a spatial polyhedron $((V,F;E);Q)$ with the embedding as its vertical projection (and the dual emersion as its face diagram).
  			\end{enumerate}
  	\end{theorem}
 	
@@ -860,7 +874,7 @@ The primary objective of this paper is to explore the connections between equiva
 	Once this has been proven, we can perform our operations on the dual and obtain Steinitz's result. 
 	This is left for the reader to explore.
  
- 	In total this means that every Circle packing can be represented by a Delaunay Triangulation (embedding with an equilibrium stress), which has multiple equivalent representations including, a convex 3-dimensional polytope (lifting) and a reciprocal diagram (dual embedding or Voronoi Diagram). 
+ 	In total this means that every Circle packing can be represented by a Delaunay Triangulation (embedding with an equilibrium stress), which has multiple equivalent representations including, a convex 3-dimensional polytope (lifting) and a dual embedding or Voronoi Diagram. 
 
 	This also yields intuition for a Circle packing algorithm which, though has not been proven to always work, seems to work very well on small problem instances. 
 	This force-directed algorithm computes the embedding of the graph using Tutte's algorithm to iteratively modify the force of each edge by changing the distance between the two points while updating the radii of each circle iteratively. 
@@ -868,7 +882,7 @@ The primary objective of this paper is to explore the connections between equiva
 	While the embedding is not a valid Circle Packing, for every edge, reposition the two vertices it connects, provided they are interior vertices, based on the stress of the edge. 
 	Then, for every edge, calculate the length of the edge and determine if the radii of the two circles add up to that distance. 
 	If not, increase the stress and the radii, otherwise, decrease the stress and the radii. 
-	This algorithm can be observed working in our application.
+	This algorithm can be observed working in our visualization tool.
  
 \section{Stereographic Mappings}
 
@@ -879,7 +893,7 @@ The primary objective of this paper is to explore the connections between equiva
 	In this section, we will cover circle packings on the sphere and the insights this representation yields.
 
 \subsection{Riemann Sphere}
-	The euclidean plane which has been operated on thus far can be represented mathematically by: $\R^2 = \C = \{z = x + iy : x, y \in \R \}$. 
+	The euclidean plane which has been operated on thus far can be represented mathematically by: $\C = \{z = x + iy : x, y \in \R \}$. 
 	In contrast, the Riemann sphere, also known as the unit sphere or the complex projective line is modeled as such: $\mathbb{P} = \{(x,y,z):x^2 + y^2 + z^2 = 1\} \subset \R^3$. 
 	This sphere can be thought of as the wrapping of the complex plane around a ball, with the addition of one point at infinity. 
 	The plane is found to be a subset of the sphere via stereographic projection, which is a mapping that projects a sphere onto the plane. 
@@ -890,9 +904,9 @@ The primary objective of this paper is to explore the connections between equiva
 	Then using similarity of triangles and recalling that $x^2 + y^2 + z^2 = 1$ the following relationships can be obtained: $u = \frac{x}{1 + z}$, $v = \frac{y}{1+ z}$. $z = \frac{1 = (u^2 + v^2}{1 + (u^2 + v^2)}$, $x = u(1+z)$, and $y =v(1+z)$.
 
 	Circle packings can be mapped onto this sphere via stereographic projection to obtain an essentially unique circle packing. 
-	This is a result of the \textbf{Koebe-Andreev-Thurston Theorem} which says the following \cite{stephenson05introduction}:
+	This is a result of the Koebe-Andreev-Thurston Theorem which says the following \cite{stephenson05introduction}:
 
-	\begin{theorem}
+	\begin{theorem}{(Koebe-Andreev-Thurston Theorem)}
 		Let $K$ be a combinatorial sphere. 
 		Then there exists an essentially unique univalent circle packing $P_K$ for $K$ on the Riemann sphere $\mathbb{P}$.
 	\end{theorem}
@@ -914,16 +928,15 @@ The primary objective of this paper is to explore the connections between equiva
 	
  	\theoremstyle{definition}
 	\begin{definition}{\textsc{M\"{o}bius Transformation}}
-		Formally, a M\"{o}bius Transformation is a rational function defined on the extended complex plane $\CP = \C\cup\{\infty\}$ of the form:
+		Formally, a M\"{o}bius Transformation is a rational function defined on the Riemann sphere of the form:
   		\begin{equation} 
   			f(z) = \frac{az+b}{cz+d}
   		\end{equation}
-  	where $z\in\CP$ is a complex variable and $a,b,c,d\in\CP$ are complex numbers such that $ad - bc$ $\neq$ $0$ \cite{stephenson05introduction}. 
+  	where $z\in\C$ is a complex variable and $a,b,c,d\in\C$ are complex numbers such that $ad - bc$ $\neq$ $0$ \cite{stephenson05introduction}. 
 	\end{definition}
 	
 	These transformations are invertible and, if performed on circle packings, transform circle packings to equivalent circle packings without any information loss. 
 	Therefore, circle packings in the plane are unique up to M\"{o}bius Transformations. 
-	In our application, M\"{o}bius Transformations can be performed from both the spherical and planar view by moving the mouse to rotate the sphere or transform the plane.
    
     \begin{figure}[h]%
 		\centering
@@ -947,7 +960,7 @@ The primary objective of this paper is to explore the connections between equiva
 
 	Circle Packings have many equivalent representations that can be exploited to develop new algorithms to both make better packings and obtain them more quickly. 
 	These representations include Delaunay Triangulations, Voronoi Diagrams, Parabolic Liftings, Koebe Polyhedrons, and Packings on the Riemann Sphere. 
-	Through examining one of these representations, the Delaunay Triangulation, and its properties as observed by Tutte and Maxwell, a new algorithm for computing Circle Packings based on equilibrium forces was developed. 
+	Through examining one of these representations, the Delaunay Triangulation a new algorithm for computing Circle Packings based on equilibrium forces was developed. 
 	In the future, a combination of these representations could be used to develop a new non-linear optimization algorithm based on optimizing different aspects of each equivalent representation.
 
 \bibliographystyle{plain}
