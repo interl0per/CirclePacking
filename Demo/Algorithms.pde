@@ -1,7 +1,8 @@
 final float KCORRECTION = 0.01;
 final float RCORRECTION = 0.005;
 
-void stress_update(EnrichedEmbedding ebd) {
+void stress_update(EnrichedEmbedding ebd) 
+{
   ebd.cEmbedding_stress();
 }
 
@@ -22,4 +23,14 @@ void radii_update(EnrichedEmbedding t)
     }
     t.cEmbedding_radii();
   }
+}
+
+void test(EnrichedEmbedding t)
+{
+  for(int i= 0; i < 100; i++)
+  {
+    t.cEmbedding_stress_f();
+  }
+        curr.cStress_radii();
+
 }

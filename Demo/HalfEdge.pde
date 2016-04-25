@@ -75,6 +75,9 @@ class Edge {
     v1 = h1.v;
     v2 = h2.v;
   }
+  public Edge()
+  {
+  }
 }
 
 class JStack<T> {

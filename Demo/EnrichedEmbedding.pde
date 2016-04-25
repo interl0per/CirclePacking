@@ -56,7 +56,7 @@ class EnrichedEmbedding {
   }
   void drawOrthocircles() {
     HashMap<HalfEdge, Boolean> ae = new HashMap<HalfEdge, Boolean>();
-    G.dual = new Complex();
+    //G.dual = new Complex();
 
     for (Edge e : G.edges) {
       HalfEdge tc[] = {e.h1, e.h2};
@@ -126,29 +126,79 @@ class EnrichedEmbedding {
       v.drawVertex();
     }
   }
-  void drawDualRadii() {
-    for (Vertex v : G.dual.verts) {
-      v.drawVertex();
+
+void fancyDraw(boolean koebe)
+  {
+    strokeWeight(2);
+    stroke(0);
+
+    for(Vertex v : G.verts)
+    {
+      fill(176, 196, 222);
+      if(koebe)
+      {
+        drawCircumcircle3D(v.ap, v.bp, v.cp);
+      }
+      else
+      {
+        if(G.verts.size() > 2 && ccInside(G.verts.get(0), v) && ccInside(G.verts.get(1), v))
+        {
+          fill(176, 196, 222, 90);
+        }
+        drawCircumcircle2D(v.a, v.b, v.c);
+      }
     }
-    for (Vertex v : G.dual.outerVerts) {
-      v.drawVertex();
+    
+    for(Vertex v : G.outerVerts)
+    {
+      fill(176, 196, 222);
+      if(koebe)
+      {
+        drawCircumcircle3D(v.ap, v.bp, v.cp);
+      }
+      else
+      {
+        if(G.verts.size() > 2 && ccInside(G.verts.get(0), v) && ccInside(G.verts.get(1), v))
+        {
+          fill(176, 196, 222, 90);
+        }
+        drawCircumcircle2D(v.a, v.b, v.c);
+      }
     }
-  }
-  void drawKoebe() {
   }
   //////////////////////
   //Data transformations
   //////////////////////
-  void cDual_primal() {
+  void cDual_primal() 
+  {
     //construct new dual embedding
   }
-  void cPrimal_dual() {
+  void cPrimal_dual() 
+  {
     //construct new primal embedding
   }
-
+  void cEmbedding_stress_f() {
+      for (int i =0; i < 100; i++) {
+        for (Edge e : G.edges) {//use leapfrog integration maybe?
+          double vx = (e.v1.x - e.v2.x)*e.stress/100000;
+          double vy = (e.v1.y - e.v2.y)*e.stress/100000;
+  
+          if (e.v2.internal) {
+            e.v2.x+=vx;
+            e.v2.y+=vy;
+          }
+  
+          if (e.v1.internal) {
+            e.v1.x-=vx;
+            e.v1.y-=vy;
+          }
+        }
+      }
+  }
+  
   void cEmbedding_stress() {
     for (int i =0; i < 100; i++) {
-      for (Edge e : G.edges) {
+      for (Edge e : G.edges) {//use leapfrog integration maybe?
         double vx = (e.v1.x - e.v2.x)*e.stress/100000;
         double vy = (e.v1.y - e.v2.y)*e.stress/100000;
 
@@ -161,22 +211,21 @@ class EnrichedEmbedding {
           e.v1.x-=vx;
           e.v1.y-=vy;
         }
-      }
-      for (Edge e : G.edges) {
-        float target = sqrt((((e.v1.x-e.v2.x)*(e.v1.x-e.v2.x) + (e.v1.y-e.v2.y)*(e.v1.y-e.v2.y))));
+      
+      float target = sqrt((((e.v1.x-e.v2.x)*(e.v1.x-e.v2.x) + (e.v1.y-e.v2.y)*(e.v1.y-e.v2.y))));
 
-        if (e.v1.r + e.v2.r < target) {
-          //increase the stress on this edge
-          e.stress += KCORRECTION;
-          e.h1.v.r += KCORRECTION*10; 
-          e.h2.v.r += KCORRECTION*10;
-        } else {
-          if (e.stress > 0) {
-            //decrease stress
-            e.stress -= KCORRECTION;
-          }
-          e.h1.v.r -= KCORRECTION*10; 
-          e.h2.v.r -= KCORRECTION*10;
+          if (e.v1.r + e.v2.r < target) {
+            //increase the stress on this edge
+            e.stress += KCORRECTION;
+            e.h1.v.r += KCORRECTION*10; 
+            e.h2.v.r += KCORRECTION*10;
+          } else {
+            if (e.stress > 0) {
+              //decrease stress
+              e.stress -= KCORRECTION;
+            }
+            e.h1.v.r -= KCORRECTION*10; 
+            e.h2.v.r -= KCORRECTION*10;
         }
       }
     }
@@ -184,23 +233,16 @@ class EnrichedEmbedding {
 
   void cStress_embedding() 
   {
-    //maxwell
     for (Edge e : G.edges) {
-      Vertex grad1 = grad(e.h1);
-      Vertex grad2 = grad(e.h2);
-
-      e.stress = grad1.add(grad2.negate()).magnitude()/distv(e.h1.v, e.h2.v);
-
-      if (e.h1.v.internal || e.h2.v.internal) {
-       // println(e.stress);
-      }
+      
     }
   }
 
   void cStress_radii() {
-    //calculate stress from dual+primal radii, assuming packing
+    G.dual = new Complex(G);
     for (Edge e : G.edges) {
       e.stress = (e.dual.v1.r + e.dual.v2.r) / (e.v1.r + e.v2.r);
+      println(e.stress);
     }
   }
 
@@ -264,14 +306,17 @@ class EnrichedEmbedding {
     }
   }
 
-  void cDualRadii_embedding() { 
+  void cDualRadii_embedding() 
+  { 
     //Calculate dual radii as incircles of faces of embedding ....
     for (Vertex v : G.dual.verts) {}
   }
   void cDualRadii_radii() {
     //Calculate dual radii as orthocircles of radii in embedding.
   }
-  void cRadii_dualRadii() {
+  void cRadii_dualRadii() 
+  {
+  
   }
 
 
