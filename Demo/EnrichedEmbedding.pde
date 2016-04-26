@@ -127,11 +127,10 @@ class EnrichedEmbedding {
     }
   }
 
-void fancyDraw(boolean koebe)
+  void fancyDraw(boolean koebe)
   {
     strokeWeight(2);
     stroke(0);
-
     for(Vertex v : G.verts)
     {
       fill(176, 196, 222);
@@ -141,6 +140,7 @@ void fancyDraw(boolean koebe)
       }
       else
       {
+        v.a = stereoProjI(v.ap); v.b = stereoProjI(v.bp); v.c = stereoProjI(v.cp);
         if(G.verts.size() > 2 && ccInside(G.verts.get(0), v) && ccInside(G.verts.get(1), v))
         {
           fill(176, 196, 222, 90);
@@ -158,6 +158,7 @@ void fancyDraw(boolean koebe)
       }
       else
       {
+        v.a = stereoProjI(v.ap); v.b = stereoProjI(v.bp); v.c = stereoProjI(v.cp);
         if(G.verts.size() > 2 && ccInside(G.verts.get(0), v) && ccInside(G.verts.get(1), v))
         {
           fill(176, 196, 222, 90);

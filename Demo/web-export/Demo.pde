@@ -1,161 +1,278 @@
-import java.util.Random;
-
 final int NUM_OUTER_VERTS = 3;
 final int INF = 1<<30;
 final float orthoSphereR = 200.0;
-float sx, sy;
-boolean drawing = false;
-boolean drawOrtho = false;
-boolean rotating = false;
-boolean drawKoebe = false;
-boolean mode2 = false;
 
-EnrichedEmbedding test; 
+float sx, sy, dyc, dxc;
+boolean drawing, rotating, drawKoebe, showHelp = true, first = true;
+int mode;
 
-void setup() {
-  size(1024, 768, P3D);
+EnrichedEmbedding curr, temp; 
+
+void setup() 
+{
+  size(1433, 900, P3D);
   background(255);
-  fill(0, 0);
-  test = new EnrichedEmbedding(NUM_OUTER_VERTS);
-  textFont(createFont("Arial",32));
+  
+  curr = new EnrichedEmbedding(NUM_OUTER_VERTS);
+  temp = new EnrichedEmbedding(NUM_OUTER_VERTS);
+  
+  drawing = false;
+  rotating = false;
+  drawKoebe = false;
+  mode = 0;
+  dyc = dxc = 0;
+  
+  textFont(createFont("Arial",15));
 }
 
-void draw() {
+void draw() 
+{
   background(255);
-  
   translate(width/2, height/2, 0);  
-  
-  fill(100);
   noStroke();
-  rect(-500,-height/2, 1000, 50);
 
-  if (!rotating) {
-    test.drawPSLG();
-    test.drawRadii();
-  }
-
-  if (keyPressed) {
-    if (keyCode==LEFT) {
-      radii_update(test);
-    } else if (keyCode==RIGHT) {
-      stress_update(test);
+  if (!rotating) 
+  {
+    if(mode==1)
+    {
+      curr.G.drawDual();
+    }
+    else
+    {
+      curr.G.sctr();
+      curr.drawPSLG();
+      curr.drawRadii();
     }
   }
 
-  if (keyPressed && key=='r') {
-    Random rand = new Random();
-    test.addVertex(rand.nextInt(width)-width/2, rand.nextInt(height)-height/2, rand.nextInt(70));
-  }
-  if (drawing) {
-    float dx = mouseX - sx, dy = mouseY - sy, r = sqrt(dx*dx + dy*dy);
+  if (keyPressed) 
+  {
+    if (keyCode==LEFT) 
+    {
+      radii_update(curr);
+    } 
+    else if (keyCode==RIGHT) 
+    {
+      stress_update(curr);
+    }
+    //else if(key == 'j')
+    //      curr.fancyDraw(drawKoebe);
 
-    noStroke();
-    fill(185, 205, 240);
+    //else if(key == 'k')
+    //{
+    //  curr.G.dual = new Complex(curr.G);
+    //  curr.cStress_radii();
+    //}
+    if(keyCode == RIGHT || keyCode == LEFT)
+    {
+       curr.G.updateStereo();
+       for(Vertex v : curr.G.verts)
+       {
+        v.ap.rotate('x', dxc);
+        v.ap.rotate('y', dyc);
+        v.bp.rotate('x', dxc);
+        v.bp.rotate('y', dyc);
+        v.cp.rotate('x', dxc);
+        v.cp.rotate('y', dyc);
+       }
+       for(Vertex v : curr.G.outerVerts)
+       {
+        v.ap.rotate('x', dxc);
+        v.ap.rotate('y', dyc);
+        v.bp.rotate('x', dxc);
+        v.bp.rotate('y', dyc);
+        v.cp.rotate('x', dxc);
+        v.cp.rotate('y', dyc);
+       }
+    }
+  }
+
+  if (drawing) 
+  {
+    float dx = mouseX - sx, dy = mouseY - sy, r = sqrt(dx*dx + dy*dy);
+    fill(176, 196, 250);
     ellipse(sx-width/2, sy-height/2, 2*r, 2*r);
   }
 
-  if (!rotating && drawOrtho) {
-    test.drawOrthocircles();
-  }
-  if (rotating && test.isPacking())
+  if (rotating)
   {
-    float dyt = sx - mouseX, dxt = sy - mouseY;
-
-    HashMap<HalfEdge, Boolean> done = new HashMap<HalfEdge, Boolean>();
-
-    for (int i= 0; i < test.G.edges.size(); i++) {
-      if (done.containsKey(test.G.edges.get(i).h1)) {
-        continue;
-      }
-      done.put(test.G.edges.get(i).h1, true);
-
-      Vertex v = test.G.edges.get(i).h1.ixnp;
-
-      v.rotate('x', -dxt/70);
-      v.rotate('x', -dxt/70);
-      v.rotate('y', dyt/70);
-      v.rotate('y', dyt/70);
-
-      test.G.edges.get(i).h1.ixnp = v;
+    float dyt = (sx - mouseX)/70, dxt = -(sy - mouseY)/70;
+    if(first)
+    {//necessary to fix some very, very strange bug with processing that leads to circumcircles not being drawn
+      dyt += 0.001;
+      dxt += 0.001;
     }
-    test.G.down();
-    test.G.fancyDraw(drawKoebe);
+    dyc += dyt;
+    dxc += dxt;
+
+    for(Vertex vv : curr.G.verts)
+    {
+    vv.ap.rotate('x', dxt);
+    vv.ap.rotate('y', dyt);
+    vv.bp.rotate('x', dxt);
+    vv.bp.rotate('y', dyt);
+    vv.cp.rotate('x', dxt);
+    vv.cp.rotate('y', dyt);
+    }
+    for(Vertex vv : curr.G.outerVerts)
+    {
+    vv.ap.rotate('x', dxt);
+    vv.ap.rotate('y', dyt);
+    vv.bp.rotate('x', dxt);
+    vv.bp.rotate('y', dyt);
+    vv.cp.rotate('x', dxt);
+    vv.cp.rotate('y', dyt);
+    }
+    
+    curr.fancyDraw(drawKoebe);
 
     sx = mouseX; 
     sy = mouseY;
+    first = false;
   }
-      fill(100);
+  
+  String status = "";
+  fill(0);
 
-    rect(-500,-height/2, 1000, 50);
+  switch(mode)
+  {
+    case 0:  status = "Primal graph (editable)"; 
+             break;
+
+    case 1:  status = "Dual graph (editable)";  
+             break;
+
+    case 2:  status = "Mobius transformations (view only)";  
+             break;
+
+    case 3:  status = "Koebe polyhedron (view only)";
+             break;
+             
+    default: status = "error";
+             break;
+  }
+  
+  text("Mode: " + status, -width/2, -height/2 + 20);
+
+  if(showHelp)
+  {
+   stroke(100);
+   fill(230,200,200);
+   translate(0,0,250);
+   rect(-200,-200, 500, 300);
+
+   fill(0);
+   text("Instructions", -200, -210);
+   text(" -Add weighted points to the triangulation by clicking \n and dragging left mouse. \n "+
+       " -Press left arrow to run the radii-update algorithm, or \n right arrow to run the spring algorithm. \n "
+       + " -Press space to change modes. \n "
+       + " -Press , to save the current embedding, and . to load \n a saved embedding. \n "
+       + " -To restart, press c. \n" 
+       + "-Press h to toggle this menu.", -180, -170);
+   translate(0,0,-250);
+  }
   fill(230);
-
-  if(test.G.verts.size()==0)
-  {
-    text("Click and drag to add weighted points to the triangulation", -450, -height/2+30);
-  }
-  else if(!test.isPacking())
-  {
-    text("When finished, press 'LEFT' to run the radii update algorithm or 'RIGHT' to run the force directed algorithm", -450, -height/2+30);
-  }
-  else
-  {
-    text("Click and drag right mouse to view mobius transformations. Press K to toggle koebe view, and 'C' to restart.", -450, -height/2+30);
-  }
 }
 
-void mousePressed() {
-  if (mouseButton == LEFT) {
+void mousePressed() 
+{
+  if (mouseButton == LEFT && !rotating) 
+  {
     sx = mouseX; 
     sy = mouseY;
     drawing = true;
-  } else if (mouseButton == RIGHT && test.isPacking()) {
-    test.G.computeIxn();
-    sx = mouseX; 
-    sy = mouseY;
-    rotating = true;
-    mode2 = true;
   }
 }
 
-void mouseReleased() {
-  if (mouseButton == LEFT) {
+void mouseReleased() 
+{
+  if (mouseButton == LEFT && !rotating) 
+  {
     float dx = mouseX - sx, dy = mouseY - sy;
-    test.addVertex(sx-width/2, sy-height/2, sqrt(dx*dx + dy*dy));
+    curr.addVertex(sx-width/2, sy-height/2, sqrt(dx*dx + dy*dy));
     drawing = false;
-  } else if (mouseButton == RIGHT) {
-    rotating = false;
-  }
+  } 
 }
 
-void keyPressed() {
-  if (key == 'c') {
-    mode2 = false;
-    setup();
-  } else if (key=='d') {
-    drawOrtho = !drawOrtho;
+void keyPressed() 
+{
+  if(key == 'h')
+  {
+    showHelp = !showHelp;
   }
-  else if (key == 'k') {
-    drawKoebe = !drawKoebe;
+  else if (key == 'c') 
+  {
+    setup();
+  }
+  else if(key ==  ',' && mode <= 1)
+  {
+    temp = new EnrichedEmbedding(curr);
+  }
+  else if(key == '.' && mode <= 1)
+  {
+    curr = new EnrichedEmbedding(temp);
+  }
+  
+  else if(key == ' ')
+  {
+    mode = (mode+1)%4;
+    if(mode == 2)
+    {
+      sx = mouseX; 
+      sy = mouseY;
+      curr.G.updateStereo();
+      rotating = true;
+      first = true;
+    }
+    else if(mode==3)
+    {
+      sx = mouseX; 
+      sy = mouseY;
+      curr.G.updateStereo();
+      rotating = true;
+      drawKoebe = true;
+    }
+    else
+    {
+      rotating = false;
+      drawKoebe = false;
+    }
   }
 }
-final float KCORRECTION = 0.01;
+final float KCORRECTION = 0.005;
 final float RCORRECTION = 0.005;
 
-void stress_update(EnrichedEmbedding ebd) {
+void stress_update(EnrichedEmbedding ebd) 
+{
   ebd.cEmbedding_stress();
 }
 
-void radii_update(EnrichedEmbedding t) {
-  for (int i =0; i <  100; i++) {
-    for (Vertex v : t.G.verts) {
-      if (v.angleSum() > 2*PI) {
+void radii_update(EnrichedEmbedding t) 
+{
+  for (int i =0; i <  100; i++) 
+  {
+    for (Vertex v : t.G.verts) 
+    {
+      if (v.angleSum() > 2*PI) 
+      {
         v.r += RCORRECTION;
-      } else {
+      }
+      else 
+      {
         v.r -= RCORRECTION;
       }
     }
     t.cEmbedding_radii();
   }
+}
+
+void test(EnrichedEmbedding t)
+{
+  for(int i= 0; i < 100; i++)
+  {
+    t.cEmbedding_stress_f();
+  }
+  curr.cStress_radii();
 }
 class Complex
 {
@@ -165,57 +282,204 @@ class Complex
 
   Complex dual;
 
-  public Complex() {
-  }
+  public Complex(Complex d) {
+    dual = d;
+    
+    HashMap<HalfEdge, Boolean> visited = new HashMap<HalfEdge, Boolean>();
+    JQueue<HalfEdge> q = new JQueue<HalfEdge>();
+    q.add(dual.outerVerts.get(0).h);
 
-  public Complex(int n) {
+    while (!q.isEmpty()) {
+      HalfEdge he = q.remove();
+
+      if (he == null || visited.containsKey(he)) {
+        continue;
+      }
+      visited.put(he, true);
+      //////////////////////////////
+      //draw orthocircle of internal triangles
+      //calculate the incenter and incircle radius.
+      //assuming we're given a packing, it's a dual packing.
+
+      Vertex p1 = new Vertex(he.v.x, he.v.y, 0, 0);
+      Vertex p2 = new Vertex(he.next.v.x, he.next.v.y, 0, 0);
+      Vertex p3 = new Vertex(he.prev.v.x, he.prev.v.y, 0, 0);
+      
+      float p1p2 = p1.add(p2.negate()).magnitude();
+      float p1p3 = p1.add(p3.negate()).magnitude();
+      float p2p3 = p2.add(p3.negate()).magnitude();
+      
+      float perimeter = p1p2 + p1p3 + p2p3;
+      
+      he.ocx = (p1.x*p2p3 + p2.x*p1p3 + p3.x*p1p2)/perimeter;
+      he.ocy = (p1.y*p2p3 + p2.y*p1p3 + p3.y*p1p2)/perimeter;
+      
+      float s = perimeter/2;
+      he.ocr = sqrt(s*(s-p1p2)*(s-p1p3)*(s-p2p3))/s;
+
+      //update radii
+
+      fill(176, 196, 222);
+      stroke(0);
+      
+      //verts.add(new Vertex(he.ocx, he.ocy, he.ocr));
+      q.add(he.next);
+      q.add(he.twin);
+    }
+    
+    for(Edge e : d.edges)
+    {
+      e.dual = new Edge();
+      e.dual.v1 = new Vertex(e.h1.ocx, e.h1.ocy, 0, e.h1.ocr);
+      e.dual.v2 = new Vertex(e.h2.ocx, e.h2.ocy, 0, e.h2.ocr);
+    }
+  }
+  
+  public Complex(int n) 
+  {
     //create outer face (a regular n-gon)
     Vertex center = new Vertex(0, 0, 0, 1000, this);
+    center.special = true;
     float step = 2*PI/n;
     //place the verticies on the outer face
 
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++) 
+    {
       Vertex bv = new Vertex(-100, -100, 0, 800, this);
       bv.internal = false;
       placeVertex(bv, i*step, center);
       outerVerts.add(bv);
     }
 
-    for (int i =1; i < n+1; i++) {
+    for (int i =1; i < n+1; i++) 
+    {
       outerVerts.get(i%n).attach(outerVerts.get(i-1));
     }
+    
+    dual = new Complex(this);
   }
+  
+  void sctr()
+  {//center complex in window
+    float minx = 99999, miny = 999999;
+    int itx = 0, ity = 0;
+    for(int i =0;i < outerVerts.size(); i++)
+    {
+      if(outerVerts.get(i).x < minx)
+      {
+        minx = outerVerts.get(i).x;
+        itx = i;
+      }
+      if(outerVerts.get(i).y < miny)
+      {
+        miny = outerVerts.get(i).y;
+        ity = i;
+      }
+    }
 
-  void placeVertex(Vertex targ, float theta, Vertex ref) {
+    float diffx = -width/2 -outerVerts.get(itx).r/4 - outerVerts.get(itx).x;
+    float diffy = -height/2 - outerVerts.get(ity).y;
+    
+    for(Vertex v : outerVerts)
+    {
+     v.x += diffx;
+    //v.y += diffy;
+    }
+    for(Vertex v : verts)
+    {
+     v.x += diffx;  
+     //v.y += diffy;
+    }
+  }
+  
+  void drawDual()//this should be obsolete soon!
+  {
+    HashMap<HalfEdge, Boolean> visited = new HashMap<HalfEdge, Boolean>();
+    JQueue<HalfEdge> q = new JQueue<HalfEdge>();
+    q.add(outerVerts.get(0).h);
+
+    while (!q.isEmpty()) {
+      HalfEdge he = q.remove();
+
+      if (he == null || visited.containsKey(he)) {
+        continue;
+      }
+      visited.put(he, true);
+      //////////////////////////////
+      //draw orthocircle of internal triangles
+      //calculate the incenter and incircle radius.
+      //assuming we're given a packing, it's a dual packing.
+
+      Vertex p1 = new Vertex(he.v.x, he.v.y, 0, 0);
+      Vertex p2 = new Vertex(he.next.v.x, he.next.v.y, 0, 0);
+      Vertex p3 = new Vertex(he.prev.v.x, he.prev.v.y, 0, 0);
+      
+      float p1p2 = p1.add(p2.negate()).magnitude();
+      float p1p3 = p1.add(p3.negate()).magnitude();
+      float p2p3 = p2.add(p3.negate()).magnitude();
+      
+      float perimeter = p1p2 + p1p3 + p2p3;
+      
+      he.ocx = (p1.x*p2p3 + p2.x*p1p3 + p3.x*p1p2)/perimeter;
+      he.ocy = (p1.y*p2p3 + p2.y*p1p3 + p3.y*p1p2)/perimeter;
+      
+      float s = perimeter/2;
+      he.ocr = sqrt(s*(s-p1p2)*(s-p1p3)*(s-p2p3))/s;
+
+      //update radii
+
+      fill(176, 196, 222);
+      stroke(0);
+      
+      if(he.v.internal || he.next.v.internal || he.prev.v.internal)
+        ellipse(he.ocx, he.ocy, 2*he.ocr, 2*he.ocr);
+
+      q.add(he.next);
+      q.add(he.twin);
+      
+      
+    }
+    for(Edge e : edges)
+    {
+      if(e.v1.internal || e.v2.internal)
+        line(e.h1.ocx, e.h1.ocy, e.h2.ocx, e.h2.ocy);
+    }
+  }
+  void placeVertex(Vertex targ, float theta, Vertex ref) 
+  {
     targ.x = (ref.r + targ.r)*cos(theta) + ref.x;
     targ.y = (ref.r + targ.r)*sin(theta) + ref.y;
-    //targ.placed = true;
   }
 
-  void drawComplex() {
-   // pushStyle();
-    stroke(100, 100, 100, 50);
-    for (Edge e : edges) {
+  void drawComplex() 
+  {
+    stroke(50);
+    strokeWeight(1.5);
+    for (Edge e : edges) 
+    {
       line(e.v1.x, e.v1.y, e.v2.x, e.v2.y);
     }
-  //  popStyle();
   }  
 
-  void triangulate(HalfEdge h, Vertex v) {
+  void triangulate(HalfEdge h, Vertex v) 
+  {
     int sides = 1;
     HalfEdge temp = h.next;
-    while (temp!=h) {
+    while (temp!=h) 
+    {
       sides++;
       temp = temp.next;
     }
 
-    for (int i = 0; i < sides; i++) {
+    for (int i = 0; i < sides; i++) 
+    {
       v.attach(h.v);
       h = h.next;
     }
   }
 
-  boolean addVertex(Vertex v) {
+  boolean addVertex(Vertex v) 
+  {
     //add a vertex to the complex (delaunay triangulation)
     if (v.r < EPSILON)  
       v.r = 10;
@@ -273,8 +537,10 @@ class Complex
         }
       }
       verts.add(v);
-      for (int i = 0; i < verts.size(); i++) {
-        if (verts.get(i).isIsolated()) {
+      for (int i = 0; i < verts.size(); i++) 
+      {
+        if (verts.get(i).isIsolated()) 
+        {
           verts.remove(i);
           i--;
         }
@@ -283,116 +549,54 @@ class Complex
     }
   }
 
-  void checkEdges(Edge[] checkEdge, HashMap<Edge, Boolean> inStack, JStack<Edge> edgesToCheck) { //delaunay Complex helper
-    for (Edge e : checkEdge) {
-      if (inStack.get(e) == null || !inStack.get(e)) {
+  void checkEdges(Edge[] checkEdge, HashMap<Edge, Boolean> inStack, JStack<Edge> edgesToCheck) 
+  { //delaunay Complex helper
+    for (Edge e : checkEdge) 
+    {
+      if (inStack.get(e) == null || !inStack.get(e)) 
+      {
         edgesToCheck.push(e);
         inStack.put(e, true);
       }
     }
   }
-
-  void computeIxn() {
-    HashMap<HalfEdge, Boolean> visited = new HashMap<HalfEdge, Boolean>();
-    JQueue<HalfEdge> q = new JQueue<HalfEdge>();
-    q.add(outerVerts.get(0).h);
-
-    while (!q.isEmpty()) {
-      HalfEdge he = q.remove();
-
-      if (he == null || visited.containsKey(he)) {
-        continue;
-      }
-      visited.put(he, true);
-      //////////////////////////////
-      //draw orthocircle of internal triangles
-      //calculate the incenter and incircle radius.
-      //assuming we're given a packing, it's a dual packing.
-
-      Vertex p1 = new Vertex(he.v.x, he.v.y, 0, 0);
-      Vertex p2 = new Vertex(he.next.v.x, he.next.v.y, 0, 0);
-      Vertex p3 = new Vertex(he.prev.v.x, he.prev.v.y, 0, 0);
-      float p1p2 = p1.add(p2.negate()).magnitude();
-      float p1p3 = p1.add(p3.negate()).magnitude();
-      float p2p3 = p2.add(p3.negate()).magnitude();
-      float perimeter = p1p2 + p1p3 + p2p3;
-      he.ocx = (p1.x*p2p3 + p2.x*p1p3 + p3.x*p1p2)/perimeter;
-      he.ocy = (p1.y*p2p3 + p2.y*p1p3 + p3.y*p1p2)/perimeter;
-      float s = perimeter/2;
-      he.ocr = sqrt(s*(s-p1p2)*(s-p1p3)*(s-p2p3))/s;
-
-      //update radii
-      float x1 = he.ocx, y1 = he.ocy;
-      float x2 = he.twin.ocx, y2 = he.twin.ocy;
-
-      float x3 = he.v.x, y3 = he.v.y;
-      float x4 = he.next.v.x, y4 = he.next.v.y;
-
-      float m1 = (y1-y2)/(x1-x2);
-      float m2 = (y3-y4)/(x3-x4);
-      float b1 = y1-m1*x1;
-      float b2 = y3-m2*x3;
-
-      float ix = (b2 - b1)/(m1 - m2);
-      float iy = (b2*m1 - b1*m2)/(m1 - m2);
-
-      he.ixn = new Vertex(ix, iy, 0, 0);
-      he.ixnp = stereoProj(he.ixn);
-      he.twin.ixnp = he.ixnp;
-
-      q.add(he.next);
-      q.add(he.twin);
+  
+  void updateStereo()
+  {
+    for(Vertex v : verts)
+    {
+     v.a = new Vertex(v.x + v.r, v.y, 0); 
+     v.b = new Vertex(v.x - v.r, v.y, 0); 
+     v.c = new Vertex(v.x, v.y + v.r, 0);
+     v.ap = stereoProj(v.a);
+     v.bp = stereoProj(v.b);
+     v.cp = stereoProj(v.c);
+    }
+    for(Vertex v : outerVerts)
+    {
+     v.a = new Vertex(v.x + v.r, v.y, 0);
+     v.b = new Vertex(v.x - v.r, v.y, 0);
+     v.c = new Vertex(v.x, v.y + v.r, 0);
+     v.ap = stereoProj(v.a);
+     v.bp = stereoProj(v.b);
+     v.cp = stereoProj(v.c);
     }
   }
-  void down() {
-    HashMap<HalfEdge, Boolean> visited = new HashMap<HalfEdge, Boolean>();
-    JQueue<HalfEdge> q = new JQueue<HalfEdge>();
-    q.add(outerVerts.get(0).h);
-
-    while (!q.isEmpty()) {
-      HalfEdge he = q.remove();
-      if (visited.containsKey(he))  continue;
-      visited.put(he, true);
-
-      he.ixn = stereoProjI(he.ixnp);
-      q.add(he.next);
-      q.add(he.twin);
+  
+  void upateFromStereo()
+  {
+    for(Vertex v : verts)
+    {
+      v.a = stereoProjI(v.ap);
+      v.b = stereoProjI(v.bp);
+      v.c = stereoProjI(v.cp);
+  //    println(v.a.x, v.a.y, v.b.x, v.b.y, v.c.x, v.c.y);
     }
-  }
-  void fancyDraw(boolean d3) {//this should not be here...
-     //d3: draw polyhedra
-    HashMap<HalfEdge, Boolean> visited = new HashMap<HalfEdge, Boolean>();
-    JQueue<HalfEdge> q = new JQueue<HalfEdge>();
-    q.add(outerVerts.get(0).h);
-
-    while (!q.isEmpty()) {
-      HalfEdge he = q.remove();
-
-      if (he == null || visited.containsKey(he)) {
-        continue;
-      }
-      visited.put(he, true);
-
-      if (d3) {
-        Vertex a2 = new Vertex(he.ixnp.x, he.ixnp.y, he.ixnp.z, 0), 
-          b2 = new Vertex(he.next.ixnp.x, he.next.ixnp.y, he.next.ixnp.z, 0), 
-          c2 = new Vertex(he.next.next.ixnp.x, he.next.next.ixnp.y, he.next.next.ixnp.z, 0);
-
-     //   pushStyle();
-        strokeWeight(2);
-        stroke(0);
-        drawCircumcircle3D(a2, b2, c2);
-      //  popStyle();
-      } else {
-    //    pushStyle();
-        strokeWeight(2);
-        stroke(0);
-        drawCircumcircle2D(he.ixn, he.next.ixn, he.next.twin.next.ixn);
-     //   popStyle();
-      }
-
-      q.add(he.next);
-      q.add(he.twin);
+    for(Vertex v : outerVerts)
+    {
+      v.a = stereoProjI(v.ap);
+      v.b = stereoProjI(v.bp);
+      v.c = stereoProjI(v.cp);
     }
   }
 }
@@ -402,7 +606,22 @@ class EnrichedEmbedding {
   public EnrichedEmbedding(int n) {
     G = new Complex(n);
   }
-
+  public EnrichedEmbedding(EnrichedEmbedding s)
+  {
+    G = new Complex(3);
+    for(Vertex v : s.G.verts)
+    {
+      addVertex(v.x, v.y, v.r);
+    }
+    
+    for(int i= 0; i < 3; i++)
+    {
+      G.outerVerts.get(i).x = s.G.outerVerts.get(i).x;
+      G.outerVerts.get(i).y = s.G.outerVerts.get(i).y;
+      G.outerVerts.get(i).r = s.G.outerVerts.get(i).r;
+    }
+  }
+  
   void drawCircumcircles() {
     HashMap<HalfEdge, Boolean> ae = new HashMap<HalfEdge, Boolean>();
 
@@ -429,11 +648,9 @@ class EnrichedEmbedding {
 
         float ocr = sqrt(s*(s-v1v2)*(s-v1v3)*(s-v2v3))/s;
 
-      //  pushStyle();
         noStroke();
         fill(0, 0, 0, 60);
         ellipse(ocx, ocy, 2*ocr, 2*ocr);
-      //  popStyle();
 
         ae.put(he, true);
       }
@@ -441,7 +658,7 @@ class EnrichedEmbedding {
   }
   void drawOrthocircles() {
     HashMap<HalfEdge, Boolean> ae = new HashMap<HalfEdge, Boolean>();
-    G.dual = new Complex();
+    //G.dual = new Complex();
 
     for (Edge e : G.edges) {
       HalfEdge tc[] = {e.h1, e.h2};
@@ -479,25 +696,19 @@ class EnrichedEmbedding {
         float cy = det3/(2*det1);
         float r = sqrt(cx*cx + cy*cy + det4/det1);
 
-      //  pushStyle();
-        //noStroke();
-        //fill(0,100, 0);
         noFill();
         stroke  (255, 160, 122);
         strokeWeight(2);
         ellipse(cx, cy, 2*r, 2*r);
-      //  popStyle();
 
         dualTwins[i] = new Vertex(cx, cy, 0, r);
       }
       //fix this up so it just calculates the whole dual
-    //  pushStyle();
       stroke  (100, 100, 100);
 
       if (dualTwins[1]!=null) {
         line(dualTwins[0].x, dualTwins[0].y, dualTwins[1].x, dualTwins[1].y);
       }
-    //  popStyle();
     }
   }
   /////////////////
@@ -517,29 +728,80 @@ class EnrichedEmbedding {
       v.drawVertex();
     }
   }
-  void drawDualRadii() {
-    for (Vertex v : G.dual.verts) {
-      v.drawVertex();
+
+void fancyDraw(boolean koebe)
+  {
+    strokeWeight(2);
+    stroke(0);
+    for(Vertex v : G.verts)
+    {
+      fill(176, 196, 222);
+      if(koebe)
+      {
+        drawCircumcircle3D(v.ap, v.bp, v.cp);
+      }
+      else
+      {
+        if(G.verts.size() > 2 && ccInside(G.verts.get(0), v) && ccInside(G.verts.get(1), v))
+        {
+          fill(176, 196, 222, 90);
+        }
+        Vertex a = stereoProjI(v.ap), b = stereoProjI(v.bp), c = stereoProjI(v.cp);
+        drawCircumcircle3D(a, b, c);
+      }
     }
-    for (Vertex v : G.dual.outerVerts) {
-      v.drawVertex();
+    
+    for(Vertex v : G.outerVerts)
+    {
+      fill(176, 196, 222);
+      if(koebe)
+      {
+        drawCircumcircle3D(v.ap, v.bp, v.cp);
+      }
+      else
+      {
+        if(G.verts.size() > 2 && ccInside(G.verts.get(0), v) && ccInside(G.verts.get(1), v))
+        {
+          fill(176, 196, 222, 90);
+        }
+        Vertex a = stereoProjI(v.ap), b = stereoProjI(v.bp), c = stereoProjI(v.cp);
+        drawCircumcircle3D(a, b, c);
+      }
     }
-  }
-  void drawKoebe() {
   }
   //////////////////////
   //Data transformations
   //////////////////////
-  void cDual_primal() {
+  void cDual_primal() 
+  {
     //construct new dual embedding
   }
-  void cPrimal_dual() {
+  void cPrimal_dual() 
+  {
     //construct new primal embedding
   }
-
+  void cEmbedding_stress_f() {
+      for (int i =0; i < 100; i++) {
+        for (Edge e : G.edges) {//use leapfrog integration maybe?
+          double vx = (e.v1.x - e.v2.x)*e.stress/100000;
+          double vy = (e.v1.y - e.v2.y)*e.stress/100000;
+  
+          if (e.v2.internal) {
+            e.v2.x+=vx;
+            e.v2.y+=vy;
+          }
+  
+          if (e.v1.internal) {
+            e.v1.x-=vx;
+            e.v1.y-=vy;
+          }
+        }
+      }
+  }
+  
   void cEmbedding_stress() {
     for (int i =0; i < 100; i++) {
-      for (Edge e : G.edges) {
+      for (Edge e : G.edges) {//use leapfrog integration maybe?
         double vx = (e.v1.x - e.v2.x)*e.stress/100000;
         double vy = (e.v1.y - e.v2.y)*e.stress/100000;
 
@@ -552,47 +814,38 @@ class EnrichedEmbedding {
           e.v1.x-=vx;
           e.v1.y-=vy;
         }
-      }
-      for (Edge e : G.edges) {
-        float target = sqrt((((e.v1.x-e.v2.x)*(e.v1.x-e.v2.x) + (e.v1.y-e.v2.y)*(e.v1.y-e.v2.y))));
+      
+      float target = sqrt((((e.v1.x-e.v2.x)*(e.v1.x-e.v2.x) + (e.v1.y-e.v2.y)*(e.v1.y-e.v2.y))));
 
-        if (e.v1.r + e.v2.r < target) {
-          //increase the stress on this edge
-          e.stress += KCORRECTION;
-          e.h1.v.r += KCORRECTION*10; 
-          e.h2.v.r += KCORRECTION*10;
-        } else {
-          if (e.stress > 0) {
-            //decrease stress
-            e.stress -= KCORRECTION;
-          }
-          e.h1.v.r -= KCORRECTION*10; 
-          e.h2.v.r -= KCORRECTION*10;
+          if (e.v1.r + e.v2.r < target) {
+            //increase the stress on this edge
+            e.stress += KCORRECTION;
+            e.h1.v.r += KCORRECTION*10; 
+            e.h2.v.r += KCORRECTION*10;
+          } else {
+            if (e.stress > 0) {
+              //decrease stress
+              e.stress -= KCORRECTION;
+            }
+            e.h1.v.r -= KCORRECTION*10; 
+            e.h2.v.r -= KCORRECTION*10;
         }
       }
     }
   }
 
-  void cStress_embedding() {
-    //maxwell
+  void cStress_embedding() 
+  {
     for (Edge e : G.edges) {
-      Vertex grad1 = grad(e.h1);
-      Vertex grad2 = grad(e.h2);
-
-      e.stress = grad1.add(grad2.negate()).magnitude()/distv(e.h1.v, e.h2.v);
-
-      if (e.h1.v.internal || e.h2.v.internal) {
-        println(e.stress);
-      }
+      
     }
-    println();
-    println();
   }
 
   void cStress_radii() {
-    //calculate stress from dual+primal radii, assuming packing
+    G.dual = new Complex(G);
     for (Edge e : G.edges) {
       e.stress = (e.dual.v1.r + e.dual.v2.r) / (e.v1.r + e.v2.r);
+      println(e.stress);
     }
   }
 
@@ -600,9 +853,7 @@ class EnrichedEmbedding {
     if (G.verts.size()==0) {
       return;
     }
-    //layout algorithm, gives correct embedding given good radii
-    G.verts.get(0).x = 0;
-    G.verts.get(0).y = 0;
+    //gives packing given good radii
     HashMap placed = new HashMap();
     HashMap processed = new HashMap();
 
@@ -658,14 +909,17 @@ class EnrichedEmbedding {
     }
   }
 
-  void cDualRadii_embedding() { 
-    //Calculate dual radii as incircles of faces of embedding
+  void cDualRadii_embedding() 
+  { 
+    //Calculate dual radii as incircles of faces of embedding ....
     for (Vertex v : G.dual.verts) {}
   }
   void cDualRadii_radii() {
     //Calculate dual radii as orthocircles of radii in embedding.
   }
-  void cRadii_dualRadii() {
+  void cRadii_dualRadii() 
+  {
+  
   }
 
 
@@ -752,6 +1006,22 @@ class HalfEdge {
   }
 }
 
+class Edge {
+  HalfEdge h1, h2;
+  Vertex v1, v2;
+  float stress = 1;
+  Edge dual;
+  public Edge(HalfEdge _h1, HalfEdge _h2) {  
+    h1 = _h1; 
+    h2 = _h2;
+    v1 = h1.v;
+    v2 = h2.v;
+  }
+  public Edge()
+  {
+  }
+}
+
 class JStack<T> {
   ArrayList<T> container = new ArrayList<T>();
   void push(T e) {
@@ -777,32 +1047,22 @@ class JQueue<T> {
     return(container.size()==0);
   }
 }
-
-class Edge {
-  HalfEdge h1, h2;
-  Vertex v1, v2;
-  float stress = 1;
-  Edge dual;
-  public Edge(HalfEdge _h1, HalfEdge _h2) {  
-    h1 = _h1; 
-    h2 = _h2;
-    v1 = h1.v;
-    v2 = h2.v;
-  }
-}
 boolean turn(Vertex p, Vertex q, Vertex r) {
   //returns true if no turn/right turn is formed by p q r
   return((q.x - p.x)*(r.y - p.y) - (r.x - p.x)*(q.y - p.y)>=0);
 }
 
-boolean inFace(HalfEdge h, Vertex d) {
+boolean inFace(HalfEdge h, Vertex d) 
+{
   //is d in the face defined by h?
   HalfEdge start = h;
   HalfEdge temp = h.next;
   boolean first = true;
-  while (first || h!=start) {
+  while (first || h!=start) 
+  {
     first = false;
-    if (turn(h.v, temp.v, d)) {
+    if (turn(h.v, temp.v, d)) 
+    {
       return false;
     }
     h = h.next;
@@ -839,12 +1099,36 @@ void drawCircumcircle2D(Vertex a, Vertex b, Vertex c) {
   ellipse(x, y, 2*r, 2*r);
 }
 
+boolean ccInside(Vertex a0, Vertex b0)
+{//is 1's circumcircle contained in 2's? 
+  Vertex a = a0.a, b = a0.b, c = a0.c;
+  
+  float mr = (b.y-a.y) / (b.x-a.x);
+  float mt = (c.y-b.y) / (c.x-b.x);
+  float x = (mr*mt*(c.y-a.y) + mr*(b.x+c.x) - mt*(a.x+b.x)) / (2*(mr-mt));
+  float y = (a.y+b.y)/2 - (x - (a.x+b.x)/2) / mr;
+  
+  a = b0.a;
+  b = b0.b;
+  c = b0.c;
+    
+  float mr2 = (b.y-a.y) / (b.x-a.x);
+  float mt2 = (c.y-b.y) / (c.x-b.x);
+  float x2 = (mr2*mt2*(c.y-a.y) + mr2*(b.x+c.x) - mt2*(a.x+b.x)) / (2*(mr2-mt2));
+  float y2 = (a.y+b.y)/2 - (x2 - (a.x+b.x)/2) / mr2;
+  float r2 = sqrt(((b.x-x2)*(b.x-x2) +  (b.y-y2)*(b.y-y2)));
+  
+  if(sqrt((x-x2)*(x-x2) + (y-y2)*(y-y2)) < r2)
+    return true;
+    
+  return false;
+}
+
 void drawCircumcircle3D(Vertex a, Vertex b, Vertex c) { 
   Vertex ct = c;
   a = a.add(c.negate());
   b = b.add(c.negate());
   c = new Vertex(0, 0, 0, 0);
-  //b.drw();
 
   float rx, ry, rz;
   ry = atan2(a.z, a.x);
@@ -877,7 +1161,7 @@ Vertex stereoProj(Vertex init) {
   return new Vertex(orthoSphereR*2*x/denom, orthoSphereR*2*y/denom, orthoSphereR*(x*x + y*y -1)/denom, 0);
 }
 
-Vertex stereoProjI(Vertex init) {
+Vertex stereoProjI(Vertex init) {//inverse
   return new Vertex(init.x*orthoSphereR/(orthoSphereR-init.z), init.y*orthoSphereR/(orthoSphereR-init.z), 0, 0);
 }
 
@@ -890,24 +1174,27 @@ Vertex grad(HalfEdge f) {
 
   Vertex pq = q.add(p.negate());
   Vertex pr = r.add(p.negate());
-  Vertex ansT = pq.cross(pr);
+  //Vertex ansT = pq.cross(pr);
   return pq.cross(pr);
 }
 
-float distv(Vertex p, Vertex q) {
+float distv(Vertex p, Vertex q) 
+{
   float dx = p.x - q.x;
   float dy = p.y - q.y;
   float dz = p.z - q.z;
-
   return sqrt(dx*dx + dy*dy + dz*dz);
 }
 class Vertex {
   color shade = 200;
   float x, y, z, r;
   boolean internal = true, f = false;
+  boolean special = false;
   HalfEdge h;
   Complex parent;//Complex this vertex belongs to 
-
+  Vertex a,b,c;//points on boundary
+  Vertex ap, bp, cp;
+  
   public Vertex(float _x, float _y, float _z, float _w, Complex _p) {
     x = _x; 
     y = _y; 
@@ -972,13 +1259,8 @@ class Vertex {
     }
   }
   void drawVertex() {
-    //   pushStyle();
-
-   // noStroke();
     fill(176, 196, 222);
     ellipse(x, y, 2*r, 2*r);
-
-    //   popStyle();
   }
 
   float getZ() {

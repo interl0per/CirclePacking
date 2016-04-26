@@ -1,0 +1,35 @@
+\begin{thebibliography}{1}
+
+\bibitem{bobenko03variational}
+Alexander~I. Bobenko and Boris~A. Springborn.
+\newblock Variational principles for circle patterns and koebe's theorem.
+\newblock {\em Transactions of the American Mathematical Society},
+  356(2):659--689, 2003.
+
+\bibitem{colindeverdiere91principe}
+Yves~Colin de~Verdi{\`e}re.
+\newblock Un principe variationnel pour les empilements de cercles.
+\newblock {\em Inventiones mathematicae}, 104(1):655--669, 1991.
+
+\bibitem{kelner06spectral}
+Jonathan~A. Kelner.
+\newblock Spectral partitioning, eigenvalue bounds, and circle packings for
+  graphs of bounded genus.
+\newblock {\em {SIAM} J. Comput.}, 35(4):882--902, 2006.
+
+\bibitem{miller97separators}
+Gary~L. Miller, Shang-Hua Teng, William Thurston, and Stephen~A. Vavasis.
+\newblock Separators for sphere-packings and nearest neighbor graphs.
+\newblock {\em J. {ACM}}, 44(1):1--29, 1997.
+
+\bibitem{mohar93polynomial}
+Bojan Mohar.
+\newblock A polynomial time circle packing algorithm.
+\newblock {\em Discrete Mathematics}, 117(1--3):257--263, 1993.
+
+\bibitem{stephenson05introduction}
+Kenneth Stephenson.
+\newblock {\em Introduction to Circle Packing}.
+\newblock Cambridge University Press, New York, New York, 2005.
+
+\end{thebibliography}

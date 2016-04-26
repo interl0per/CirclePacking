@@ -298,8 +298,8 @@ class Complex
     }
     for(Vertex v : outerVerts)
     {
-     v.a = new Vertex(v.x + v.r, v.y, 0); 
-     v.b = new Vertex(v.x - v.r, v.y, 0); 
+     v.a = new Vertex(v.x + v.r, v.y, 0);
+     v.b = new Vertex(v.x - v.r, v.y, 0);
      v.c = new Vertex(v.x, v.y + v.r, 0);
      v.ap = stereoProj(v.a);
      v.bp = stereoProj(v.b);
@@ -314,6 +314,7 @@ class Complex
       v.a = stereoProjI(v.ap);
       v.b = stereoProjI(v.bp);
       v.c = stereoProjI(v.cp);
+  //    println(v.a.x, v.a.y, v.b.x, v.b.y, v.c.x, v.c.y);
     }
     for(Vertex v : outerVerts)
     {
