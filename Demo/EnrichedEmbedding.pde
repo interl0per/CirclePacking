@@ -7,16 +7,15 @@ class EnrichedEmbedding {
   public EnrichedEmbedding(EnrichedEmbedding s)
   {
     G = new Complex(3);
-    for(Vertex v : s.G.verts)
-    {
-      addVertex(v.x, v.y, v.r);
-    }
-    
-    for(int i= 0; i < 3; i++)
+        for(int i= 0; i < NUM_OUTER_VERTS; i++)
     {
       G.outerVerts.get(i).x = s.G.outerVerts.get(i).x;
       G.outerVerts.get(i).y = s.G.outerVerts.get(i).y;
       G.outerVerts.get(i).r = s.G.outerVerts.get(i).r;
+    }
+    for(Vertex v : s.G.verts)
+    {
+      addVertex(v.x, v.y, v.r);
     }
   }
   

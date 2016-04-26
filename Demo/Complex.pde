@@ -3,7 +3,8 @@ class Complex
   public ArrayList<Vertex> verts = new ArrayList<Vertex>();//internal verticies
   public ArrayList<Vertex> outerVerts = new ArrayList<Vertex>();
   public ArrayList<Edge> edges = new ArrayList<Edge>();
-
+  public ArrayList<Vertex> history = new ArrayList<Vertex>();//history of added points
+  
   Complex dual;
 
   public Complex(Complex d) {
@@ -204,6 +205,7 @@ class Complex
 
   boolean addVertex(Vertex v) 
   {
+    history.add(new Vertex(v.x, v.y, 0, v.r));
     //add a vertex to the complex (delaunay triangulation)
     if (v.r < EPSILON)  
       v.r = 10;
@@ -269,6 +271,7 @@ class Complex
           i--;
         }
       }
+      
       return true;
     }
   }
