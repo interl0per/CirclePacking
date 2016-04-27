@@ -3,7 +3,7 @@ final int INF = 1<<30;
 final float orthoSphereR = 200.0;
 
 float sx, sy, dyc, dxc;
-boolean drawing, rotating, drawKoebe, showHelp = true, first = true;
+boolean drawing, rotating, drawKoebe, showHelp = true, first = true, helpNotClosed = true;
 int mode;
 
 EnrichedEmbedding curr, temp; 
@@ -192,7 +192,11 @@ void mouseReleased()
     float dx = mouseX - sx, dy = mouseY - sy;
     curr.addVertex(sx-width/2, sy-height/2, sqrt(dx*dx + dy*dy));
     drawing = false;
-  } 
+  }
+  if(showHelp && helpNotClosed)
+  {
+    showHelp = false;
+  }
 }
 
 void keyPressed() 
@@ -200,6 +204,7 @@ void keyPressed()
   if(key == 'h')
   {
     showHelp = !showHelp;
+    helpNotClosed = false;
   }
   else if (key == 'c') 
   {
