@@ -50,7 +50,7 @@
 
 \begin{abstract}
   We explore equivalent representations of circle packings and the relationships between them connecting them to theorems by Maxwell and Tutte.  
-  The source code for tool used to create the circle packing figures can be found at: https://github.com/interl0per/CirclePacking
+  The source code for tool used to create the circle packing figures can be found at: \\ https://github.com/interl0per/CirclePacking
 \end{abstract}
 
 \section{Introduction}
@@ -85,7 +85,7 @@
 \subsection{Graphs}
 	\theoremstyle{definition}
 	\begin{definition}{\textsc{Graph}}
-		A \emph{graph} is an ordered pair $G=(V,E)$ which represents a set of objects or \emph{vetices} $v$ and the links between them, or \emph{edges} $E$. 
+		A \emph{graph} is an ordered pair $G=(V,E)$ which represents a set of objects or \emph{vertices} $v$ and the links between them, or \emph{edges} $E$. 
 		Edges in a graph can be directed or undirected, however, we will focus on undirected edges in our application. 
 	\end{definition}
 	
@@ -140,12 +140,6 @@
 	\end{definition}
 	
 	A simple graph may either be connected or disconnected.
-  
-  	\theoremstyle{definition}
-	\begin{definition}{\textsc{Dual Graph}}
-		The \emph{dual graph} $G'$ of a planar graph $G$ is one whose vertices each corresponds to a face in $G$. 
-		Two vertices are connected by an edge if the corresponding faces in $G$ have a boundary edge in common \cite{mathworld:dualGraph}. 
-  	\end{definition}
 	
 \subsubsection{Embeddings and Topology}
     
@@ -186,14 +180,25 @@
 	In other words, the graph can be drawn on the plane in such a way that its edges intersect only at their endpoints (no edges cross each other) \cite{mathworld:PlanarGraph}.
 	
 	\theoremstyle{definition}
+	\begin{definition}{\textsc{Face}}
+		A face of a planar straight-line graph is a set of edges ${e_1,...e_k}$ which bounds an area of the plane such that it contains no edges.
+		In other words, the faces are the boundaries of the connected components of $\R^2 \setminus \pi(G)$.
+	\end{definition}
+	
+	\theoremstyle{definition}
 	\begin{definition}{\textsc{Planar Straight-Line Graph}}
 		A planar straight line graph is a graph that can be embedded in the plane where all the edges are straight lines. $PSLG = (V,E,F, \{\pi : V \rightarrow \R^2 \})$, where a face of a PSLG is a set of edges.
 	\end{definition}
 	
 	\theoremstyle{definition}
-	\begin{definition}{\textsc{Simplex}}
-		A \emph{simplex} is the generalization of a triangle to arbitrary dimensions.
-	\end{definition}
+	\begin{definition}{\textsc{Dual Graph}}
+		The \emph{dual graph} $G'$ of a planar graph $G$ is one whose vertices each corresponds to a face in $G$. 
+		Two vertices are connected by an edge if the corresponding faces in $G$ have a boundary edge in common \cite{mathworld:dualGraph}. 
+  	\end{definition}
+	%\theoremstyle{definition}
+	%\begin{definition}{\textsc{Simplex}}
+	%	A \emph{simplex} is the generalization of a triangle to arbitrary dimensions.
+	%\end{definition}
 
 \subsubsection{Matrix Manipulation and Terminology}
 
@@ -225,7 +230,7 @@
 	
 	\theoremstyle{definition}
 	\begin{definition}{\textsc{Characteristic Polynomial}}
-		The \emph{characteristic polynomial} is the polynomial left-hand side of the characteristic equation --- $\det(A - \lambda I) = 0$ \cite{mathworld:CharacteristicPoly}.
+		The \emph{characteristic polynomial} is the polynomial left-hand side of the characteristic equation: $\det(A - \lambda I) = 0$ \cite{mathworld:CharacteristicPoly}.
 	\end{definition}
 	
 	\theoremstyle{definition}
@@ -314,8 +319,7 @@
 	
 	\theoremstyle{definition}
 	\begin{definition}{\textsc{Triangulation}}
-		A \emph{triangulation}, also referred to as a \emph{maximal planar graph}, is a simple planar graph in which there is no way to add another edge and have the graph continue to be simple and planar \cite{meshGeneration}. 
-		This means that each face is bounded by three edges --- each face is a triangle.
+		A \emph{triangulation}, straight-line planar graph in which every face is a triangle \cite{meshGeneration}. 
 	\end{definition}
 
 	There are many specific types of triangulations in mathematics, however, we will focus on Delaunay and Weighted Delaunay triangulations which are intimately connected to circle packings.
@@ -524,8 +528,9 @@
 	
 	$P_1$ in this equation is chosen by pinning down the outer face.
 	$P_2$ is then found by the linear system suggested by the above equation: $BP_1 + L_2P_2 = 0$ and thus $P_2 = -L_2^{-1}BP_1$. 
-	For this equation to be valid $L_2$ must be invertible. Therefore, we must prove that it will always be invertible in this scenerio.
-	To prove this fact, we can, like Tutte, use the Matrix Tree Theorem.
+	For this equation to be valid $L_2$ must be invertible. 
+	$L_2$ will be invertible if all its eigenvalues are positive.
+	To prove that for these graphs, this fact holds we can, like Tutte, use the Matrix Tree Theorem.
 	
 	\theoremstyle{definition}
 	\begin{definition}{\textsc{Spanning Tree}}
@@ -534,10 +539,13 @@
 	
 	\begin{theorem}{(The Matrix-Tree Theorem)}
 		If $L$ is the Laplacian of a graph and $L'$ is derived from $L$ by deleting the first row and column, then $\det L'$ is exactly the number of spanning trees of $G$.
-		In other words, $\kappa(G) = \frac{1}{n} \lambda_1\lambda_2 \dots \lambda_{n-1}$ where $\lambda_1, \dots, \lambda_{n-1}$ are non-zero eigenvalues of the Laplacian matrix $L$ of $G$.
+		In other words, the number of spanning trees of $G$, $\kappa(G) = \frac{1}{n} \lambda_1\lambda_2 \dots \lambda_{n-1}$ where $\lambda_1, \dots, \lambda_{n-1}$ are non-zero eigenvalues of the Laplacian matrix $L$ of $G$.
 	\end{theorem}
 	
-	To prove this theorem, we will introduce and prove the Matrix-Tree theorem for oriented graphs and then show that it implies the version for unoriented graphs.
+	This theorem implies that $\det L_2$ is the number of spanning trees of the contracted graph.
+	Since contractions cannot separate a connected graph, there will be at least one spanning tree. 
+	Thus $\det L_2 > 0$ and therefore it is invertible as desired.
+	To prove this theorem, we will introduce and prove the Matrix-Tree theorem for directed graphs and then show that it implies the version for undirected graphs.
 	This is the approach used by Lionel Levine in his lecture notes from Algebraic Combinatorics \cite{matrixTree}.
 	
 	Let $\Gamma = (V,E)$ be a oriented graph.
@@ -553,11 +561,11 @@
 	\end{definition}
 	
 	\theoremstyle{definition}
-	\begin{definition}{\textsc{Laplacian matrix of an oriented graph}}
+	\begin{definition}{\textsc{Laplacian matrix of a directed graph}}
 			The Laplacian matrix $L$ of $\Gamma$ is equal to $D-A$ where $D = \text{diag } (d_1, \dots, d_n)$ where $d_i$ is the out degree of vertex $i$ and $A$ is the adjacency matrix of $\Gamma$.
 	\end{definition}
 	
-	\begin{theorem}{(The Matrix-Tree Theorem --- Oriented Graphs)}
+	\begin{theorem}{(The Matrix-Tree Theorem --- Directed Graphs)}
 			Let $\kappa(\Gamma, r) =$ \# \{oriented spanning trees of $\Gamma \text{ rooted at } r\}$ and $L_r$ be the Laplacian matrix of $\Gamma$ with the row and column correspond to vertex $r$ crossed out. 
 			Then, $\kappa(\Gamma, r) = \det L_r$, where $L_r$ is the Laplacian matrix $L$ with row and column $r$ removed.
 	\end{theorem}
@@ -603,7 +611,7 @@
 		\end{center}
 	\end{proof}
 	
-	We can now use the Matrix-Tree theorem for directed graphs to prove the theorem for unoriented graphs.
+	We can now use the Matrix-Tree theorem for directed graphs to prove the theorem for undirected graphs.
 	
 	\begin{proof}
 		Given graph $G$, let $\Gamma$ be the directed graph with edges $(i,j)$ and $(j,i)$ for every edge of $G$. 
@@ -618,12 +626,13 @@
 	\end{proof}
 	
 	This proves the first portion of Tutte's theorem --- that there are unique equilibrium positions for the interior vertices.
-	It is left to the reader to prove that all faces of $G$ are realized as non-overlapping convex polygons. 	
+	The second part of Tutte's theorem is that all faces of $G$ are realized as non-overlapping convex polygons.
+	While we will not prove this part of the theorem, a proof can be found in Tutte's original paper, \emph{How to Draw a Graph} \cite{tutte1963draw}.
 	
 	
 \subsection{Maxwell-Cremona Theorem}
 	Beginning with a graph, using Tutte's algorithm, we may assign the graph arbitrary positive stresses and convert it into a convex planar embedding with an equilibrium stress on the interior. 
-	Next, because the outer face is a triangle, it is possible to assign negative weights to the three outer edges to obtain an equilibrium stress for the entire embedding. 
+	Next, because we are assuming the outer face is a triangle, it is possible to assign negative weights to the three outer edges to obtain an equilibrium stress for the entire embedding. 
 	This yields a starting point for the Maxwell-Cremona Theorem.
 
  	The Maxwell-Cremona Theorem, in plain english, states that there is a natural correspondence between the equilibrium stress of a planar embedding and the lifting of that embedding.
@@ -637,19 +646,19 @@
 	\theoremstyle{definition}
 	\begin{definition}{\textsc{Edge Patch}}
 		An \emph{edge patch} is a different notation for describing an edge in an embedding. 
-		It is written $<h,i;j,k>$ where it connects vertices $h,i$ and separates the faces $j,k$ \cite{mccProof}.
+		It is written $\langle h,i;j,k \rangle$ where it connects vertices $h,i$ and separates the faces $j,k$ \cite{mccProof}.
 	\end{definition}
 	
 		\begin{figure}[h]
   		\begin{center}
   			\includegraphics[width=.3\textwidth]{edge_patch2}
   		\end{center}
-  		\caption{The edge patch $<h,i;j,k>$.}
+  		\caption{The edge patch $\langle h,i;j,k \rangle$.}
 	\end{figure}
 	
 	\theoremstyle{definition}
 	\begin{definition}{\textsc{Emersion}}
-		An \emph{emersion} is a relaxation of an embedding that allows crossings. (ie. An emersion is not planar.)
+		An \emph{emersion} is a relaxation of an embedding that allows crossings. (ie. An emersion is not necessarily planar.)
 	\end{definition}
 	
 	We will also need the notion of a \emph{dual emersion}. However, in our notion of the dual emersion, we will place $\{\infty\}$ in the center of the emersion.
@@ -664,7 +673,7 @@
 	\begin{definition}{\textsc{Combinatorial Oriented Polyhedron}}
 		A \emph{combinatorial oriented polyhedron} is a finite set of vertices, faces and edge patches such that \cite{mccProof}:
 		\begin{enumerate}
-			\item There are two edge patches per edge. I.e. if $<h,i;j,k> \in E$ then $<i,h;k,j> \in E$ but $<h,i;k,j> \not\in E$ and $<h,i;j,k> \not\in E$.
+			\item There are two edge patches per edge. I.e. if $\langle h,i;j,k \rangle \in E$ then $\langle i,h;k,j \rangle \in E$ but $ \langle h,i;k,j \rangle \not\in E$ and $\langle h,i;j,k \rangle \not\in E$.
 			\item For each vertex $a_0$ all edge patches with first entry $a_0$ form a cycle. 
 			\item For each face $F^0$ all edge patches with last entry $F^0$ form a cycle.
 			\item Each pair $a_0$, $a_1$ is joined by a vertex edge path. Each pair of faces is connected by a face-edge path (the vertex edge path in the dual). 
@@ -691,7 +700,7 @@
 	
 	\theoremstyle{definition}
 	\begin{definition}{\textsc{Spherical Combinatorial Polyhedron}}
-		A combinatorial polyhedron and its dual are spherical if every closed path of faces and distinct edges $<h_r,i_r;j_r,k_r>$ for $1 \leq r \leq t$ such that $j_{r+1} = k_r$ and $j_1 = k_t$ disconnects the vertices \cite{mccProof}.
+		A combinatorial polyhedron and its dual are spherical if every closed path of faces and distinct edges $\langle h_r,i_r;j_r,k_r \rangle$ for $1 \leq r \leq t$ such that $j_{r+1} = k_r$ and $j_1 = k_t$ disconnects the vertices \cite{mccProof}.
 	\end{definition}
 		
 	Lastly, three other definitions that will be references are as follows:
@@ -715,11 +724,11 @@
 \subsubsection{Part 1: Stress and Reciprocal Diagram}
 	%\theoremstyle{definition}
 	%\begin{definition}{Reciprocal Framework}
-		%A reciprocal framework, or dual embedding, $H* = ((F,E);P)$ on the dual combinatorial polyhedron is a framework such that for each edge patch $<h,i;j,k>$  the vector $v_e = p_i - p_h$ is perpendicular to the vector $v^e = p^k - p^j$ from the reciprocal. 
+		%A reciprocal framework, or dual embedding, $H* = ((F,E);P)$ on the dual combinatorial polyhedron is a framework such that for each edge patch $\langle h,i;j,k \rangle$  the vector $v_e = p_i - p_h$ is perpendicular to the vector $v^e = p^k - p^j$ from the reciprocal. 
 	%\end{definition}
 	
 	\begin{theorem}
-		A planar vertex 2-connected, edge 3-connected, straight line graph supports an equalibruim stress if and only if it has a dual emersion.
+		A planar vertex 2-connected, edge 3-connected, straight line graph supports an equilibrium stress if and only if it has a dual emersion.
 	\end{theorem}
 	
 	A note on notation: $90^o$ clockwise rotation will be written $u^\bot$ and $90^o$ counter-clockwise rotation will be written $-u^\bot$
@@ -728,21 +737,21 @@
 		Starting with a planar drawing of a graph, form the associated spherical polyhedron.
 		
 		Part A: Assume the spherical polyhedron has a dual emersion.
-		For each edge patch $<h,i;j,k>$ we will use the equation $\omega_{hi}(p_i - p_h) = -(P^k - P^j)^\bot$ or $\omega_ev_e = (V^e)^\bot$ to define scalars $\omega_{hi} = \omega_e$. 
+		For each edge patch $\langle h,i;j,k \rangle$ we will use the equation $\omega_{hi}(p_i - p_h) = -(P^k - P^j)^\bot$ or $\omega_ev_e = (V^e)^\bot$ to define scalars $\omega_{hi} = \omega_e$. 
 		None of the weights will equal zero because $P^j \neq P^k$ in an emersion. 
 		From the facial polyhedrons of the dual emersion we get $\sum\omega_ev_e = 0 = \sum\omega_{hi}(p_i - p_h)$.
 
-		Part B: Assume we have an equalibruim stress on the embedding.
+		Part B: Assume we have an equilibrium stress on the embedding.
 		Pick a face $F^0$ and a point $P^0$ for the this face. 
 		Any other face is connected to this face by a simple face-edge path of edge patches $\{...e...\}$. 
 		We define point $P^1 = P^0 + \sum\omega_ev_e^\bot$. 
 		This is a consistent definition provided that two different paths from $F^0$ to $F^1$ give the same point $P^1$. 
 		Two such paths form a closed path on the spherical polyhedron and therefore the edges of the path form a cut set for the graph of the polyhedron. 
 		If we travel on one path and back on the other we see the sums on the two paths are equal, as required $\sum\omega_ev_e = \sum\omega_e^{'}v_e^{'} = 0$. 
-		For each edge $e = <i,h;j,k>$ the path from $P^j$ to $P^k$ is this single edge and the difference in position is $P^j - P^k = -\omega_ev_e^\bot$. 
+		For each edge $e = \langle i,h;j,k \rangle$ the path from $P^j$ to $P^k$ is this single edge and the difference in position is $P^j - P^k = -\omega_ev_e^\bot$. 
 		Thus, we have a true dual emersion.
 
-		Part B of this proof in layman's terms is that from the definition of an equalibruim stress, a simple cycle that sums around a vertex will equal zero. 
+		Part B of this proof in layman's terms is that from the definition of an equilibrium stress, a simple cycle that sums around a vertex will equal zero. 
 		As a result of this fact, you can divide the graph into cut sets that each have a self stress of zero. 
 		Adding these self stresses up, you obtain the final result of zero.
 	\end{proof}
@@ -795,7 +804,7 @@
 		After transformation to $L(q)$ and $L^{-1}(Q)$ we have: $xA + yB + C + z = 0$, so the new plane contains the new point. 
 		If $q$ lies on $L(q)$ we have $x^2 + y^2 + z + z = 0$, and the point lies on the paraboloid. 
  
- 		For an edge patch $e = <h,i;j,k>$ the turning moment is $m_e = p_j \times p_i$. 
+ 		For an edge patch $e = \langle h,i;j,k \rangle$ the turning moment is $m_e = p_j \times p_i$. 
 		In a similar manner, for the dual edge in the reciprocal $V^e = (P^k - P^j)$ and $M^e = P^k \times P^j = (P^k - P^j)\times P^j)$.
 	\end{proof}
  
@@ -810,7 +819,7 @@
  	\begin{proof}
 		Part A: 
 		For each face $F^i$ the vector $N^j = (A^j, B^j,1)$ is normal to the plane $Q^j$. 
-		For each edge $e = <h,i;j,k>:  (x_h-x_i,,y_h-y_i, z_h-z_i)=(q_h-q_i) = \omega^e N^j \times N^k = \omega^e(B^j-B^k,A^k-A^j,A^jB^k-A^kB^j)$. 
+		For each edge $e = \langle h,i;j,k \rangle:  (x_h-x_i,,y_h-y_i, z_h-z_i)=(q_h-q_i) = \omega^e N^j \times N^k = \omega^e(B^j-B^k,A^k-A^j,A^jB^k-A^kB^j)$. 
 		This shows that $-\omega^e(A^j-A^k,B^j-B^k)^\bot = (x_h - x_i, y_h-y_i)$ or $-\omega^e(V^e)^\bot = v_e$. 
 		The emersions are dual, with scalars $\omega^e$ for the equilibrium stress in the face diagram.
  
