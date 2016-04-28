@@ -50,7 +50,7 @@
 
 \begin{abstract}
   We explore equivalent representations of circle packings and the relationships between them connecting them to theorems by Maxwell and Tutte.  
-  The source code for tool used to create the circle packing figures can be found at: \\ https://github.com/interl0per/CirclePacking
+  The associated code is available at a website as noted and cited in the introduction.
 \end{abstract}
 
 \section{Introduction}
@@ -69,12 +69,12 @@
 	The circle packings most often studied are those that require the interior of the circles to be disjoint, called univalent packings, this means the circles are non-overlapping \cite{stephenson05introduction}. 
 	In this case, a circle packing can be thought of as a graph formed by a set of circles with disjoint interiors, where each circle kisses, intersects at exactly one point, its neighboring circles in the graph.
 
-	Common geometric settings for circle packings are the \emph{euclidean plane}, the \emph{sphere} and the \emph{hyperbolic plane}. 
+	Common geometric settings for circle packings are the \emph{Euclidean plane}, the \emph{sphere} and the \emph{hyperbolic plane}. 
 	Each pair of circles in a packing forms a \emph{tangent pair}, every three form a \emph{triple} and the empty space between each triple forms an $interstice$ \cite{stephenson05introduction}. 
 	A $flower$ is the next level of structure, which consists of a central circle and some number of $petal$ circles. 
 	The number of petals defines the $degree$ of the central circle. 
 	In the visualization tool used to create the circle packing figures we enforce the condition that every circle packing has to have a flower. 
-	Note that while not all circle packings are univalent, the ones discussed in this paper and created by the visualization tool will all be univalent. 
+	Note that while not all circle packings are univalent, the ones discussed in this paper and created by the visualization tool will all be univalent \cite{visualizationTool}. 
 	As a result of this property the angle sum, the sum of the angles around each vertex, will be $2\pi$.
 
 	The primary objective of this paper is to explore the connections between equivalent representations of circle packings. 
@@ -260,7 +260,7 @@
 	
 	\theoremstyle{definition}
 	\begin{definition}{\textsc{Laplacian}}
-		A \emph{laplacian} of a graph $G$ is an $n \times n$ symmetric matrix with one row and one column for each vertex defined by $L = D - A$, where $D$ is the degree matrix and A is the adjacency matrix \cite{mathworld:Laplacian}.
+		A \emph{Laplacian} of a graph $G$ is an $n \times n$ symmetric matrix with one row and one column for each vertex defined by $L = D - A$, where $D$ is the degree matrix and A is the adjacency matrix \cite{mathworld:Laplacian}.
 	\end{definition}
 
 \subsubsection{Misc.}
@@ -902,7 +902,7 @@
 	In this section, we will cover circle packings on the sphere and the insights this representation yields.
 
 \subsection{Riemann Sphere}
-	The euclidean plane which has been operated on thus far can be represented mathematically by: $\C = \{z = x + iy : x, y \in \R \}$. 
+	The Euclidean plane which has been operated on thus far can be represented mathematically by: $\C = \{z = x + iy : x, y \in \R \}$. 
 	In contrast, the Riemann sphere, also known as the unit sphere or the complex projective line is modeled as such: $\mathbb{P} = \{(x,y,z):x^2 + y^2 + z^2 = 1\} \subset \R^3$. 
 	This sphere can be thought of as the wrapping of the complex plane around a ball, with the addition of one point at infinity. 
 	The plane is found to be a subset of the sphere via stereographic projection, which is a mapping that projects a sphere onto the plane. 
@@ -969,7 +969,7 @@
 
 	Circle Packings have many equivalent representations that can be exploited to develop new algorithms to both make better packings and obtain them more quickly. 
 	These representations include Delaunay Triangulations, Voronoi Diagrams, Parabolic Liftings, Koebe Polyhedrons, and Packings on the Riemann Sphere. 
-	Through examining one of these representations, the Delaunay Triangulation a new algorithm for computing Circle Packings based on equilibrium forces was developed. 
+	Through examining one of these representations, the Delaunay Triangulation, a new algorithm for computing Circle Packings based on equilibrium forces was developed. 
 	In the future, a combination of these representations could be used to develop a new non-linear optimization algorithm based on optimizing different aspects of each equivalent representation.
 
 \bibliographystyle{plain}
