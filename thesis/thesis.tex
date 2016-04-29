@@ -141,6 +141,12 @@
 	
 	A simple graph may either be connected or disconnected.
 	
+	\theoremstyle{definition}
+	\begin{definition}{\textsc{Contraction}}
+		The contraction of a pair of vertices $v_1$ and $v_2$ of a graph produces a graph in which the two vertices are replaced with a single vertex $v$ such that $v$ is adjacent to the union of the vertices to which $v_1$ and $v_2$ were originally adjacent. 
+		If the vertices $v_1$ and $v_2$ are connected by an edge then the edge is removed \cite{mathworld:Contraction}.
+	\end{definition}
+	
 \subsubsection{Embeddings and Topology}
     
     \begin{wrapfigure}{r}{.4\textwidth}%
@@ -539,7 +545,7 @@
 	
 	\begin{theorem}{(The Matrix-Tree Theorem)}
 		If $L$ is the Laplacian of a graph and $L'$ is derived from $L$ by deleting the first row and column, then $\det L'$ is exactly the number of spanning trees of $G$.
-		In other words, the number of spanning trees of $G$, $\kappa(G) = \frac{1}{n} \lambda_1\lambda_2 \dots \lambda_{n-1}$ where $\lambda_1, \dots, \lambda_{n-1}$ are non-zero eigenvalues of the Laplacian matrix $L$ of $G$.
+		In other words, the number of spanning trees of $G$, $\kappa(G) = \frac{1}{n} \lambda_1\lambda_2 \dots \lambda_{n-1}$ where $\lambda_1, \dots, \lambda_{n-1}$ are non-zero eigenvalues of the Laplacian matrix $L$ of $G$ \cite{matrixTree}.
 	\end{theorem}
 	
 	This theorem implies that $\det L_2$ is the number of spanning trees of the contracted graph.
@@ -567,7 +573,7 @@
 	
 	\begin{theorem}{(The Matrix-Tree Theorem --- Directed Graphs)}
 			Let $\kappa(\Gamma, r) =$ \# \{oriented spanning trees of $\Gamma \text{ rooted at } r\}$ and $L_r$ be the Laplacian matrix of $\Gamma$ with the row and column correspond to vertex $r$ crossed out. 
-			Then, $\kappa(\Gamma, r) = \det L_r$, where $L_r$ is the Laplacian matrix $L$ with row and column $r$ removed.
+			Then, $\kappa(\Gamma, r) = \det L_r$, where $L_r$ is the Laplacian matrix $L$ with row and column $r$ removed \cite{matrixTree}.
 	\end{theorem}
 	
 	\begin{proof}
@@ -971,6 +977,21 @@
 	These representations include Delaunay Triangulations, Voronoi Diagrams, Parabolic Liftings, Koebe Polyhedrons, and Packings on the Riemann Sphere. 
 	Through examining one of these representations, the Delaunay Triangulation, a new algorithm for computing Circle Packings based on equilibrium forces was developed. 
 	In the future, a combination of these representations could be used to develop a new non-linear optimization algorithm based on optimizing different aspects of each equivalent representation.
+
+\section{Acknowledgements}
+	I would like to thank my co-author Kevin Pratt for creating the visualization tool used to create the majority of figures for this paper. 
+	Kevin is intelligent, inquisitive and knowledgable --- any readers who have questions regarding circle packings should direct them to him.
+	I would also like to thank my other co-author and advisor, Don Sheehy, without whom, this paper would not be possible.
+	I cannot thank Don enough for his continued support and encouragement.
+	Don's guidance helped me become both a better reader and writer and without his help the quality of this paper would be nowhere near that of its current form. 
+	I appreciate all the time Don spent teaching me both the basics of Computational Geometry and more specific circle packing concepts. 	
+	Lastly, I would like to thank my family for all of their continued support throughout my academic career.
+
+
+
+
+
+
 
 \bibliographystyle{plain}
 \bibliography{references}
